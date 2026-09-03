@@ -1,0 +1,11 @@
+__pycache__/
+.venv/
+.vscode
+.claude
+*.html
+docs/bench.json
+out1.txt
+out2.txt
+params.yaml.bak
+params.yaml.orig
+.DS_Store
