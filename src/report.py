@@ -17,7 +17,7 @@ MODE_TITLES = {
 
 def thousands(n: int) -> str:
     """Число с неразрывными пробелами по разрядам."""
-    return f"{n:,}".replace(",", " ")
+    return f"{n:,}".replace(",", " ")
 
 
 def plot_activations(activations: dict, path: str) -> None:
