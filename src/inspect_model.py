@@ -13,6 +13,7 @@ import gc
 import json
 import os
 import platform
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -396,20 +397,34 @@ def measure_mode(mode: str, params: dict) -> dict:
     return result
 
 
+def measure_mode_subprocess(mode: str) -> dict:
+    """Один режим памяти в отдельном процессе — см. --probe в докстринге модуля."""
+    proc = subprocess.run(
+        [sys.executable, "-m", "src.inspect_model", "--probe", mode],
+        capture_output=True, text=True, check=True,
+    )
+    lines = [line for line in proc.stdout.splitlines() if line.strip()]
+    return json.loads(lines[-1])
+
+
 def memory_profile(params: dict) -> list[dict]:
     """Профиль памяти в трёх режимах.
+
+    Каждый режим — отдельный процесс: счётчики пика памяти (RSS high-water
+    mark и аллокатор ускорителя) не сбрасываются сами собой, и без изоляции
+    процессом более лёгкий режим, измеренный после тяжёлого, наследует его
+    пик вместо собственного.
 
     memory.repeats задаёт число прогонов на режим; берётся худший (максимум).
     """
     repeats = max(1, int(params["memory"].get("repeats", 1)))
     results = []
     for mode in MODES:
-        runs = [measure_mode(mode, params) for _ in range(repeats)]
+        runs = [measure_mode_subprocess(mode) for _ in range(repeats)]
         worst = max(runs, key=lambda item: item["peak_mb"])
         worst["repeats"] = repeats
         worst["peak_mb_runs"] = [item["peak_mb"] for item in runs]
         results.append(worst)
-        gc.collect()
     return results
 
 
