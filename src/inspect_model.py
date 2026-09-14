@@ -156,9 +156,10 @@ def hook_targets(model) -> dict[str, int]:
     return {"первый": 0, "средний": n_layers // 2, "последний": n_layers - 1}
 
 
-def forward_hooks(modules: dict) -> dict:
-    """Навесить forward-hooks на модули и вернуть словарь, куда они пишут."""
+def forward_hooks(modules: dict) -> tuple[dict, list]:
+    """Навесить forward-hooks на модули; вернуть словарь для записи и хендлы для снятия."""
     store: dict[str, list[float]] = {}
+    handles = []
 
     def make_hook(label: str):
         def hook(module, args, output):
@@ -167,8 +168,8 @@ def forward_hooks(modules: dict) -> dict:
         return hook
 
     for label, module in modules.items():
-        module.register_forward_hook(make_hook(label))
-    return store
+        handles.append(module.register_forward_hook(make_hook(label)))
+    return store, handles
 
 
 def activation_norms(tokenizer, model, params: dict) -> dict:
@@ -178,9 +179,13 @@ def activation_norms(tokenizer, model, params: dict) -> dict:
     prompt = build_prompt(tokenizer, params, params["hooks"]["prompt"])
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
 
-    store = forward_hooks({label: layers[i] for label, i in targets.items()})
-    with torch.inference_mode():
-        model(**inputs)
+    store, handles = forward_hooks({label: layers[i] for label, i in targets.items()})
+    try:
+        with torch.inference_mode():
+            model(**inputs)
+    finally:
+        for handle in handles:
+            handle.remove()
 
     return {
         "layers": targets,
