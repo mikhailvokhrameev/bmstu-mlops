@@ -4,6 +4,7 @@ __pycache__/
 .claude
 *.html
 docs/bench.json
+docs/report.json
 out1.txt
 out2.txt
 params.yaml.bak

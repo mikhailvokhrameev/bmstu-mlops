@@ -1,12 +1,15 @@
 [project]
-name = "mlops-hw1"
+name = "mlops-hw"
 version = "0.1.0"
-description = "MLOPS-26, домашняя работа 1: окружение и бенчмарк"
+description = "MLOPS-26: окружение и бенчмарк (ДЗ 1), анатомия модели и профиль памяти (ДЗ 2)"
 requires-python = ">=3.12"
 dependencies = [
     "torch>=2.14.0",
     "transformers>=5.16.1",
     "accelerate>=1.14.0",
+    "peft>=0.14",
+    "matplotlib>=3.9",
     "numpy>=2.5.2",
+    "psutil>=5.9",
     "pyyaml>=6.0.3",
 ]
