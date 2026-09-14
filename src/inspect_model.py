@@ -263,13 +263,21 @@ def lora_report(model, params: dict) -> list[dict]:
 # --------------------------------------------------------------------------
 
 def device_allocated_bytes(device: torch.device) -> int:
-    """Сколько памяти занято прямо сейчас."""
+    """Сколько памяти занято прямо сейчас на устройстве device."""
+    if device.type == "cuda":
+        return torch.cuda.max_memory_allocated(device)
+    if device.type == "mps":
+        return torch.mps.driver_allocated_memory()
     used, _ = peak_rss()
     return used
 
 
 def device_metric_source(device: torch.device) -> str:
     """Имя функции, которой снята память."""
+    if device.type == "cuda":
+        return "torch.cuda.max_memory_allocated"
+    if device.type == "mps":
+        return "torch.mps.driver_allocated_memory"
     _, source = peak_rss()
     return source
 
@@ -314,10 +322,11 @@ class PeakMemory:
         return self
 
     def __exit__(self, *exc) -> bool:
-        # TODO: это расход режима — или то, что осталось занято после него,
-        # когда всё уже посчитано и мусор собран?
-        gc.collect()
+        # Снимаем показание ДО сборки мусора: на mps/cuda это живой снимок
+        # аллокатора, а не исторический пик, и gc.collect() перед чтением
+        # уже освободил бы то, что должно было засчитаться расходом режима.
         self.used = device_allocated_bytes(self.device)
+        gc.collect()
         return False
 
     def result(self) -> dict:
