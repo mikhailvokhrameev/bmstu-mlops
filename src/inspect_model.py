@@ -96,15 +96,20 @@ def group_of(name: str) -> str:
 def parameter_rows(model) -> list[dict]:
     """Все тензоры параметров модели.
 
-    remove_duplicate=False — иначе в таблицу не попадёт lm_head.
+    remove_duplicate=False — иначе в таблицу не попадёт lm_head. Тензоры,
+    уже встреченные раньше (tied-веса), помечаются tied=True, чтобы не
+    задваивать их в сумме параметров.
     """
     rows = []
+    seen: set[int] = set()
     for name, param in model.named_parameters(remove_duplicate=False):
+        tied = id(param) in seen
+        seen.add(id(param))
         rows.append({
             "name": name,
             "shape": tuple(param.shape),
             "numel": param.numel(),
-            "tied": False,
+            "tied": tied,
         })
     return rows
 
