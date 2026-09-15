@@ -103,6 +103,11 @@ def parameter_rows(model) -> list[dict]:
     """
     rows = []
     seen: set[int] = set()
+    # дефект исправлен: раньше каждая строка жёстко помечалась "tied": False,
+    # и tie_word_embeddings=True приводил к двойному счёту embed_tokens.weight
+    # и lm_head.weight (один и тот же тензор, отданный named_parameters дважды).
+    # Теперь тензоры отслеживаются по id(param), повторное появление помечается
+    # tied=True и не идёт в общую сумму параметров.
     for name, param in model.named_parameters(remove_duplicate=False):
         tied = id(param) in seen
         seen.add(id(param))
@@ -162,6 +167,10 @@ def hook_targets(model) -> dict[str, int]:
     return {"первый": 0, "средний": n_layers // 2, "последний": n_layers - 1}
 
 
+# дефект исправлен: forward_hooks() раньше не возвращал RemovableHandle,
+# и хуки никогда не снимались - повторные вызовы activation_norms() копили
+# обработчики на одних и тех же модулях. Теперь функция возвращает список
+# хендлов вместе со словарём.
 def forward_hooks(modules: dict) -> tuple[dict, list]:
     """Навесить forward-hooks на модули; вернуть словарь для записи и хендлы для снятия."""
     store: dict[str, list[float]] = {}
@@ -190,6 +199,9 @@ def activation_norms(tokenizer, model, params: dict) -> dict:
         with torch.inference_mode():
             model(**inputs)
     finally:
+        # дефект исправлен: хендлы снимаются сразу после прямого прохода,
+        # в finally - повторный вызов в одном процессе больше не наращивает
+        # число хуков на модулях модели.
         for handle in handles:
             handle.remove()
 
@@ -263,6 +275,13 @@ def lora_report(model, params: dict) -> list[dict]:
 # 4. Память в трёх режимах
 # --------------------------------------------------------------------------
 
+# дефект исправлен: device_allocated_bytes()/device_metric_source() раньше
+# игнорировали device и всегда вызывали peak_rss() (host RSS), хотя
+# PeakMemory.result() подписывал число как "аллокатор mps"/"аллокатор cuda".
+# На ускорителе тензоры лежат в его памяти, а не в RSS процесса - метрика
+# почти не реагировала на размер модели. Теперь ветвится по device.type:
+# torch.cuda.max_memory_allocated() для cuda, torch.mps.driver_allocated_memory()
+# для mps, peak_rss() остаётся fallback'ом только для cpu.
 def device_allocated_bytes(device: torch.device) -> int:
     """Сколько памяти занято прямо сейчас на устройстве device."""
     if device.type == "cuda":
@@ -323,9 +342,10 @@ class PeakMemory:
         return self
 
     def __exit__(self, *exc) -> bool:
-        # Снимаем показание ДО сборки мусора: на mps/cuda это живой снимок
-        # аллокатора, а не исторический пик, и gc.collect() перед чтением
-        # уже освободил бы то, что должно было засчитаться расходом режима.
+        # дефект исправлен: показание снималось после gc.collect(), из-за чего
+        # сборка мусора успевала освободить то, что должно было засчитаться
+        # расходом режима. Снимаем показание ДО сборки мусора: на mps/cuda
+        # это живой снимок аллокатора, а не исторический пик.
         self.used = device_allocated_bytes(self.device)
         gc.collect()
         return False
@@ -397,6 +417,11 @@ def measure_mode(mode: str, params: dict) -> dict:
     return result
 
 
+# дефект исправлен: memory_profile() раньше вызывал measure_mode() для всех
+# трёх режимов напрямую в одном процессе - счётчики пика памяти (RSS
+# high-water mark и аллокатор ускорителя) не сбрасываются сами по себе,
+# поэтому более лёгкий режим наследовал пик тяжёлого. Теперь каждый режим
+# запускается отдельным процессом через уже существовавший --probe.
 def measure_mode_subprocess(mode: str) -> dict:
     """Один режим памяти в отдельном процессе — см. --probe в докстринге модуля."""
     proc = subprocess.run(
