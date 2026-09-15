@@ -11,3 +11,4 @@ params.yaml.bak
 params.yaml.orig
 .DS_Store
 docs/superpowers/
+.superpowers/
