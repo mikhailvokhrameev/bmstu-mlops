@@ -258,8 +258,26 @@ def markdown_report(report: dict, params: dict) -> str:
 
 
 def write_report(report: dict, params: dict) -> None:
-    """Нарисовать график и записать docs/anatomy.md."""
+    """Нарисовать график и записать docs/anatomy.md.
+
+    Если в файле уже есть раздел "## 7." (дописанный вручную разбор
+    найденных дефектов), он сохраняется и переносится в конец нового
+    файла — иначе повторный `make inspect` тихо стирал бы его.
+    """
     plot_activations(report["activations"], params["hooks"]["plot"])
     path = Path(params["report"]["markdown"])
     path.parent.mkdir(exist_ok=True)
-    path.write_text(markdown_report(report, params), encoding="utf-8")
+
+    generated = markdown_report(report, params)
+    manual_tail = ""
+    if path.exists():
+        existing = path.read_text(encoding="utf-8")
+        marker = "\n## 7."
+        idx = existing.find(marker)
+        if idx != -1:
+            # Keep "## 7." itself and everything after it; drop only the
+            # leading "\n" that was part of the marker.
+            manual_tail = existing[idx + 1:]
+
+    content = generated.rstrip("\n") + "\n\n" + manual_tail if manual_tail else generated
+    path.write_text(content, encoding="utf-8")
