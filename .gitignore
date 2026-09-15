@@ -4,8 +4,12 @@ __pycache__/
 .claude
 *.html
 docs/bench.json
+docs/report.json
 out1.txt
 out2.txt
 params.yaml.bak
 params.yaml.orig
 .DS_Store
+docs/superpowers/
+.superpowers/
+/mlops26-hw2
