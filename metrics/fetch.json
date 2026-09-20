@@ -1,0 +1,15 @@
+{
+  "site": "stackoverflow",
+  "fetched_at": "2026-09-20",
+  "tags": 57,
+  "tags_with_rows": 57,
+  "questions": 2751,
+  "rows_per_shard": [
+    1660,
+    1091
+  ],
+  "answers_missing": 0,
+  "api_calls": 85,
+  "quota_remaining": 135,
+  "seconds": 129.94
+}
