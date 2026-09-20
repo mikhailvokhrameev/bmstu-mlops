@@ -23,8 +23,11 @@ v2:
 	uv run python -m src.set_version v2
 	uv run dvc repro
 
+A ?= v1
+B ?= v2
+
 diff:
-	uv run dvc metrics diff
+	uv run dvc metrics diff $(A) $(B)
 
 dag:
 	uv run dvc dag

@@ -37,7 +37,8 @@
    в git данных нет.
 3. `make v1` / `make v2` переключают версию датасета. Версии отмечены
    git-тегами `v1` и `v2`, разница между ними —
-   `uv run dvc metrics diff v1 v2` (`make diff` сравнивает с последним коммитом).
+   `make diff` (то же, что `dvc metrics diff v1 v2`; другие ревизии:
+   `make diff A=<rev> B=<rev>`).
 4. `make contamination` — отдельная проверка train/test, `make diversity` —
    гейт разнообразия.
 5. `docs/datasheet.md` — источник, лицензия, объём, длины, устройство сплита,
@@ -53,7 +54,7 @@ make inspect      # ДЗ2: разбор модели, отчёт в docs/
 make repro        # ДЗ3: весь пайплайн данных
 make v1           # ДЗ3: переключиться на v1 и пересчитать
 make v2           # ДЗ3: переключиться на v2 и пересчитать
-make diff         # ДЗ3: dvc metrics diff
+make diff         # ДЗ3: dvc metrics diff v1 v2
 make contamination  # ДЗ3: проверка train/test
 make diversity    # ДЗ3: гейт разнообразия
 make check        # самопроверка всех ДЗ — должна быть зелёной
