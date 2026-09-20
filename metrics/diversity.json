@@ -1,20 +1,20 @@
 {
-  "version": "v1",
-  "examples": 1128,
+  "version": "v2",
+  "examples": 1662,
   "system_prompts": 5,
   "groups": 54,
-  "largest_group": "prefect",
-  "largest_group_share": 0.0337,
+  "largest_group": "amazon-sagemaker",
+  "largest_group_share": 0.0445,
   "answer_len": {
-    "p10": 229,
-    "p50": 705,
-    "p90": 1840,
-    "ratio_p90_p10": 8.03,
-    "cv": 0.716,
+    "p10": 220,
+    "p50": 679,
+    "p90": 1803,
+    "ratio_p90_p10": 8.2,
+    "cv": 0.727,
     "min": 47,
-    "max": 2908
+    "max": 2955
   },
-  "same_length_share": 0.0044,
+  "same_length_share": 0.0048,
   "duplicate_answer_share": 0.0,
   "thresholds": {
     "min_examples": 1000,
@@ -27,5 +27,5 @@
   },
   "violations": [],
   "passed": true,
-  "seconds": 0.08
+  "seconds": 0.1
 }
