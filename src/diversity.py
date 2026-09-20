@@ -126,9 +126,13 @@ def main() -> None:
     mpath.write_text(json.dumps(metrics, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     if failed:
-        # TODO: гейт или отчёт? Стадия, которая сообщает о проблеме и продолжает,
-        # не мешает вырожденному набору доехать до обучения.
-        print("diversity: предупреждение — " + "; ".join(failed))
+        # Гейт, а не отчёт: стадия, которая сообщает о проблеме и продолжает,
+        # не мешает вырожденному набору доехать до обучения. Нарушения идут
+        # по одному на строку — так видно, сколько порогов нарушено и какие.
+        listing = "\n".join(f"  - {item}" for item in failed)
+        raise SystemExit(
+            f"diversity: набор не прошёл гейт, нарушено порогов: {len(failed)}\n{listing}"
+        )
 
     print(
         f"diversity: {stats['examples']} строк, {stats['system_prompts']} системных промптов, "
