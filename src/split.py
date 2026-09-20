@@ -3,27 +3,43 @@
 import json
 import random
 import time
+from collections import Counter
 from pathlib import Path
 
 from src.config import load_params
-from src.contamination import report
+from src.contamination import is_clean, report
 from src.schema import Example, dump, iter_examples
 from src.textnorm import normalize_group
 
 
-def row_split(count: int, ratios: dict[str, float], seed: int) -> list[str]:
-    """Раздать строкам метки сплита в заданных долях."""
-    order = list(range(count))
-    random.Random(seed).shuffle(order)
-    labels = [""] * count
-    start = 0
-    names = list(ratios)
-    for i, name in enumerate(names):
-        stop = count if i == len(names) - 1 else start + round(count * ratios[name])
-        for pos in order[start:stop]:
-            labels[pos] = name
-        start = stop
-    return labels
+def group_split(keys: list[str], ratios: dict[str, float], seed: int) -> list[str]:
+    """Раздать строкам метки сплита так, чтобы группа целиком попала в один сплит.
+
+    Резать по строкам нельзя: вопросы одной группы близки друг к другу, и при
+    случайном сплите они оказываются и в train, и в test. Тест перестаёт быть
+    незнакомым, а метрика на нём — честной.
+
+    Группы перемешиваются по seed, затем крупные идут первыми, и каждая
+    достаётся сплиту с наибольшим недобором до целевой доли. Так доли выходят
+    близкими к заданным, а результат детерминирован.
+    """
+    sizes = Counter(keys)
+    groups = sorted(sizes)
+    random.Random(seed).shuffle(groups)
+    groups.sort(key=lambda g: -sizes[g])    # сортировка устойчивая: ничьи остаются в порядке shuffle
+    total = len(keys)
+    filled = {name: 0 for name in ratios}
+    owner: dict[str, str] = {}
+    for group in groups:
+        name = max(ratios, key=lambda n: ratios[n] * total - filled[n])
+        owner[group] = name
+        filled[name] += sizes[group]
+    empty = [name for name, count in filled.items() if not count]
+    if empty:
+        raise SystemExit(
+            f"групп слишком мало ({len(groups)}): сплиты {empty} остались пустыми"
+        )
+    return [owner[key] for key in keys]
 
 
 def main() -> None:
@@ -36,12 +52,10 @@ def main() -> None:
     if cfg["group_key"] != "topic":
         raise SystemExit(f"неизвестный split.group_key: {cfg['group_key']!r}")
 
-    sizes: dict[str, int] = {}
-    for ex in examples:
-        key = normalize_group(ex.topic)
-        sizes[key] = sizes.get(key, 0) + 1
+    keys = [normalize_group(ex.topic) for ex in examples]
+    sizes = Counter(keys)
 
-    labels = row_split(len(examples), cfg["ratios"], cfg["seed"])
+    labels = group_split(keys, cfg["ratios"], cfg["seed"])
     buckets: dict[str, list[Example]] = {name: [] for name in cfg["ratios"]}
     for label, ex in zip(labels, examples):
         buckets[label].append(ex)
@@ -86,6 +100,16 @@ def main() -> None:
         + ", ".join(f"{name} {len(rows)}" for name, rows in buckets.items())
         + f" (групп {len(sizes)}, {metrics['seconds']} с)"
     )
+
+    # Метрики записаны выше — по ним видно, что именно протекло. Но стадия
+    # обязана упасть: молча оставленный протекающий test доехал бы до обучения.
+    if not is_clean(rep):
+        leaks = ", ".join(
+            f"{name} {rep[name]}"
+            for name in ("id_overlap", "text_overlap", "group_overlap", "near_dup_pairs")
+            if rep[name]
+        )
+        raise SystemExit(f"split: контаминация train/test ({leaks}) — метрики на test будут завышены")
 
 
 if __name__ == "__main__":
