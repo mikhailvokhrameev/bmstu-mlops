@@ -1,7 +1,7 @@
 [project]
 name = "mlops-hw"
 version = "0.1.0"
-description = "MLOPS-26: окружение и бенчмарк (ДЗ 1), анатомия модели и профиль памяти (ДЗ 2)"
+description = "MLOPS-26: окружение и бенчмарк (ДЗ 1), анатомия модели и профиль памяти (ДЗ 2), датасет и DVC (ДЗ 3)"
 requires-python = ">=3.12"
 dependencies = [
     "torch>=2.14.0",
@@ -12,4 +12,7 @@ dependencies = [
     "numpy>=2.5.2",
     "psutil>=5.9",
     "pyyaml>=6.0.3",
+    "dvc>=3.55",
+    "pydantic>=2.9",
+    "datasketch>=1.6",
 ]

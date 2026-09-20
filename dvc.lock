@@ -1,0 +1,333 @@
+schema: '2.0'
+stages:
+  fetch:
+    cmd: python -m src.fetch
+    deps:
+    - path: src/config.py
+      hash: md5
+      md5: 1a7f038ddcad4cc719c02fd4de52e2de
+      size: 1426
+    - path: src/fetch.py
+      hash: md5
+      md5: be71785bfe389af80b1221967bfa6538
+      size: 8326
+    params:
+      params.yaml:
+        fetch:
+          site: stackoverflow
+          api: https://api.stackexchange.com/2.3
+          filter: '!FyN2A_UsTcy)9peuviF7IGMkUGExv7c2gPkis-'
+          pool: 100
+          per_shard: 40
+          shards: 2
+          pause_seconds: 0.5
+          tags:
+          - neptune
+          - deepspeed
+          - flyte
+          - ludwig
+          - tensorflow-model-analysis
+          - tensorflow-extended
+          - feast
+          - label-studio
+          - tvm
+          - seldon
+          - netflix-metaflow
+          - mleap
+          - tensorboardx
+          - triton
+          - torchserve
+          - horovod
+          - feature-store
+          - clearml
+          - ray-tune
+          - azure-ml-pipelines
+          - huggingface-hub
+          - mlrun
+          - hyperopt
+          - wandb
+          - amazon-sagemaker-studio
+          - great-expectations
+          - dvc
+          - dagster
+          - tekton
+          - tfx
+          - optuna
+          - knative
+          - prefect
+          - kedro
+          - gcp-ai-platform-notebook
+          - google-ai-platform
+          - mlops
+          - nvidia-docker
+          - kubeflow-pipelines
+          - argo-workflows
+          - luigi
+          - onnxruntime
+          - tensorrt
+          - openvino
+          - kubeflow
+          - argocd
+          - ray
+          - mlflow
+          - onnx
+          - minio
+          - google-cloud-vertex-ai
+          - tensorflow-serving
+          - tensorboard
+          - google-cloud-composer
+          - azure-machine-learning-service
+          - amazon-sagemaker
+          - airflow
+        paths.metrics_fetch: metrics/fetch.json
+        paths.source_dir: data/source
+    outs:
+    - path: data/source
+      hash: md5
+      md5: 810e2932dc9a23c13550bd5303c261f6.dir
+      size: 10097343
+      nfiles: 2
+    - path: metrics/fetch.json
+      hash: md5
+      md5: 09c1557b50d08e8e8b2048b6705f6987
+      size: 255
+  collect:
+    cmd: python -m src.collect
+    deps:
+    - path: data/source
+      hash: md5
+      md5: 810e2932dc9a23c13550bd5303c261f6.dir
+      size: 10097343
+      nfiles: 2
+    - path: src/collect.py
+      hash: md5
+      md5: 064db8d0fb404d89b96e1593743c11b4
+      size: 7166
+    - path: src/config.py
+      hash: md5
+      md5: 1a7f038ddcad4cc719c02fd4de52e2de
+      size: 1426
+    params:
+      params.yaml:
+        collect:
+          version: v2
+          n_rows: 3000
+          sources:
+            v1:
+            - data/source/stackoverflow_0000.jsonl
+            v2:
+            - data/source/stackoverflow_0000.jsonl
+            - data/source/stackoverflow_0001.jsonl
+          topics:
+          verify_answer: true
+          min_question_score: 1
+          min_answer_score: 1
+          max_answer_chars: 3000
+          system_prompts:
+          - Ты инженер по MLOps и отвечаешь на технические вопросы со Stack 
+            Overflow. Дан вопрос по инструменту или платформе. Дай точный 
+            практичный ответ, при необходимости с командой или фрагментом кода.
+          - 'Перед тобой вопрос разработчика по MLOps-инструментам: трекинг экспериментов,
+            оркестрация, деплой моделей, версионирование данных. Ответь по существу,
+            с примером конфигурации или кода, если он нужен.'
+          - 'Задача: ответить на вопрос со Stack Overflow про эксплуатацию моделей
+            машинного обучения. Назови причину проблемы и способ её решения, код и
+            команды приводи в блоках.'
+          - 'Ты помогаешь коллеге, который застрял при настройке MLOps-инструмента.
+            Прочитай вопрос и дай решение, которое принято сообществом: коротко объясни
+            причину и покажи, что изменить.'
+          - 'Отвечай на технические вопросы по MLOps так, как это делает опытный участник
+            Stack Overflow: сначала суть решения, затем пример команды, конфига или
+            кода. Не выдумывай несуществующих опций.'
+        paths.metrics_collect: metrics/collect.json
+        paths.raw: data/raw.jsonl
+    outs:
+    - path: data/raw.jsonl
+      hash: md5
+      md5: 3c5504466b81a4e6b022cbc3416b6bbf
+      size: 5994229
+    - path: metrics/collect.json
+      hash: md5
+      md5: c9fee00550c7ef760c1fc83f6e84bd52
+      size: 272
+  clean:
+    cmd: python -m src.clean
+    deps:
+    - path: data/raw.jsonl
+      hash: md5
+      md5: 3c5504466b81a4e6b022cbc3416b6bbf
+      size: 5994229
+    - path: src/clean.py
+      hash: md5
+      md5: 9d77e3c487c187b08f2240d9ecf85b03
+      size: 4769
+    - path: src/config.py
+      hash: md5
+      md5: 1a7f038ddcad4cc719c02fd4de52e2de
+      size: 1426
+    - path: src/dedup.py
+      hash: md5
+      md5: fde80d28430f1612c4cbb7f0fdcc1f4d
+      size: 2757
+    - path: src/pii.py
+      hash: md5
+      md5: 54de6f3690578d83cfc17094d2d2aa7a
+      size: 2397
+    - path: src/schema.py
+      hash: md5
+      md5: ad834fcb5caa483d3d5d5bfabb433cc0
+      size: 3054
+    - path: src/stats.py
+      hash: md5
+      md5: a54925032eff4769647b5775d72dd423
+      size: 2222
+    - path: src/textnorm.py
+      hash: md5
+      md5: c7e2f072fe9cc4d2b5af76f5c360c6c0
+      size: 1844
+    params:
+      params.yaml:
+        clean:
+          min_user_chars: 30
+          max_user_chars: 4000
+          min_assistant_chars: 2
+          near_dup:
+            enabled: true
+            shingle_words: 4
+            num_perm: 64
+            threshold: 0.85
+          pii:
+            enabled: true
+        collect.version: v2
+        paths.clean: data/clean.jsonl
+        paths.metrics_clean: metrics/clean.json
+        paths.raw: data/raw.jsonl
+    outs:
+    - path: data/clean.jsonl
+      hash: md5
+      md5: 73735c73e788d79e593aa08078f45c81
+      size: 4434760
+    - path: metrics/clean.json
+      hash: md5
+      md5: f051a8d19f0aa3049e94e055febccad3
+      size: 454
+  diversity:
+    cmd: python -m src.diversity
+    deps:
+    - path: data/clean.jsonl
+      hash: md5
+      md5: 73735c73e788d79e593aa08078f45c81
+      size: 4434760
+    - path: src/config.py
+      hash: md5
+      md5: 1a7f038ddcad4cc719c02fd4de52e2de
+      size: 1426
+    - path: src/diversity.py
+      hash: md5
+      md5: ca4bf180a66ebc862f2ca5eff8c27221
+      size: 6973
+    - path: src/schema.py
+      hash: md5
+      md5: ad834fcb5caa483d3d5d5bfabb433cc0
+      size: 3054
+    - path: src/stats.py
+      hash: md5
+      md5: a54925032eff4769647b5775d72dd423
+      size: 2222
+    - path: src/textnorm.py
+      hash: md5
+      md5: c7e2f072fe9cc4d2b5af76f5c360c6c0
+      size: 1844
+    params:
+      params.yaml:
+        collect.version: v2
+        diversity:
+          min_examples: 1000
+          min_system_prompts: 3
+          min_groups: 50
+          max_group_share: 0.1
+          min_answer_len_ratio: 1.6
+          max_same_length_share: 0.25
+          max_duplicate_answer_share: 0.3
+        paths.clean: data/clean.jsonl
+        paths.metrics_diversity: metrics/diversity.json
+        split.group_key: topic
+    outs:
+    - path: metrics/diversity.json
+      hash: md5
+      md5: a046290d894d2d0f29826244d0463258
+      size: 653
+  split:
+    cmd: python -m src.split
+    deps:
+    - path: data/clean.jsonl
+      hash: md5
+      md5: 73735c73e788d79e593aa08078f45c81
+      size: 4434760
+    - path: metrics/diversity.json
+      hash: md5
+      md5: a046290d894d2d0f29826244d0463258
+      size: 653
+    - path: src/config.py
+      hash: md5
+      md5: 1a7f038ddcad4cc719c02fd4de52e2de
+      size: 1426
+    - path: src/contamination.py
+      hash: md5
+      md5: 9293919fc5964067833313514c6f9f2b
+      size: 2249
+    - path: src/dedup.py
+      hash: md5
+      md5: fde80d28430f1612c4cbb7f0fdcc1f4d
+      size: 2757
+    - path: src/schema.py
+      hash: md5
+      md5: ad834fcb5caa483d3d5d5bfabb433cc0
+      size: 3054
+    - path: src/split.py
+      hash: md5
+      md5: 0c13adff30dd15edc000ec6cbc169a46
+      size: 4792
+    - path: src/textnorm.py
+      hash: md5
+      md5: c7e2f072fe9cc4d2b5af76f5c360c6c0
+      size: 1844
+    params:
+      params.yaml:
+        clean.near_dup:
+          enabled: true
+          shingle_words: 4
+          num_perm: 64
+          threshold: 0.85
+        collect.version: v2
+        contamination:
+          threshold: 0.85
+        paths.clean: data/clean.jsonl
+        paths.metrics_split: metrics/split.json
+        paths.test: data/test.jsonl
+        paths.train: data/train.jsonl
+        paths.val: data/val.jsonl
+        split:
+          group_key: topic
+          ratios:
+            train: 0.8
+            val: 0.1
+            test: 0.1
+          seed: 42
+    outs:
+    - path: data/test.jsonl
+      hash: md5
+      md5: 106cdb455f42b404efde0990254821c7
+      size: 441560
+    - path: data/train.jsonl
+      hash: md5
+      md5: a60b0556a8aef4f3bb335770c8c51988
+      size: 3533127
+    - path: data/val.jsonl
+      hash: md5
+      md5: 986082a308ec4d06e015f26faeedc171
+      size: 460073
+    - path: metrics/split.json
+      hash: md5
+      md5: 31cfd8df5e1894bc5017e5296cb5341a
+      size: 519

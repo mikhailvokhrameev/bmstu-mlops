@@ -1,0 +1,13 @@
+{
+  "version": "v2",
+  "files": 2,
+  "rows_scanned": 2751,
+  "rows_written": 1827,
+  "dropped_topic_filter": 0,
+  "dropped_answer_mismatch": 0,
+  "dropped_score": 827,
+  "dropped_answer_length": 97,
+  "topics_filter": 0,
+  "system_prompt_variants": 5,
+  "seconds": 0.09
+}
