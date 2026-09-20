@@ -1,4 +1,4 @@
-# Пайплайн ДЗ 3: collect → clean → diversity → split.
+# Пайплайн ДЗ 3: fetch → collect → clean → diversity → split.
 #
 # Два правила, из-за нарушения которых пайплайн «не пересчитывается»:
 #   deps — всё, от чего зависит результат: входные данные И код стадии;
@@ -8,6 +8,30 @@
 # params, поэтому согласованность проверяется в tests/check.sh.
 
 stages:
+  fetch:
+    cmd: python -m src.fetch
+    deps:
+      - src/fetch.py
+      - src/config.py
+    params:
+      - fetch
+      - paths.source_dir
+      - paths.metrics_fetch
+    outs:
+      - data/source
+    metrics:
+      - metrics/fetch.json:
+          cache: false
+
+  collect:
+    cmd: python -m src.collect
+    deps:
+      - data/source
+      - src/collect.py
+      - src/config.py
+    outs:
+      - data/raw.jsonl
+
   clean:
     cmd: python -m src.clean
     deps:

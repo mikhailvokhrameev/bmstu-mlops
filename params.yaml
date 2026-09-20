@@ -44,6 +44,117 @@ report:
 # --- ДЗ 3: датасет, DVC, валидация схемы, честный сплит ---
 # Ни один путь, порог или размер среза не должен появляться в коде строкой.
 
+fetch:
+  # Источник — Stack Overflow, вопросы по MLOps-инструментам с принятым ответом.
+  # Снимок собирается ОДИН раз (лимит API — 300 запросов в сутки на IP),
+  # дальше стадии работают с ним из кэша DVC.
+  site: "stackoverflow"
+  api: "https://api.stackexchange.com/2.3"
+  # Кастомный фильтр API: только нужные поля, включая body_markdown и content_license.
+  filter: "!FyN2A_UsTcy)9peuviF7IGMkUGExv7c2gPkis-"
+  pool: 100                  # вопросов с принятым ответом на тег, топ по голосам
+  per_shard: 40              # вопросов на тег в одном шарде
+  shards: 2                  # шард 0 — v1, шарды 0 и 1 — v2
+  pause_seconds: 0.5         # пауза между запросами; backoff API важнее
+  # Порядок значим: вопрос с несколькими тегами достаётся первому из них.
+  # Поэтому редкие теги идут первыми, а airflow — почти последним.
+  tags:
+    - neptune
+    - deepspeed
+    - flyte
+    - ludwig
+    - tensorflow-model-analysis
+    - tensorflow-extended
+    - feast
+    - label-studio
+    - tvm
+    - seldon
+    - netflix-metaflow
+    - mleap
+    - tensorboardx
+    - triton
+    - torchserve
+    - horovod
+    - feature-store
+    - clearml
+    - ray-tune
+    - azure-ml-pipelines
+    - huggingface-hub
+    - mlrun
+    - hyperopt
+    - wandb
+    - amazon-sagemaker-studio
+    - great-expectations
+    - dvc
+    - dagster
+    - tekton
+    - tfx
+    - optuna
+    - knative
+    - prefect
+    - kedro
+    - gcp-ai-platform-notebook
+    - google-ai-platform
+    - mlops
+    - nvidia-docker
+    - kubeflow-pipelines
+    - argo-workflows
+    - luigi
+    - onnxruntime
+    - tensorrt
+    - openvino
+    - kubeflow
+    - argocd
+    - ray
+    - mlflow
+    - onnx
+    - minio
+    - google-cloud-vertex-ai
+    - tensorflow-serving
+    - tensorboard
+    - google-cloud-composer
+    - azure-machine-learning-service
+    - amazon-sagemaker
+    - airflow
+
+collect:
+  # Версия датасета переключается ЗДЕСЬ. Всё остальное — следствие.
+  version: "v1"              # v1 | v2
+  n_rows: 3000               # строк, берём из каждого файла-источника ПОСЛЕ фильтров
+  sources:
+    v1:
+      - "data/source/stackoverflow_0000.jsonl"
+    v2:
+      - "data/source/stackoverflow_0000.jsonl"
+      - "data/source/stackoverflow_0001.jsonl"
+
+  # --- Переработка источника ---
+  # Чужой готовый набор — это сырьё, а не сдача. Параметры ниже — то, чем
+  # raw.jsonl отличается от «выгрузил из API и переименовал». Каждый из них
+  # отражён в metrics/collect.json и в docs/datasheet.md.
+
+  topics: null               # null — все теги; список тегов сужает набор.
+                             # Следите за diversity.min_groups: один тег не датасет.
+
+  verify_answer: true        # сверять принятый ответ с разметкой источника:
+                             # ответ отмечен принятым и относится именно к этому
+                             # вопросу. Расхождение — строка выбрасывается
+                             # и попадает в счётчик.
+  min_question_score: 1      # вопрос без голосов — не вопрос, а шум
+  min_answer_score: 1        # ответ, принятый автором, но не поддержанный никем,
+                             # в обучение не берём
+  max_answer_chars: 3000     # слишком длинные ответы — простыни логов и дампов
+
+  system_prompts:            # В источнике инструкции нет вовсе, а модель, обученная
+                             # на одной формулировке, заучивает её как константу.
+                             # Поэтому инструкция разведена на варианты; вариант
+                             # выбирается детерминированно по id примера.
+    - "Ты инженер по MLOps и отвечаешь на технические вопросы со Stack Overflow. Дан вопрос по инструменту или платформе. Дай точный практичный ответ, при необходимости с командой или фрагментом кода."
+    - "Перед тобой вопрос разработчика по MLOps-инструментам: трекинг экспериментов, оркестрация, деплой моделей, версионирование данных. Ответь по существу, с примером конфигурации или кода, если он нужен."
+    - "Задача: ответить на вопрос со Stack Overflow про эксплуатацию моделей машинного обучения. Назови причину проблемы и способ её решения, код и команды приводи в блоках."
+    - "Ты помогаешь коллеге, который застрял при настройке MLOps-инструмента. Прочитай вопрос и дай решение, которое принято сообществом: коротко объясни причину и покажи, что изменить."
+    - "Отвечай на технические вопросы по MLOps так, как это делает опытный участник Stack Overflow: сначала суть решения, затем пример команды, конфига или кода. Не выдумывай несуществующих опций."
+
 clean:
   # Фильтр длин: слишком короткий пример — обрезок, слишком длинный — выброс.
   min_user_chars: 30
@@ -102,11 +213,13 @@ contamination:
   threshold: 0.85
 
 paths:
+  source_dir: "data/source"
   raw: "data/raw.jsonl"
   clean: "data/clean.jsonl"
   train: "data/train.jsonl"
   val: "data/val.jsonl"
   test: "data/test.jsonl"
+  metrics_fetch: "metrics/fetch.json"
   metrics_collect: "metrics/collect.json"
   metrics_clean: "metrics/clean.json"
   metrics_split: "metrics/split.json"
