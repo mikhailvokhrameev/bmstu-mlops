@@ -85,6 +85,8 @@ stages:
       - paths.test
     outs:
       - data/train.jsonl
+      - data/val.jsonl
+      - data/test.jsonl
     metrics:
       - metrics/split.json:
           cache: false

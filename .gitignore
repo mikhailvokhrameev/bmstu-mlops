@@ -14,3 +14,5 @@ docs/superpowers/
 .superpowers/
 /mlops26-hw2
 /mlops26-hw3
+data/
+dvc_remote/
