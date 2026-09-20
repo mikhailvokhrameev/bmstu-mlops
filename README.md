@@ -17,7 +17,7 @@
 
 1. Прогнать `make inspect`: разбор модели, отчёт в `docs/anatomy.md`,
    график в `docs/activations.png`.
-2. Прогнать `make check` — обе самопроверки (ДЗ 1 и ДЗ 2) должны быть
+2. Прогнать `make check` — самопроверки ДЗ 1, 2 и 3 должны быть
    зелёными.
 3. `docs/anatomy.md`: таблица «модуль → shape → параметров → доля»,
    график норм активаций, расчёт LoRA-параметров для обоих конфигов,
@@ -26,12 +26,35 @@
 4. `docs/anatomy-worksheet.xlsx` — заполненный, контрольные суммы
    сходятся.
 
-## Запуск (оба ДЗ)
+## ДЗ 3 — Свой датасет, DVC, валидация схемы, честный сплит
+
+1. Датасет — вопросы Stack Overflow с принятым ответом по 57 тегам
+   MLOps-инструментов (mlflow, dvc, kubeflow, airflow, sagemaker и др.).
+   Тег — тема и группа сплита. Стадия `fetch` собирает снимок через
+   Stack Exchange API, `collect` превращает его в `data/raw.jsonl`.
+2. Пайплайн `fetch → collect → clean → diversity → split` описан в
+   `dvc.yaml`, данные версионирует DVC (локальный remote `dvc_remote/`),
+   в git данных нет.
+3. `make v1` / `make v2` переключают версию датасета. Версии отмечены
+   git-тегами `v1` и `v2`, разница между ними —
+   `uv run dvc metrics diff v1 v2` (`make diff` сравнивает с последним коммитом).
+4. `make contamination` — отдельная проверка train/test, `make diversity` —
+   гейт разнообразия.
+5. `docs/datasheet.md` — источник, лицензия, объём, длины, устройство сплита,
+   ограничения. `docs/defects.md` — разбор пяти найденных дефектов.
+
+## Запуск (все ДЗ)
 
 ```bash
 uv sync
 make generate     # ДЗ1: генерация
 make bench        # ДЗ1: замеры
 make inspect      # ДЗ2: разбор модели, отчёт в docs/
-make check        # самопроверка обоих ДЗ — должна быть зелёной
+make repro        # ДЗ3: весь пайплайн данных
+make v1           # ДЗ3: переключиться на v1 и пересчитать
+make v2           # ДЗ3: переключиться на v2 и пересчитать
+make diff         # ДЗ3: dvc metrics diff
+make contamination  # ДЗ3: проверка train/test
+make diversity    # ДЗ3: гейт разнообразия
+make check        # самопроверка всех ДЗ — должна быть зелёной
 ```
