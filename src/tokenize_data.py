@@ -92,9 +92,13 @@ def describe(values: list[int]) -> dict:
 
 def truncation_stats(metas: list[dict], name: str, params: dict) -> dict:
     """Статистика обрезки по max_seq_len."""
-    # TODO: посчитать долю обрезанных и предупредить, если она выше
-    # tokenize.truncated_warn_ratio.
-    return {}
+    total = len(metas)
+    truncated = sum(1 for m in metas if m["truncated"])
+    ratio = truncated / total if total else 0.0
+    warn = params["tokenize"]["truncated_warn_ratio"]
+    if ratio > warn:
+        print(f"  ПРЕДУПРЕЖДЕНИЕ: {name}: обрезано {ratio:.1%} примеров (порог {warn:.1%})")
+    return {"truncated": truncated, "truncated_ratio": round(ratio, 4)}
 
 
 def process_split(

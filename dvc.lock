@@ -360,8 +360,8 @@ stages:
       size: 4588
     - path: src/tokenize_data.py
       hash: md5
-      md5: 426a6026034ebb972ba035c5d7cb2914
-      size: 15259
+      md5: 849aa05efb13158170ca42ee7aae5971
+      size: 15495
     params:
       params.yaml:
         data.out_dir: data/tokenized
@@ -376,7 +376,7 @@ stages:
           enabled: true
           batch_size: 8
         tokenize:
-          max_seq_len: 232
+          max_seq_len: 1536
           truncated_warn_ratio: 0.05
           padding_side: left
         train_estimate:
@@ -385,10 +385,10 @@ stages:
     outs:
     - path: data/tokenized
       hash: md5
-      md5: ba26e8e037d61f466304b1445e24b66d.dir
-      size: 1850048
+      md5: 084a4009c5e2ee59e861a6d9b62cb004.dir
+      size: 16899904
       nfiles: 4
     - path: metrics/tokenize.json
       hash: md5
-      md5: c0da733ae767a841ec7a0c4c8dde1ac5
-      size: 2546
+      md5: f0ffb99b603a77886cd33526036c375c
+      size: 2672
