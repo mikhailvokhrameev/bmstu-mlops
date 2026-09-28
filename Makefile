@@ -1,4 +1,4 @@
-.PHONY: install generate bench inspect repro v1 v2 diff dag diversity contamination check check-data clean
+.PHONY: install generate bench inspect repro v1 v2 diff dag diversity contamination check check-data clean sample tokenize check-tokenize
 
 install:
 	uv sync
@@ -41,10 +41,20 @@ contamination:
 check-data:
 	bash tests/check_data.sh
 
+sample:
+	uv run python -m src.make_sample
+
+tokenize:
+	uv run python -m src.tokenize_data
+
+check-tokenize:
+	bash tests/check_tokenize.sh
+
 check:
 	bash tests/check.sh
 	bash tests/check_anatomy.sh
 	bash tests/check_data.sh
+	bash tests/check_tokenize.sh
 
 clean:
-	rm -rf docs/bench.json docs/report.json out1.txt out2.txt params.yaml.bak params.yaml.orig src/__pycache__ tests/__pycache__ data
+	rm -rf docs/bench.json docs/report.json metrics/tokenize.json docs/tokenize_report.md out1.txt out2.txt params.yaml.bak params.yaml.orig src/__pycache__ tests/__pycache__ data

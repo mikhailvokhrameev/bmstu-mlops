@@ -15,4 +15,5 @@ dependencies = [
     "dvc>=3.55",
     "pydantic>=2.9",
     "datasketch>=1.6",
+    "pyarrow>=18.0",
 ]

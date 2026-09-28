@@ -6,6 +6,8 @@ import numpy as np
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from src.prompt import render_chat_template
+
 
 def set_seed(seed: int) -> None:
     """Зафиксировать источники случайности, чтобы прогон воспроизводился."""
@@ -39,9 +41,7 @@ def build_prompt(tokenizer, params: dict, text: str) -> str:
     # остальные шаблоны его молча проигнорируют.
     if params["generate"].get("enable_thinking") is not None:
         kwargs["enable_thinking"] = params["generate"]["enable_thinking"]
-    return tokenizer.apply_chat_template(
-        messages, tokenize=False, add_generation_prompt=True, **kwargs
-    )
+    return render_chat_template(tokenizer, messages, add_generation_prompt=True, **kwargs)
 
 
 def generate(tokenizer, model, params: dict, text: str) -> tuple[str, int]:
