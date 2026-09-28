@@ -27,6 +27,22 @@ def split_messages(messages: list[dict]) -> tuple[list[dict], dict]:
     return messages[:-1], messages[-1]
 
 
+def render_chat_template(
+    tokenizer: Any,
+    messages: list[dict],
+    add_generation_prompt: bool,
+    **kwargs: Any,
+) -> str:
+    """Единственное место в проекте, где вызывается apply_chat_template.
+
+    Никогда не склеивайте роли вручную: у каждой модели свой формат,
+    а расхождение шаблонов обучения и инференса — самая частая тихая ошибка.
+    """
+    return tokenizer.apply_chat_template(
+        messages, tokenize=False, add_generation_prompt=add_generation_prompt, **kwargs
+    )
+
+
 def build_chat_text(
     tokenizer: Any,
     messages: list[dict],
@@ -43,17 +59,8 @@ def build_chat_text(
     """
     if add_generation_prompt:
         messages, _ = split_messages(messages)
-        return tokenizer.apply_chat_template(
-            messages,
-            tokenize=False,
-            add_generation_prompt=True,
-            **_template_kwargs(params),
-        )
-    return tokenizer.apply_chat_template(
-        messages,
-        tokenize=False,
-        add_generation_prompt=False,
-        **_template_kwargs(params),
+    return render_chat_template(
+        tokenizer, messages, add_generation_prompt, **_template_kwargs(params)
     )
 
 
