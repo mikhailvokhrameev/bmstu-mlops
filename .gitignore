@@ -12,7 +12,10 @@ params.yaml.orig
 .DS_Store
 docs/superpowers/
 .superpowers/
+/mlops26-hw1
 /mlops26-hw2
 /mlops26-hw3
+/mlops26-hw4
 data/
 dvc_remote/
+.check_*.log
