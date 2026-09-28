@@ -41,8 +41,7 @@ def read_jsonl(path: Path) -> list[dict]:
 
 def mask_prompt(input_ids: list[int], n_prompt: int) -> list[int]:
     """labels для лосса."""
-    # TODO: промпт должен быть замаскирован.
-    return list(input_ids)
+    return [LABEL_PAD_ID] * n_prompt + list(input_ids[n_prompt:])
 
 
 def encode_example(tokenizer, record: dict, params: dict, max_seq_len: int) -> dict:
