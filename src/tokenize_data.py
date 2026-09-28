@@ -21,7 +21,7 @@ from transformers import AutoTokenizer
 from src.collate import LABEL_PAD_ID
 from src.config import load_params
 from src.pack import pack_examples, packing_report
-from src.prompt import build_chat_text
+from src.prompt import build_chat_text, prompt_token_len
 
 METRICS_PATH = Path("metrics/tokenize.json")
 REPORT_PATH = Path("docs/tokenize_report.md")
@@ -48,11 +48,11 @@ def encode_example(tokenizer, record: dict, params: dict, max_seq_len: int) -> d
     """Один пример -> input_ids / attention_mask / labels + служебная статистика."""
     messages = record["messages"]
     full_text = build_chat_text(tokenizer, messages, params, add_generation_prompt=False)
+    prompt_text = build_chat_text(tokenizer, messages, params, add_generation_prompt=True)
 
-    encoded = tokenizer(full_text, add_special_tokens=False)
+    encoded = tokenizer(full_text, add_special_tokens=False, return_offsets_mapping=True)
     input_ids = encoded["input_ids"]
-    # TODO: найти границу промпта и ответа
-    n_prompt, used_fallback = 0, False
+    n_prompt, used_fallback = prompt_token_len(tokenizer, prompt_text, input_ids, encoded["offset_mapping"])
 
     full_len = len(input_ids)
     truncated = full_len > max_seq_len

@@ -7,85 +7,85 @@
   "splits": {
     "train": {
       "examples_in": 1330,
-      "examples_kept": 1330,
-      "dropped_no_supervision": 0,
+      "examples_kept": 370,
+      "dropped_no_supervision": 960,
       "length_tokens": {
         "count": 1330,
-        "mean": 600.8,
-        "p50": 542,
-        "p90": 987,
-        "p99": 1462,
-        "max": 1958
+        "mean": 604.8,
+        "p50": 546,
+        "p90": 991,
+        "p99": 1466,
+        "max": 1962
       },
       "prompt_tokens": {
         "count": 1330,
-        "mean": 0.0,
-        "p50": 0,
-        "p90": 0,
-        "p99": 0,
-        "max": 0
+        "mean": 391.0,
+        "p50": 323,
+        "p90": 711,
+        "p99": 1158,
+        "max": 1523
       },
       "answer_tokens": {
         "count": 1330,
-        "mean": 600.8,
-        "p50": 542,
-        "p90": 987,
-        "p99": 1462,
-        "max": 1958
+        "mean": 213.8,
+        "p50": 171,
+        "p90": 429,
+        "p99": 688,
+        "max": 1184
       },
       "bpe_boundary_fallback": 0,
-      "total_tokens": 307390,
-      "supervised_tokens": 307390,
+      "total_tokens": 84819,
+      "supervised_tokens": 16710,
       "packing": {
-        "sequences_before": 1330,
-        "sequences_after": 1330,
+        "sequences_before": 370,
+        "sequences_after": 370,
         "batch_size": 8,
-        "steps_before": 167,
-        "steps_after": 167,
+        "steps_before": 47,
+        "steps_after": 47,
         "steps_saved_ratio": 0.0,
-        "fill_ratio": 0.9962,
+        "fill_ratio": 0.9881,
         "max_examples_per_bin": 1
       }
     },
     "val": {
       "examples_in": 166,
-      "examples_kept": 166,
-      "dropped_no_supervision": 0,
+      "examples_kept": 34,
+      "dropped_no_supervision": 132,
       "length_tokens": {
         "count": 166,
-        "mean": 637.2,
-        "p50": 561,
-        "p90": 1068,
-        "p99": 1444,
-        "max": 1557
+        "mean": 641.2,
+        "p50": 565,
+        "p90": 1072,
+        "p99": 1448,
+        "max": 1561
       },
       "prompt_tokens": {
         "count": 166,
-        "mean": 0.0,
-        "p50": 0,
-        "p90": 0,
-        "p99": 0,
-        "max": 0
+        "mean": 434.6,
+        "p50": 355,
+        "p90": 793,
+        "p99": 1114,
+        "max": 1242
       },
       "answer_tokens": {
         "count": 166,
-        "mean": 637.2,
-        "p50": 561,
-        "p90": 1068,
-        "p99": 1444,
-        "max": 1557
+        "mean": 206.7,
+        "p50": 160,
+        "p90": 457,
+        "p99": 651,
+        "max": 680
       },
       "bpe_boundary_fallback": 0,
-      "total_tokens": 38403,
-      "supervised_tokens": 38403,
+      "total_tokens": 7791,
+      "supervised_tokens": 1634,
       "packing": {
-        "sequences_before": 166,
-        "sequences_after": 166,
+        "sequences_before": 34,
+        "sequences_after": 34,
         "batch_size": 8,
-        "steps_before": 21,
-        "steps_after": 21,
+        "steps_before": 5,
+        "steps_after": 5,
         "steps_saved_ratio": 0.0,
-        "fill_ratio": 0.9972,
+        "fill_ratio": 0.9877,
         "max_examples_per_bin": 1
       }
     }
@@ -93,9 +93,9 @@
   "train_time_estimate": {
     "epochs": 3,
     "tokens_per_sec": 52,
-    "tokens_per_epoch": 307390,
-    "seconds": 17734.0,
-    "hours": 4.93,
+    "tokens_per_epoch": 84819,
+    "seconds": 4893.4,
+    "hours": 1.36,
     "note": "tokens_per_sec взят из замера ГЕНЕРАЦИИ в ДЗ 1. Обучение считает ещё backward и шаг оптимизатора, поэтому реальная скорость ниже в 2-3 раза, а прогноз ниже — это оптимистичная граница."
   }
 }
