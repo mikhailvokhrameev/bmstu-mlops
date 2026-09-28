@@ -2,7 +2,7 @@
   "model": "Qwen/Qwen3-0.6B",
   "enable_thinking": false,
   "max_seq_len": 232,
-  "padding_side": "right",
+  "padding_side": "left",
   "truncated_warn_ratio": 0.05,
   "splits": {
     "train": {

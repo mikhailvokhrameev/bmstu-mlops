@@ -5,7 +5,7 @@
 - модель: `Qwen/Qwen3-0.6B`
 - `max_seq_len`: 232
 - `enable_thinking`: false
-- `padding_side`: right
+- `padding_side`: left
 
 ## Длины в токенах
 

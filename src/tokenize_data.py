@@ -291,7 +291,7 @@ def render_report(metrics: dict) -> str:
 def main() -> None:
     params = load_params()
     tokenizer = AutoTokenizer.from_pretrained(params["model"]["name"])
-    # TODO: tokenize.padding_side из params.yaml сюда так и не доехал
+    tokenizer.padding_side = params["tokenize"]["padding_side"]
 
     out_dir = Path(params["data"]["out_dir"])
     out_dir.mkdir(parents=True, exist_ok=True)

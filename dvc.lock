@@ -344,8 +344,8 @@ stages:
       size: 460073
     - path: src/collate.py
       hash: md5
-      md5: dcc60d73c8d8e664c1f886aee2ea9aca
-      size: 1518
+      md5: 3f589814c25be76d30b8e9ef565ef5a7
+      size: 1517
     - path: src/config.py
       hash: md5
       md5: 1a7f038ddcad4cc719c02fd4de52e2de
@@ -360,8 +360,8 @@ stages:
       size: 4588
     - path: src/tokenize_data.py
       hash: md5
-      md5: 5c78a12cfea50f44dce3014e691facd3
-      size: 15283
+      md5: 426a6026034ebb972ba035c5d7cb2914
+      size: 15259
     params:
       params.yaml:
         data.out_dir: data/tokenized
@@ -385,10 +385,10 @@ stages:
     outs:
     - path: data/tokenized
       hash: md5
-      md5: e0efe5100dee635b2b58964bd2a6598e.dir
+      md5: ba26e8e037d61f466304b1445e24b66d.dir
       size: 1850048
       nfiles: 4
     - path: metrics/tokenize.json
       hash: md5
-      md5: d619060aa4ead76b09f3d97c12fb59d3
-      size: 2547
+      md5: c0da733ae767a841ec7a0c4c8dde1ac5
+      size: 2546
