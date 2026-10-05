@@ -147,16 +147,31 @@ def main() -> None:
     )
 
     eval_bs = tcfg.get("eval_batch_size", tcfg["batch_size"])
-    base_val = None   # TODO: с чем сравнивать дообученную модель?
+    val_examples = val_blob["examples"]
+
+    def timed_eval() -> float:
+        """Замер val loss; время копится отдельно, чтобы не попасть в seconds обучения."""
+        nonlocal eval_seconds
+        t = time.perf_counter()
+        value = evaluate(model, val_examples, pad_id, device, eval_bs)
+        eval_seconds += time.perf_counter() - t
+        return value
+
+    eval_seconds = 0.0
     curve_train: list[list[float]] = []
     curve_val: list[list[float]] = []
+    # Точка «до обучения»: без неё нечем измерить, помогло ли дообучение.
+    # LoRA-матрица B инициализирована нулями, так что это лосс базовой модели.
+    base_val = timed_eval()
+    curve_val.append([0, round(base_val, 4)])
+    print(f"  шаг 0: val {base_val:.4f} (до обучения)")
+    base_eval_seconds = eval_seconds   # замер до started: из времени обучения вычитать не нужно
     print(f"[{args.variant}] устройство {device}, обучаемых {trainable:,} из {total:,} "
           f"({trainable / total:.3%}); шагов {total_steps}")
 
     peak = allocated_bytes(device)
     started = time.perf_counter()
     step, micro, accum_loss, diverged = 0, 0, 0.0, False
-    eval_seconds = 0.0
     for epoch in range(tcfg["epochs"]):
         for batch in batches(examples, tcfg["batch_size"], pad_id, shuffle=True, seed=tcfg["seed"] + epoch):
             batch = {k: v.to(device) for k, v in batch.items()}
@@ -179,12 +194,16 @@ def main() -> None:
                 break
             accum_loss = 0.0
             if step % tcfg["eval_every"] == 0 or step == total_steps:
-                print(f"  шаг {step}/{total_steps}: train {curve_train[-1][1]:.4f}")
+                val = timed_eval()
+                curve_val.append([step, round(val, 4)])
+                print(f"  шаг {step}/{total_steps}: train {curve_train[-1][1]:.4f}, val {val:.4f}")
             if step >= total_steps:
                 break
         if diverged or step >= total_steps:
             break
-    seconds = time.perf_counter() - started - eval_seconds   # чистое обучение, без замеров val
+    if curve_val[-1][0] != step:   # обучение остановлено не на кратном eval_every шаге
+        curve_val.append([step, round(timed_eval(), 4)])
+    seconds = time.perf_counter() - started - (eval_seconds - base_eval_seconds)   # чистое обучение, без замеров val
 
     out_root = Path(args.out) if args.out else Path(params["paths"]["models"])
     adapter_dir = out_root / f"adapter_{args.variant}"
