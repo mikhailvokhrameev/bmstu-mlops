@@ -61,6 +61,8 @@ def lora_config(params: dict, n_layers: int, freeze_first: int) -> LoraConfig:
         lora_dropout=cfg["dropout"],
         target_modules=cfg["target_modules"],
         modules_to_save=cfg.get("modules_to_save"),
+        # Без этого LoRA ставится на все слои, и freeze_first ни на что не влияет.
+        layers_to_transform=list(range(freeze_first, n_layers)) if freeze_first > 0 else None,
         task_type="CAUSAL_LM",
     )
 
