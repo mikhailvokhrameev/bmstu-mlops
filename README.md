@@ -85,3 +85,25 @@ make compare      # ДЗ5: базовая модель против адапте
 make check-train  # ДЗ5: самопроверка обучения
 make check        # самопроверка всех ДЗ — должна быть зелёной
 ```
+
+## ДЗ 5 — LoRA-обучение
+
+Интегрировано: стадии DVC `train_all` / `train_freeze` / `compare`
+(`src/train.py`, `src/compare.py`, `src/plot.py`, `src/data.py`,
+`src/runtime.py`), параметры в `params.yaml` (`train`, `lora_train`,
+`compare`), самопроверка `tests/check_train.sh`. Пять дефектов цикла
+обучения исправлены отдельными коммитами, разбор — в
+[docs/train_defects.md](docs/train_defects.md).
+
+```bash
+make train        # all_layers + freeze14 + графики
+make compare      # базовая модель против адаптера на 5 MLOps-вопросах
+make check-train  # самопроверка ДЗ 5
+make check        # все ДЗ
+```
+
+Результаты (`docs/curves.png`, `docs/compare.md`, метрики) пока не получены:
+обучение не помещается в память машины на 8 ГБ. Нужно запустить
+`make train && make check` на машине с достаточным объёмом памяти и
+подставить числа в `docs/train_defects.md` (места помечены
+`TODO: подставить из прогона`).
