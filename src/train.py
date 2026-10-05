@@ -7,7 +7,7 @@
 обычно прячется, — где считается val loss, как копятся градиенты, что
 сохраняется рядом с адаптером.
 
-Что сохраняется в models/adapter_<variant>/: адаптер.
+Что сохраняется в models/adapter_<variant>/: адаптер и токенайзер.
 В metrics/train_<variant>.json — кривые train/val loss, время, пиковая память,
 число обучаемых параметров, вес адаптера и отпечаток входов.
 """
@@ -210,6 +210,7 @@ def main() -> None:
     out_root = Path(args.out) if args.out else Path(params["paths"]["models"])
     adapter_dir = out_root / f"adapter_{args.variant}"
     model.save_pretrained(adapter_dir)
+    tokenizer.save_pretrained(adapter_dir)   # токенайзер едет вместе с адаптером
 
     tokens = sum(len(e["input_ids"]) for e in examples) * tcfg["epochs"]
     metrics = {
