@@ -138,3 +138,58 @@ stages:
     metrics:
       - metrics/tokenize.json:
           cache: false
+
+  # --- ДЗ 5 ---
+  train_all:
+    cmd: python -m src.train --variant all_layers
+    deps:
+      - data/tokenized/train.pt
+      - data/tokenized/val.pt
+      - src/train.py
+      - src/data.py
+      - src/runtime.py
+      - src/config.py
+    params:
+      - model
+      - lora_train
+      - train
+      - variants
+    outs:
+      - models/adapter_all_layers
+    metrics:
+      - metrics/train_all_layers.json:
+          cache: false
+
+  train_freeze:
+    cmd: python -m src.train --variant freeze14
+    deps:
+      - data/tokenized/train.pt
+      - data/tokenized/val.pt
+      - src/train.py
+      - src/data.py
+      - src/runtime.py
+      - src/config.py
+    params:
+      - model
+      - lora_train
+      - train
+      - variants
+    outs:
+      - models/adapter_freeze14
+    metrics:
+      - metrics/train_freeze14.json:
+          cache: false
+
+  compare:
+    cmd: python -m src.compare --variant all_layers
+    deps:
+      - models/adapter_all_layers
+      - src/compare.py
+    params:
+      - compare
+    outs:
+      - docs/compare.md:
+          cache: false
+    metrics:
+      - metrics/compare_all_layers.json:
+          cache: false
