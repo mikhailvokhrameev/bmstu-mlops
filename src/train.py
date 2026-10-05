@@ -32,7 +32,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, get_cosine_schedul
 
 from src.config import load_params
 from src.data import LABEL_PAD_ID, batches, load_split
-from src.runtime import allocated_bytes, memory_metric, resolve_device, resolve_dtype
+from src.runtime import allocated_bytes, memory_metric, resolve_device, resolve_dtype, set_seed
 
 
 TRAIN_CODE = ("src/train.py", "src/data.py", "src/runtime.py", "src/config.py")
@@ -119,6 +119,7 @@ def main() -> None:
         val_blob["examples"] = val_blob["examples"][:args.val_limit]
     pad_id = train_blob["pad_token_id"]
 
+    set_seed(tcfg["seed"])   # до загрузки модели и get_peft_model: от него зависят init LoRA A и dropout
     tokenizer = AutoTokenizer.from_pretrained(params["model"]["name"])
     model = AutoModelForCausalLM.from_pretrained(params["model"]["name"], dtype=dtype).to(device)
     n_layers = model.config.num_hidden_layers
