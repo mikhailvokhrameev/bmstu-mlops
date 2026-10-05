@@ -27,6 +27,8 @@ os.environ.setdefault("PYTORCH_MPS_HIGH_WATERMARK_RATIO", "0.7")
 os.environ.setdefault("PYTORCH_MPS_LOW_WATERMARK_RATIO", "0.6")   # нижний порог не выше верхнего
 
 import torch  # noqa: E402
+import torch.nn.functional as F
+from torch.utils.checkpoint import checkpoint
 from peft import LoraConfig, get_peft_model
 from transformers import AutoModelForCausalLM, AutoTokenizer, get_cosine_schedule_with_warmup
 
@@ -67,6 +69,39 @@ def lora_config(params: dict, n_layers: int, freeze_first: int) -> LoraConfig:
     )
 
 
+LOSS_CHUNK = 256   # позиций за один lm_head: 256 x 151 936 x 4 байта = 155 МБ логитов в float32
+
+
+def _chunk_nll(hidden: torch.Tensor, weight: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+    """Сумма NLL по куску позиций. Логиты живут только внутри этой функции."""
+    logits = F.linear(hidden, weight).float()
+    return F.cross_entropy(logits, target, ignore_index=LABEL_PAD_ID, reduction="sum")
+
+
+def masked_loss(model, batch: dict) -> torch.Tensor:
+    """Средний лосс на токен без логитов на весь словарь для всей последовательности.
+
+    model(**batch).loss строит логиты для каждого токена, в том числе для промпта
+    (labels = -100): на 1536 токенах это ~1 ГБ в float32 плюс копии под log_softmax
+    и градиент, и именно здесь падает MPS OOM. Здесь lm_head считается
+    только на позициях с метками и кусками по LOSS_CHUNK; каждый кусок обёрнут
+    в checkpoint, так что на backward его логиты пересчитываются, а не хранятся.
+    Значение то же, что у model(**batch).loss: cross_entropy и так игнорирует -100.
+    """
+    labels = batch["labels"]
+    inner = model.get_base_model()   # Qwen3ForCausalLM с уже вставленными LoRA-слоями
+    hidden = inner.model(input_ids=batch["input_ids"], attention_mask=batch["attention_mask"]).last_hidden_state
+    idx = (labels[:, 1:] != LABEL_PAD_ID).any(dim=0).nonzero().squeeze(-1)   # позиции, чей следующий токен размечен
+    hidden = hidden[:, idx].flatten(0, 1)
+    target = labels[:, idx + 1].flatten()
+    weight = inner.lm_head.weight
+    total = hidden.new_zeros((), dtype=torch.float32)
+    for i in range(0, target.numel(), LOSS_CHUNK):
+        total = total + checkpoint(_chunk_nll, hidden[i:i + LOSS_CHUNK], weight, target[i:i + LOSS_CHUNK],
+                                   use_reentrant=False)
+    return total / (target != LABEL_PAD_ID).sum().clamp(min=1)
+
+
 @torch.no_grad()
 def evaluate(model, examples, pad_id, device, batch_size: int) -> float:
     """Средний лосс на токен по всему val-сплиту.
@@ -81,7 +116,7 @@ def evaluate(model, examples, pad_id, device, batch_size: int) -> float:
         n = int((batch["labels"][:, 1:] != LABEL_PAD_ID).sum())
         if n == 0:
             continue
-        loss = model(**batch).loss
+        loss = masked_loss(model, batch)
         total += loss.item() * n
         count += n
     model.train()
@@ -178,7 +213,7 @@ def main() -> None:
     for epoch in range(tcfg["epochs"]):
         for batch in batches(examples, tcfg["batch_size"], pad_id, shuffle=True, seed=tcfg["seed"] + epoch):
             batch = {k: v.to(device) for k, v in batch.items()}
-            loss = model(**batch).loss / tcfg["grad_accum"]
+            loss = masked_loss(model, batch) / tcfg["grad_accum"]
             loss.backward()
             accum_loss += loss.item()
             micro += 1
@@ -189,6 +224,8 @@ def main() -> None:
             optimizer.step()
             scheduler.step()
             optimizer.zero_grad(set_to_none=True)
+            if device.type == "mps":
+                torch.mps.empty_cache()   # длины примеров разные, кэш аллокатора фрагментируется
             step += 1
             curve_train.append([step, round(accum_loss, 4)])
             if not math.isfinite(accum_loss):
