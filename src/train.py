@@ -21,9 +21,10 @@ import time
 from pathlib import Path
 
 # Потолок памяти Metal — до импорта torch. Без него mps занимает сколько дадут,
-# и на ноутбуке с 16–32 ГБ система уходит в своп вместо внятной ошибки.
-os.environ.setdefault("PYTORCH_MPS_HIGH_WATERMARK_RATIO", "0.5")
-os.environ.setdefault("PYTORCH_MPS_LOW_WATERMARK_RATIO", "0.4")   # нижний порог не выше верхнего
+# и система уходит в своп вместо внятной ошибки. На 8 ГБ 0.5 (~2,7 ГиБ от рабочего
+# набора Metal) мало для модели + логитов на 1536 токенов, 0.8 и выше уже свопит: ставим 0.7.
+os.environ.setdefault("PYTORCH_MPS_HIGH_WATERMARK_RATIO", "0.7")
+os.environ.setdefault("PYTORCH_MPS_LOW_WATERMARK_RATIO", "0.6")   # нижний порог не выше верхнего
 
 import torch  # noqa: E402
 from peft import LoraConfig, get_peft_model
