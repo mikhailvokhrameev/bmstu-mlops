@@ -79,5 +79,30 @@ make diversity    # ДЗ3: гейт разнообразия
 make sample       # ДЗ4: срез курса из parquet (только для преподавателя)
 make tokenize     # ДЗ4: data/*.jsonl -> data/tokenized/ + метрики + отчёт
 make check-tokenize  # ДЗ4: самопроверка стадии tokenize
+make train        # ДЗ5: LoRA-обучение (all_layers + freeze14) и графики
+make train-all    # ДЗ5: один вариант, адаптеры на всех слоях
+make compare      # ДЗ5: базовая модель против адаптера на 5 промптах
+make check-train  # ДЗ5: самопроверка обучения
 make check        # самопроверка всех ДЗ — должна быть зелёной
 ```
+
+## ДЗ 5 — LoRA-обучение
+
+Интегрировано: стадии DVC `train_all` / `train_freeze` / `compare`
+(`src/train.py`, `src/compare.py`, `src/plot.py`, `src/data.py`,
+`src/runtime.py`), параметры в `params.yaml` (`train`, `lora_train`,
+`compare`), самопроверка `tests/check_train.sh`. Пять дефектов цикла
+обучения исправлены отдельными коммитами, разбор — в
+[docs/train_defects.md](docs/train_defects.md).
+
+```bash
+make train        # all_layers + freeze14 + графики
+make compare      # базовая модель против адаптера на 5 MLOps-вопросах
+make check-train  # самопроверка ДЗ 5
+make check        # все ДЗ
+```
+
+Результаты: `docs/curves.png`, `docs/compare.md`, числа — в
+[docs/train_defects.md](docs/train_defects.md). Обучение на машине с 8 ГБ идёт ~1 час на
+вариант (127 шагов, примеры длиннее 768 токенов отбрасываются). Проверять ДЗ 5 нужно
+`make check-train`: полный `make check` запускает `dvc repro` и удаляет артефакты обучения.

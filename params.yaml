@@ -227,6 +227,11 @@ paths:
   metrics_clean: "metrics/clean.json"
   metrics_split: "metrics/split.json"
   metrics_diversity: "metrics/diversity.json"
+  # ДЗ 5
+  models: "models"
+  metrics: "metrics"
+  curves: "docs/curves.png"
+  compare: "docs/compare.md"
 
 # --- ДЗ 4: препроцессинг — chat template, masking, packing ---
 
@@ -237,6 +242,9 @@ data:
   train_jsonl: "data/train.jsonl"
   val_jsonl: "data/val.jsonl"
   out_dir: "data/tokenized"
+  # ДЗ 5: вход обучения — выход стадии tokenize из ДЗ 4.
+  train: "data/tokenized/train.pt"
+  val: "data/tokenized/val.pt"
 
 sample:
   train_size: 500
@@ -259,3 +267,51 @@ train_estimate:
   # Обучение медленнее: forward + backward + optimizer. Реальное число
   # подставляется сюда после первого прогона ДЗ 5.
   tokens_per_sec: 52
+
+# --- ДЗ 5: LoRA-обучение ---
+# Секция lora из ДЗ 2 (alpha_ratio/configs) — про оценку памяти; гиперпараметры
+# обучения живут в lora_train.
+
+lora_train:
+  r: 8
+  alpha: 16                 # итоговый масштаб апдейта alpha / r = 2
+  dropout: 0.05
+  # Только проекции внимания и MLP. embed_tokens и lm_head — это 155 млн
+  # параметров каждый; в modules_to_save они уезжают в адаптер целиком.
+  target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+
+train:
+  seed: 42
+  epochs: 1
+  batch_size: 1             # машина с 8 ГБ, данные до 1536 токенов: батч 2 не влезает по логитам
+  grad_accum: 8             # эффективный батч = 8: память как у батча 1, шаг как у батча 8
+  lr: 2.0e-4
+  warmup_ratio: 0.03
+  weight_decay: 0.0
+  max_grad_norm: 1.0
+  eval_every: 10            # шагов оптимизатора между замерами val loss
+  # Логиты на весь словарь: 1 пример x 1536 токенов x 151 936 x 4 байта = 0,93 ГБ
+  # только в float32, плюс bf16-копия и градиент. Батч 2 — уже > 2 ГБ одних логитов,
+  # а при 8 ГБ ОЗУ ноутбук уходит в своп.
+  eval_batch_size: 1
+  gradient_checkpointing: true   # без него на ноутбуке с 16–32 ГБ не влезает
+  max_steps: null          # null — по эпохам; число — обрезать (smoke-тесты)
+  max_example_tokens: 768   # null — без фильтра; иначе примеры длиннее отбрасываются (машина с 8 ГБ)
+
+# Эксперимент по слоям: второй прогон без адаптеров на первых N слоях.
+variants:
+  - name: "all_layers"
+    freeze_first: 0
+  - name: "freeze14"
+    freeze_first: 14
+
+compare:
+  max_new_tokens: 40
+  # Пять фиксированных промптов: одни и те же для базовой модели и адаптера.
+  prompts:
+    - "Тема:\nnetflix-metaflow\n\nВопрос:\nHow to store and retrieve figures as artifacts in MetaFlow?\n\nHow do I save a plot as a data artifact in MetaFlow? Plotting libraries usually have you write out to a file on disk. How do I view the figure afterwards?"
+    - "Тема:\nray-tune\n\nВопрос:\nBest Config after Hyperparameter Search with Ray Tune\n\nI just run my first Ray Tune. I got nice terminal output an all that but now I'm wondering: Which configuration gave me the best score?\n\nI see that there are a ton of results files but is there an easy way to get the best config?"
+    - "Тема:\nmlops\n\nВопрос:\nHow to set a tag at the experiment level in MLFlow\n\nI can see that an experiment in MLFlow can have tags (like runs can have tags).\nI'm able to set a run's tag using `mlflow.set_tag`, but how do I set it for an experiment?"
+    - "Тема:\nmlops\n\nВопрос:\nLog Pickle files as a part of Mlflow run\n\nI am running an MLflow experiment as a part of it I would like to log a few artifacts as a python pickle. \n\nEx: Trying out different categorical encoders, so wanted to log the encoder objects as a pickle file.\n\n\nIs there a way to achieve this?"
+    - "Тема:\nmlops\n\nВопрос:\nDifference between tracking_uri and the backend store uri in MLFLOW\n\nI am using Mlflow for my project hosting it in an EC2 instance. I was wondering in MlFlow what is the difference between the backend_store_uri we set when we launch the server and the trarcking_uri ? \n\nThanks,"
+  system: "Ты инженер по MLOps и отвечаешь на технические вопросы со Stack Overflow. Дан вопрос по инструменту или платформе. Дай точный практичный ответ, при необходимости с командой или фрагментом кода."
