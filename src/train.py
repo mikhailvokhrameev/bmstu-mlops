@@ -150,6 +150,14 @@ def main() -> None:
 
     train_blob = load_split(params["data"]["train"])
     val_blob = load_split(params["data"]["val"])
+    max_len = tcfg.get("max_example_tokens")
+    if max_len:
+        # На 8 ГБ длинные примеры упираются в потолок Metal (OOM, затем NaN). Фильтр только
+        # здесь: токенизированные файлы ДЗ 4 и их проверки остаются как есть.
+        for name, blob in (("train", train_blob), ("val", val_blob)):
+            before = len(blob["examples"])
+            blob["examples"] = [e for e in blob["examples"] if len(e["input_ids"]) <= max_len]
+            print(f"  {name}: {len(blob['examples'])} из {before} примеров не длиннее {max_len} токенов")
     if args.val_limit:
         val_blob["examples"] = val_blob["examples"][:args.val_limit]
     pad_id = train_blob["pad_token_id"]
