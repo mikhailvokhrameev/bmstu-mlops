@@ -175,8 +175,8 @@ def memory_section(report: dict) -> list[str]:
         "Вход — случайные id токенов: меряется память, а не качество, и loss здесь",
         "смысловой нагрузки не несёт (у full FT и LoRA он одинаковый, потому что",
         "`B` в адаптере инициализирован нулями и до первого шага ничего не меняет).",
-        "Числа должны отличаться: по лекции full fine-tune стоит кратно дороже",
-        "инференса, а LoRA лежит между ними.",
+        "По лекции full fine-tune должен стоить дороже инференса, а LoRA лежать",
+        "между ними; ниже сверка этой прикидки с замером.",
         "",
         "| Режим | Пик, МБ | Пик RSS, МБ | × к инференсу | Секунд | loss |",
         "|---|--:|--:|--:|--:|--:|",
@@ -192,16 +192,28 @@ def memory_section(report: dict) -> list[str]:
     weights_mb = report["params_total"] * 2 / 1024 ** 2
     rss_values = [item["peak_rss_mb"] for item in modes.values()]
     rss_spread = max(rss_values) - min(rss_values)
+    full_extra = modes["full_ft"]["peak_mb"] - base["peak_mb"]
+    lora_extra = modes["lora"]["peak_mb"] - base["peak_mb"]
+    lora_saving = modes["full_ft"]["peak_mb"] - modes["lora"]["peak_mb"]
+    lora_saving_pct = 100 * lora_saving / modes["full_ft"]["peak_mb"]
     lines += [
         "",
         f"Прикидка из лекции: веса bf16 — {weights_mb:.0f} МБ. Full fine-tune добавляет",
         f"градиенты (+{weights_mb:.0f} МБ) и два состояния AdamW (+{2 * weights_mb:.0f} МБ),",
-        "то есть ×4 к весам ещё до активаций — что и видно в замере.",
+        f"то есть ×4 к весам (+{3 * weights_mb:.0f} МБ над инференсом) ещё до активаций.",
+        f"В замере full fine-tune добавил к инференсу {full_extra:.0f} МБ, LoRA — "
+        f"{lora_extra:.0f} МБ: {full_extra / (3 * weights_mb):.0%} от прикидки у full fine-tune.",
         f"LoRA обучает {thousands(report['lora'][0]['peft'])} параметров вместо "
         f"{thousands(report['params_total'])}:",
         "градиенты и состояния оптимизатора считаются только для адаптера, базовые",
-        "веса заморожены. Остаётся расход на активации — поэтому LoRA всё же дороже",
-        "инференса, хоть и втрое дешевле полного дообучения.",
+        "веса заморожены. Остаётся расход на активации и аллокатор.",
+        (
+            f"LoRA ниже full fine-tune по пику на {lora_saving:.0f} МБ "
+            f"({lora_saving_pct:.1f}%)."
+            if lora_saving >= 0
+            else f"В этом замере пик LoRA не ниже, чем у full fine-tune: "
+            f"выше на {-lora_saving:.0f} МБ ({-lora_saving_pct:.1f}%)."
+        ),
         "",
     ]
     if base["device"].startswith(("mps", "cuda")):
