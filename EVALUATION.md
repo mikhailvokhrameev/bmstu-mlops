@@ -113,6 +113,6 @@ LLM-as-judge, BLEU/ROUGE/BERTScore и платный API для обязател
 который составляет студент вручную, и придумывать его я не стал. Поэтому
 `make evaluate` и `make promote` падают на отсутствии golden, `metrics/quality-gate.json`
 содержит `passed: false` с этой причиной, алиас `champion` в реестре не выставлен
-(есть только `candidate` у `my-smollm-adapter` версии 1). `docs/conclusion.md` не написан.
+(есть только `candidate` у `my-smollm-adapter` версии 2; версия 1 осталась без алиаса). `docs/conclusion.md` не написан.
 `make check-eval` даёт 22 ошибки из 39 тестов: они вызваны заглушками стартового
 `evaluation/solution.py` (`NotImplementedError`), а не сменой модели.

@@ -265,7 +265,7 @@ Sweep, отчёт и регистрация кандидата выполнен�
 - `make sweep`: шесть кандидатов, 4 шага, val loss базы 2.5915, лучший `all-r8-high`
   2.58313 (`qv-r8-high` 2.58669, `all-r8-low` 2.58856, `qv-r8-low` 2.58898,
   `qv-r4-high` 2.58924, `qv-r4-low` 2.58963). Все шесть чуть лучше базы; разброс
-  невелик, ведь бюджет учебный (32 примера, 8 примеров val). Пик памяти 3702–3814 МБ.
+  невелик, ведь бюджет учебный (32 примера, 8 примеров val). Пик памяти 3602–3814 МБ.
 - Первый запуск `make sweep` упал по MPS OOM в первой оценке базы (лимит аллокатора
   около 2,67 ГиБ при настройках по умолчанию, последовательности до 1536 токенов).
   Повтор с `PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.8` и `PYTORCH_MPS_LOW_WATERMARK_RATIO=0.6`
@@ -273,7 +273,7 @@ Sweep, отчёт и регистрация кандидата выполнен�
   один FAILED-run `sweep`; в MLflow также остались FAILED-runs от прежних попыток
   на Qwen3-0.6B. Ничего из этого не удалялось.
 - `make report`, `make candidate`: `docs/comparison.csv`, в реестре
-  `my-smollm-adapter` версия 1 (run `c5a75077`) с алиасом `candidate`. Модель
+  `my-smollm-adapter` версия 2 (run `c55591ce`) с алиасом `candidate`; версия 1 от первого sweep осталась без алиаса. Модель
   `my-qwen-adapter` в реестре не существовала.
 - Не выполнено: `make evaluate`, `make promote`, `make check-negative`. Файлов
   `data/eval/golden.jsonl`, `training-index.jsonl`, `behavioral.jsonl` нет (их
