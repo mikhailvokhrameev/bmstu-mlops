@@ -105,3 +105,14 @@ LLM-as-judge, BLEU/ROUGE/BERTScore и платный API для обязател
 нужны. Если добавляете judge, скрывайте имена моделей, меняйте A/B и B/A,
 восстанавливайте соответствие букв версиям, сохраняйте рубрику и вердикты
 и сверяйте спорные случаи с человеком. Judge не заменяет scorer меток.
+
+## Состояние выполнения на SmolLM2-135M-Instruct
+
+Часть B в репозитории не выполнена до конца. Файлов `data/eval/golden.jsonl`,
+`data/eval/training-index.jsonl` и `data/eval/behavioral.jsonl` нет: это набор,
+который составляет студент вручную, и придумывать его я не стал. Поэтому
+`make evaluate` и `make promote` падают на отсутствии golden, `metrics/quality-gate.json`
+содержит `passed: false` с этой причиной, алиас `champion` в реестре не выставлен
+(есть только `candidate` у `my-smollm-adapter` версии 1). `docs/conclusion.md` не написан.
+`make check-eval` даёт 22 ошибки из 39 тестов: они вызваны заглушками стартового
+`evaluation/solution.py` (`NotImplementedError`), а не сменой модели.

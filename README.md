@@ -103,8 +103,12 @@ make check        # все ДЗ
 ```
 
 Результаты: `docs/curves.png`, `docs/compare.md`, числа — в
-[docs/train_defects.md](docs/train_defects.md). Обучение на машине с 8 ГБ идёт ~1 час на
-вариант (127 шагов, примеры длиннее 768 токенов отбрасываются). Проверять ДЗ 5 нужно
+[docs/train_defects.md](docs/train_defects.md). Обучение SmolLM2-135M на машине с 8 ГБ: 99 шагов
+на вариант (примеры длиннее 768 токенов отбрасываются, остаётся 799 из 1324),
+чистое обучение 1172 с у `all_layers` и 1062 с у `freeze14` (около 18–20 минут),
+плюс около 4,6 минуты на замеры val; с Qwen3-0.6B выходило около часа на вариант.
+Вариант `freeze14` замораживает первые 14 из 30 слоёв, то есть адаптеры стоят на
+16 слоях (53%), а не на «половине». Проверять ДЗ 5 нужно
 `make check-train`: полный `make check` запускает `dvc repro` и удаляет артефакты обучения.
 
 ## ДЗ 6 — MLflow: трекинг экспериментов и реестр моделей
@@ -114,6 +118,18 @@ make check        # все ДЗ
 `make sweep` (шесть кандидатов LoRA) → `make report` (`docs/comparison.csv`) →
 `make candidate` → `make check-storage` → `make check-hw6`. Модель в реестре — `my-smollm-adapter`.
 Отдельно: `make check-hw6-defects` (юнит-тесты без сервера), `make check-hw6-all`.
+
+На машине с 8 ГБ `make sweep` с настройками MPS по умолчанию падает по OOM в первой
+оценке базы (лимит аллокатора около 2,7 ГиБ при последовательностях до 1536 токенов).
+Запускать так: `PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.8 PYTORCH_MPS_LOW_WATERMARK_RATIO=0.6 make sweep`.
+Пик памяти при этом 3,7–3,8 ГБ.
+
+Результат на SmolLM2-135M-Instruct: val loss базы 2.5915 (8 примеров val), лучший
+кандидат `all-r8-high` — 2.5831 (run `c5a75077`), остальные 2.5867–2.5896; бюджет — 4 шага,
+32 примера train, поэтому разница небольшая. В реестре `my-smollm-adapter` версия 1 с алиасом
+`candidate`; алиас `champion` не выставлен: эталонного набора `data/eval/golden.jsonl`
+в репозитории нет, `make evaluate` и `make promote` не выполнены (подробности —
+[docs/hw6_defects.md](docs/hw6_defects.md)).
 
 Конфиг ДЗ 6 лежит в секции `hw6:` файла `params.yaml` и собирается функцией
 `src.common.load_params()` (общие `model` и `data` + секции из `hw6`). Корневые `train`/`lora` — ДЗ 5/ДЗ 2.
