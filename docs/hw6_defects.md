@@ -187,3 +187,72 @@ a478f26a...  data/tokenized/val.pt
 ```
 
 Эти значения теперь будут записаны в теги при следующем sweep.
+
+## Дефект 4. Порог по loss проверяется после регистрации модели
+
+### Симптом
+
+`make candidate` (через `evaluation.cli.prepare_candidate`, который вызывает
+`promote`) регистрировал версию модели в реестре и вешал на неё alias вне
+зависимости от качества. Тег `validation=passed` ставился безусловно, даже если
+`final_val_loss` хуже `base_val_loss`, равен `NaN` или run не завершился
+(`FAILED`). Флаг `--max-val-ratio` мог ослабить порог из конфига
+(например, `5.0` вместо `1.0`) и пропустить заведомо худшую модель.
+
+### Причина
+
+`promote` считал `ratio` напрямую из метрик, нигде не сравнивая его с порогом
+(на месте проверки стоял `TODO`), и сразу вызывал `mlflow.register_model`.
+Готовая функция `gate`, которая бросает `ValueError` при плохих метриках, статусе
+не `FINISHED` или превышении порога, в `promote` не использовалась. В `main`
+значение флага просто подменяло значение из конфига в любую сторону.
+
+Это важно из-за различия ролей. Candidate — версия, которая только претендует на
+замену: её регистрируют, чтобы затем сравнить с champion на отложенных данных
+(часть B). Но candidate обязан хотя бы не быть хуже базовой модели по val loss;
+champion же — версия, которую реально используют, и она получается из candidate
+только после оценки. Если в реестр попадают кандидаты без проверки порога, в
+него попадает и мусор, а `validation=passed` перестаёт что-либо значить.
+
+### Исправление
+
+`promote` первой строкой вызывает `ratio = gate(run, threshold)`: при провале
+`ValueError` бросается до `register_model`, поэтому в реестре не остаётся ни
+версии, ни тегов. `validation=passed` ставится только после успешного gate.
+Добавлена `effective_threshold(config_value, override)`: она возвращает
+`min(config_value, override)`, то есть флаг CLI может только ужесточить порог.
+
+```python
+def effective_threshold(config_value, override):
+    return config_value if override is None else min(config_value, override)
+
+
+def promote(client, run, name, alias, threshold):
+    ratio = gate(run, threshold)
+    version = mlflow.register_model(f"runs:/{run.info.run_id}/model", name)
+    ...
+```
+
+### Доказательство «до/после»
+
+Тесты `TestPromoteGate` подменяют `mlflow` в `src.promote` и проверяют, что
+`register_model` не вызывался при отказе. Граница `ratio == порог` принимается
+(`final == base`, порог `1.0`).
+
+До исправления (RED):
+
+```
+FAIL: test_zero_threshold_rejected - ValueError not raised
+FAIL: test_worse_than_base_rejected - ValueError not raised
+FAIL: test_missing_nan_or_unfinished_rejected [nan_final], [failed] - ValueError not raised
+ERROR: test_missing_nan_or_unfinished_rejected [no_base] - KeyError: 'base_val_loss'
+ERROR: test_cli_cannot_loosen_threshold - cannot import name 'effective_threshold'
+FAILED (failures=4, errors=2)
+```
+
+После исправления (GREEN):
+
+```
+Ran 15 tests in 7.3s
+OK
+```

@@ -42,8 +42,12 @@ def select(client, params, summary):
     return min(runs, key=lambda r: (r.data.metrics["final_val_loss"], r.info.run_id))
 
 
+def effective_threshold(config_value, override):
+    return config_value if override is None else min(config_value, override)
+
+
 def promote(client, run, name, alias, threshold):
-    ratio = run.data.metrics["final_val_loss"] / run.data.metrics["base_val_loss"]  # TODO: достаточно ли этого?
+    ratio = gate(run, threshold)
     version = mlflow.register_model(f"runs:/{run.info.run_id}/model", name)
     client.set_model_version_tag(name, version.version, "val_ratio", str(ratio))
     client.set_model_version_tag(name, version.version, "gate.max_val_ratio", str(threshold))
@@ -61,7 +65,7 @@ def main():
     client = MlflowClient()
     summary = json.loads(Path("metrics/sweep.json").read_text())
     best = select(client, p, summary)
-    threshold = p["registry"]["max_val_ratio"] if args.max_val_ratio is None else args.max_val_ratio
+    threshold = effective_threshold(p["registry"]["max_val_ratio"], args.max_val_ratio)
     version = promote(client, best, p["registry"]["name"], p["registry"]["alias"], threshold)
     result = {"name": version.name, "version": version.version, "run_id": best.info.run_id,
         "uri": f"models:/{version.name}@{p['registry']['alias']}", "val_loss": best.data.metrics["final_val_loss"]}

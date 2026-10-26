@@ -2,6 +2,7 @@
 import sys
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -172,6 +173,69 @@ class TestCompose(unittest.TestCase):
         self.assertEqual(len(destinations), 1)
         mounts = [v.split(":")[1] for v in service.get("volumes", [])]
         self.assertIn(destinations[0], mounts)
+
+
+class TestPromoteGate(unittest.TestCase):
+    """Дефект 4: порог по loss проверяется до регистрации версии в реестре."""
+
+    @staticmethod
+    def _run(final=1.0, base=2.0, status="FINISHED", drop=None):
+        metrics = {"final_val_loss": final, "base_val_loss": base}
+        metrics.pop(drop, None)
+        run = mock.MagicMock()
+        run.data.metrics = metrics
+        run.info.status = status
+        run.info.run_id = "rid"
+        return run
+
+    def _promote(self, run, threshold):
+        from src import promote
+
+        client = mock.MagicMock()
+        mlflow = mock.MagicMock()
+        with mock.patch.object(promote, "mlflow", mlflow):
+            try:
+                promote.promote(client, run, "m", "candidate", threshold)
+            finally:
+                self.registered = mlflow.register_model.called
+                self.client = client
+
+    def test_zero_threshold_rejected(self):
+        with self.assertRaises(ValueError):
+            self._promote(self._run(final=1.0, base=2.0), 0.0)
+        self.assertFalse(self.registered)
+
+    def test_ratio_equal_threshold_accepted(self):
+        self._promote(self._run(final=2.0, base=2.0), 1.0)
+        self.assertTrue(self.registered)
+        tags = {c.args[2]: c.args[3] for c in self.client.set_model_version_tag.call_args_list}
+        self.assertEqual(tags["val_ratio"], "1.0")
+        self.assertEqual(tags["gate.max_val_ratio"], "1.0")
+        self.assertEqual(tags["validation"], "passed")
+
+    def test_worse_than_base_rejected(self):
+        with self.assertRaises(ValueError):
+            self._promote(self._run(final=3.0, base=2.0), 1.0)
+        self.assertFalse(self.registered)
+
+    def test_missing_nan_or_unfinished_rejected(self):
+        cases = {
+            "no_base": self._run(drop="base_val_loss"),
+            "nan_final": self._run(final=float("nan")),
+            "failed": self._run(status="FAILED"),
+        }
+        for name, run in cases.items():
+            with self.subTest(name):
+                with self.assertRaises(ValueError):
+                    self._promote(run, 1.0)
+                self.assertFalse(self.registered)
+
+    def test_cli_cannot_loosen_threshold(self):
+        from src.promote import effective_threshold
+
+        self.assertEqual(effective_threshold(1.0, 5.0), 1.0)
+        self.assertEqual(effective_threshold(1.0, 0.5), 0.5)
+        self.assertEqual(effective_threshold(1.0, None), 1.0)
 
 
 if __name__ == "__main__":
