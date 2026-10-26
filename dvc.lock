@@ -356,19 +356,19 @@ stages:
       size: 2862
     - path: src/prompt.py
       hash: md5
-      md5: e6781570e654df149cdd72521a7ca6c9
-      size: 5010
+      md5: 6e9f3e4c37093cfa063a13a96f98c0b8
+      size: 5042
     - path: src/tokenize_data.py
       hash: md5
-      md5: 849aa05efb13158170ca42ee7aae5971
-      size: 15495
+      md5: 85d8edd7ac5ddfa34ae271c0fc89bda6
+      size: 15497
     params:
       params.yaml:
         data.out_dir: data/tokenized
         data.train_jsonl: data/train.jsonl
         data.val_jsonl: data/val.jsonl
         model:
-          name: Qwen/Qwen3-0.6B
+          name: HuggingFaceTB/SmolLM2-135M-Instruct
           dtype: bfloat16
           device: auto
           enable_thinking: false
@@ -385,10 +385,10 @@ stages:
     outs:
     - path: data/tokenized
       hash: md5
-      md5: 084a4009c5e2ee59e861a6d9b62cb004.dir
-      size: 16899904
+      md5: df15a206ae9cbf7dab5ee8aa6b8c59c8.dir
+      size: 20206656
       nfiles: 4
     - path: metrics/tokenize.json
       hash: md5
-      md5: f0ffb99b603a77886cd33526036c375c
-      size: 2672
+      md5: b7e4ad247a2d0e4ea5d7dd94fa1fbac5
+      size: 2693
