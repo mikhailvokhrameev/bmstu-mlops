@@ -116,3 +116,74 @@ PASS: новый контейнер вернул тот же артефакт, S
 Скрипт `tests/check_storage.py` логирует файл с уникальным содержимым,
 пересоздаёт только сервис `mlflow`, скачивает файл обратно и сравнивает SHA256.
 Результат записывается в `metrics/storage-check.json`.
+
+## Дефект 3. В тегах runs нет версий train и val
+
+### Симптом
+
+У родительского и дочерних runs sweep в MLflow были теги `git_sha`,
+`git_dirty`, `code_sha256`, `config_sha256`, но не было `data_train_sha256` и
+`data_val_sha256`. По run нельзя было узнать, на каких именно данных он
+обучался, а `promote.select()` и проверка 2 требуют все шесть ключей.
+
+### Причина
+
+В `src/sweep.py` (`main`) версии фильтровались и данные выбрасывались:
+
+```python
+versions = {k: v for k, v in provenance(p).items() if not k.startswith("data_")}
+```
+
+`provenance(p)` считает все шесть хэшей, но фильтр `not k.startswith("data_")`
+убирал оба хэша данных до того, как словарь попадал в теги и в
+`run_candidate`.
+
+Почему sha данных важен: `git_sha` не покрывает `data/`. Каталог лежит в
+`.gitignore` и версионируется через DVC, поэтому два запуска с одним и тем же
+коммитом могут обучаться на разных `train.pt` и `val.pt`, а по `git_sha`
+это не заметно. Без хэшей данных метрики двух runs нельзя честно сравнивать.
+
+### Исправление
+
+Фильтр убран, в теги идёт весь результат `provenance`:
+
+```python
+versions = provenance(p)
+```
+
+Теперь все шесть ключей (`git_sha`, `git_dirty`, `code_sha256`,
+`data_train_sha256`, `data_val_sha256`, `config_sha256`) попадают в теги
+родительского run и в `versions` каждого кандидата.
+
+### Доказательство «до/после»
+
+Тесты `TestVersions` подменяют `provenance` заглушкой с шестью ключами и
+проверяют теги родительского `start_run` и аргумент `versions` в каждом
+`run_candidate`.
+
+До исправления (RED):
+
+```
+test_candidates_receive_data_hashes ... FAIL
+test_parent_run_has_data_hashes ... FAIL
+AssertionError: 'data_train_sha256' not found in {'git_sha': ..., 'git_dirty': ..., 'code_sha256': ..., 'config_sha256': ...}
+FAILED (failures=2)
+```
+
+После исправления (GREEN):
+
+```
+test_candidates_receive_data_hashes ... ok
+test_parent_run_has_data_hashes ... ok
+Ran 10 tests in 7.772s
+OK
+```
+
+Для справки, текущие хэши данных (`shasum -a 256`):
+
+```text
+34b9f134...  data/tokenized/train.pt
+a478f26a...  data/tokenized/val.pt
+```
+
+Эти значения теперь будут записаны в теги при следующем sweep.

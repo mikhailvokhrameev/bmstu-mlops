@@ -101,6 +101,57 @@ class TestSeparateRuns(unittest.TestCase):
             self._run_main(["a", "b", "c", "d", "e", "a"])
 
 
+class TestVersions(unittest.TestCase):
+    """Дефект 3: версии train/val попадают в теги родительского и дочерних runs."""
+
+    KEYS = ("git_sha", "git_dirty", "code_sha256", "data_train_sha256",
+            "data_val_sha256", "config_sha256")
+
+    def _run(self):
+        from unittest import mock
+
+        from src import sweep
+
+        names = [f"c{i}" for i in range(6)]
+        params = {"sweep": [{"name": n} for n in names],
+                  "train": {k: 1 for k in ("max_steps", "train_limit", "val_limit",
+                                           "batch_size", "grad_accum", "eval_every")}}
+        prov = {k: f"v-{k}" for k in self.KEYS}
+        received = []
+
+        def start_run(run_name=None, nested=False, tags=None, **kwargs):
+            if not nested:
+                parent_tags.update(tags or {})
+            run = mock.MagicMock()
+            run.__enter__.return_value.info.run_id = "id"
+            return run
+
+        parent_tags = {}
+        mlflow = mock.MagicMock()
+        mlflow.start_run.side_effect = start_run
+        with mock.patch.object(sweep, "mlflow", mlflow), \
+                mock.patch.object(sweep, "load_params", return_value=params), \
+                mock.patch.object(sweep, "connect"), \
+                mock.patch.object(sweep, "provenance", return_value=prov), \
+                mock.patch.object(sweep, "save_json"), \
+                mock.patch.object(sweep, "run_candidate",
+                                  lambda p, c, v: received.append(v) or {"name": c["name"]}):
+            sweep.main()
+        return parent_tags, received
+
+    def test_parent_run_has_data_hashes(self):
+        parent_tags, _ = self._run()
+        for key in self.KEYS:
+            self.assertIn(key, parent_tags)
+
+    def test_candidates_receive_data_hashes(self):
+        _, received = self._run()
+        self.assertEqual(len(received), 6)
+        for versions in received:
+            for key in self.KEYS:
+                self.assertIn(key, versions)
+
+
 class TestCompose(unittest.TestCase):
     """Дефект 2: файлы артефактов должны лежать в volume, а не в контейнере."""
 
