@@ -32,8 +32,8 @@ class TestMerge(unittest.TestCase):
         from src.common import load_params
 
         model = load_params()["model"]
-        self.assertEqual(model["revision"], "main")
-        self.assertEqual(model["name"], "Qwen/Qwen3-0.6B")
+        self.assertEqual(model["revision"], "12fd25f77366fa6b3b4b768ec3050bf629380bac")
+        self.assertEqual(model["name"], "HuggingFaceTB/SmolLM2-135M-Instruct")
 
 
 class TestSeparateRuns(unittest.TestCase):

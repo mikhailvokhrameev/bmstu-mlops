@@ -356,19 +356,19 @@ stages:
       size: 2862
     - path: src/prompt.py
       hash: md5
-      md5: e6781570e654df149cdd72521a7ca6c9
-      size: 5010
+      md5: 8828f7306d5408c47c824cdf11ffa8f9
+      size: 6802
     - path: src/tokenize_data.py
       hash: md5
-      md5: 849aa05efb13158170ca42ee7aae5971
-      size: 15495
+      md5: 8388fcbcca336312511cb7bebdf4c557
+      size: 15442
     params:
       params.yaml:
         data.out_dir: data/tokenized
         data.train_jsonl: data/train.jsonl
         data.val_jsonl: data/val.jsonl
         model:
-          name: Qwen/Qwen3-0.6B
+          name: HuggingFaceTB/SmolLM2-135M-Instruct
           dtype: bfloat16
           device: auto
           enable_thinking: false
@@ -381,14 +381,164 @@ stages:
           padding_side: left
         train_estimate:
           epochs: 3
-          tokens_per_sec: 52
+          tokens_per_sec: 128
     outs:
     - path: data/tokenized
       hash: md5
-      md5: 084a4009c5e2ee59e861a6d9b62cb004.dir
-      size: 16899904
+      md5: 94579bc961f3e884a453fae55f343e94.dir
+      size: 20206848
       nfiles: 4
     - path: metrics/tokenize.json
       hash: md5
-      md5: f0ffb99b603a77886cd33526036c375c
-      size: 2672
+      md5: 745c81588d025e381aebfea1ff1d65da
+      size: 2701
+  train_all:
+    cmd: python -m src.train --variant all_layers
+    deps:
+    - path: data/tokenized/train.pt
+      hash: md5
+      md5: a44f73cf15671b870e89c7bddef0ba70
+      size: 8925665
+    - path: data/tokenized/val.pt
+      hash: md5
+      md5: fb05cb48fd5da8be9b63a49e5d913962
+      size: 1201749
+    - path: src/config.py
+      hash: md5
+      md5: 1a7f038ddcad4cc719c02fd4de52e2de
+      size: 1426
+    - path: src/data.py
+      hash: md5
+      md5: d78a3ccae087e8bcfdc3b3c945d66089
+      size: 1985
+    - path: src/runtime.py
+      hash: md5
+      md5: 19e2a30dbb77c96c004c0e26f360c53c
+      size: 2225
+    - path: src/train.py
+      hash: md5
+      md5: 07c49b844e48e3cebd33fb2b874725ab
+      size: 15801
+    params:
+      params.yaml:
+        lora_train:
+          r: 8
+          alpha: 16
+          dropout: 0.05
+          target_modules:
+          - q_proj
+          - k_proj
+          - v_proj
+          - o_proj
+          - gate_proj
+          - up_proj
+          - down_proj
+        model:
+          name: HuggingFaceTB/SmolLM2-135M-Instruct
+          dtype: bfloat16
+          device: auto
+          enable_thinking: false
+        train:
+          seed: 42
+          epochs: 1
+          batch_size: 1
+          grad_accum: 8
+          lr: 0.0002
+          warmup_ratio: 0.03
+          weight_decay: 0.0
+          max_grad_norm: 1.0
+          eval_every: 10
+          eval_batch_size: 1
+          gradient_checkpointing: true
+          max_steps:
+          max_example_tokens: 768
+        variants:
+        - name: all_layers
+          freeze_first: 0
+        - name: freeze14
+          freeze_first: 14
+    outs:
+    - path: metrics/train_all_layers.json
+      hash: md5
+      md5: 246ac6025b5b75f7a8e54160c826e755
+      size: 4680
+    - path: models/adapter_all_layers
+      hash: md5
+      md5: 3319783016e34187b3f58ebb273c86f6.dir
+      size: 13353299
+      nfiles: 6
+  train_freeze:
+    cmd: python -m src.train --variant freeze14
+    deps:
+    - path: data/tokenized/train.pt
+      hash: md5
+      md5: a44f73cf15671b870e89c7bddef0ba70
+      size: 8925665
+    - path: data/tokenized/val.pt
+      hash: md5
+      md5: fb05cb48fd5da8be9b63a49e5d913962
+      size: 1201749
+    - path: src/config.py
+      hash: md5
+      md5: 1a7f038ddcad4cc719c02fd4de52e2de
+      size: 1426
+    - path: src/data.py
+      hash: md5
+      md5: d78a3ccae087e8bcfdc3b3c945d66089
+      size: 1985
+    - path: src/runtime.py
+      hash: md5
+      md5: 19e2a30dbb77c96c004c0e26f360c53c
+      size: 2225
+    - path: src/train.py
+      hash: md5
+      md5: 07c49b844e48e3cebd33fb2b874725ab
+      size: 15801
+    params:
+      params.yaml:
+        lora_train:
+          r: 8
+          alpha: 16
+          dropout: 0.05
+          target_modules:
+          - q_proj
+          - k_proj
+          - v_proj
+          - o_proj
+          - gate_proj
+          - up_proj
+          - down_proj
+        model:
+          name: HuggingFaceTB/SmolLM2-135M-Instruct
+          dtype: bfloat16
+          device: auto
+          enable_thinking: false
+        train:
+          seed: 42
+          epochs: 1
+          batch_size: 1
+          grad_accum: 8
+          lr: 0.0002
+          warmup_ratio: 0.03
+          weight_decay: 0.0
+          max_grad_norm: 1.0
+          eval_every: 10
+          eval_batch_size: 1
+          gradient_checkpointing: true
+          max_steps:
+          max_example_tokens: 768
+        variants:
+        - name: all_layers
+          freeze_first: 0
+        - name: freeze14
+          freeze_first: 14
+    outs:
+    - path: metrics/train_freeze14.json
+      hash: md5
+      md5: 91a42ca31d4646f2c00d29aa9d5ea163
+      size: 4675
+    - path: models/adapter_freeze14
+      hash: md5
+      md5: 41825cb327302af11845bee73e9f77ca.dir
+      size: 8769307
+      nfiles: 6

@@ -8,7 +8,7 @@ import pandas as pd
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--uri", required=True, help="models:/my-qwen-adapter@champion")
+    ap.add_argument("--uri", required=True, help="models:/my-smollm-adapter@champion")
     ap.add_argument("--tracking-uri", default="http://127.0.0.1:5006")
     ap.add_argument("--prompt", required=True)
     args = ap.parse_args()

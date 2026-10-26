@@ -69,7 +69,7 @@ def lora_config(params: dict, n_layers: int, freeze_first: int) -> LoraConfig:
     )
 
 
-LOSS_CHUNK = 256   # позиций за один lm_head: 256 x 151 936 x 4 байта = 155 МБ логитов в float32
+LOSS_CHUNK = 256   # позиций за один lm_head: 256 x 49 152 x 4 байта = 50 МБ логитов в float32
 
 
 def _chunk_nll(hidden: torch.Tensor, weight: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
@@ -82,14 +82,14 @@ def masked_loss(model, batch: dict) -> torch.Tensor:
     """Средний лосс на токен без логитов на весь словарь для всей последовательности.
 
     model(**batch).loss строит логиты для каждого токена, в том числе для промпта
-    (labels = -100): на 1536 токенах это ~1 ГБ в float32 плюс копии под log_softmax
+    (labels = -100): на 1536 токенах это ~0.3 ГБ в float32 плюс копии под log_softmax
     и градиент, и именно здесь падает MPS OOM. Здесь lm_head считается
     только на позициях с метками и кусками по LOSS_CHUNK; каждый кусок обёрнут
     в checkpoint, так что на backward его логиты пересчитываются, а не хранятся.
     Значение то же, что у model(**batch).loss: cross_entropy и так игнорирует -100.
     """
     labels = batch["labels"]
-    inner = model.get_base_model()   # Qwen3ForCausalLM с уже вставленными LoRA-слоями
+    inner = model.get_base_model()   # LlamaForCausalLM с уже вставленными LoRA-слоями
     hidden = inner.model(input_ids=batch["input_ids"], attention_mask=batch["attention_mask"]).last_hidden_state
     idx = (labels[:, 1:] != LABEL_PAD_ID).any(dim=0).nonzero().squeeze(-1)   # позиции, чей следующий токен размечен
     hidden = hidden[:, idx].flatten(0, 1)
@@ -167,7 +167,7 @@ def main() -> None:
     model = AutoModelForCausalLM.from_pretrained(params["model"]["name"], dtype=dtype).to(device)
     n_layers = model.config.num_hidden_layers
     if params["train"].get("gradient_checkpointing"):
-        # Активации 28 слоёв не храним, а пересчитываем на обратном проходе:
+        # Активации 30 слоёв не храним, а пересчитываем на обратном проходе:
         # памяти в разы меньше, шаг примерно на треть дольше.
         model.config.use_cache = False
         model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})

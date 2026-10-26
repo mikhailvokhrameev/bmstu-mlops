@@ -89,7 +89,7 @@ sweep:
 promote:
 	uv run python -m evaluation.cli promote
 predict:
-	uv run python -m src.predict --uri models:/my-qwen-adapter@champion --prompt "Какой показатель отражает запасы железа?"
+	uv run python -m src.predict --uri models:/my-smollm-adapter@champion --prompt "Какой показатель отражает запасы железа?"
 check-hw6:
 	bash tests/check_hw6.sh
 check-hw6-defects:
@@ -114,4 +114,4 @@ check-hw6-all: check-hw6 check-eval
 baseline-update:
 	uv run python -m evaluation.cli baseline-update
 predict-candidate:
-	uv run python -m src.predict --uri models:/my-qwen-adapter@candidate --prompt "Выберите правильный вариант."
+	uv run python -m src.predict --uri models:/my-smollm-adapter@candidate --prompt "Выберите правильный вариант."
