@@ -164,9 +164,9 @@ def estimate_train_time(total_tokens: int, params: dict) -> dict:
         "seconds": round(seconds, 1),
         "hours": round(seconds / 3600, 2),
         "note": (
-            "tokens_per_sec взят из замера ГЕНЕРАЦИИ в ДЗ 1. Обучение считает "
-            "ещё backward и шаг оптимизатора, поэтому реальная скорость ниже "
-            "в 2-3 раза, а прогноз ниже — это оптимистичная граница."
+            "tokens_per_sec взят из замера ОБУЧЕНИЯ в ДЗ 5 (all_layers, без времени "
+            "val). Прогноз считает все токены train, а ДЗ 5 учит только примеры "
+            "не длиннее max_example_tokens, поэтому он завышает реальное время."
         ),
     }
 
