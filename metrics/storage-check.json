@@ -1,6 +1,6 @@
 {
-  "run_id": "db2539b04feb4446ab003a90fc4533b5",
-  "sha256": "a09b6e7aee94b1b67bff896f7dc8fe5b04c4b535cf22bd9b744d9d0c637403e3",
+  "run_id": "91ade377adb049aa8ff61a7429725e91",
+  "sha256": "7fa31332b1bfbc97e0eaa359bcdc1ac4d304108b9247c746085948890db6a00b",
   "compose_sha256": "7336a0ff1f137e8b12ce1506b5e8590caeffee5017ff98c2f4cc06ea272bab88",
   "project": "mlops-hw6"
 }
