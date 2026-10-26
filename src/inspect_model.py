@@ -44,7 +44,7 @@ except ImportError:
 # pyo3 OnceLock + GIL загрузка иногда встаёт намертво: на этой машине
 # примерно один процесс из шести не доживал до конца from_pretrained.
 # Замер обязан быть воспроизводимым, поэтому читаем последовательно —
-# на модели 0.6B это не стоит ничего (4.4 с против 4.5 с).
+# на модели 135M это не стоит ничего (4.4 с против 4.5 с).
 os.environ.setdefault("HF_DEACTIVATE_ASYNC_LOAD", "1")
 
 MODES = ("inference", "full_ft", "lora")
@@ -156,7 +156,7 @@ def group_table(rows: list[dict]) -> list[dict]:
 # --------------------------------------------------------------------------
 
 def decoder_layers(model):
-    """Список декодер-блоков. У Qwen3 это model.model.layers."""
+    """Список декодер-блоков. У Llama-подобных моделей это model.model.layers."""
     decoder = model.get_decoder() if hasattr(model, "get_decoder") else model.model
     return decoder.layers
 

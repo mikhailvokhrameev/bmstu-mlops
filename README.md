@@ -1,4 +1,4 @@
-## ДЗ 1 — Окружение, первый инференс Qwen3, бенчмарк машины
+## ДЗ 1 — Окружение, первый инференс SmolLM2, бенчмарк машины
 
 ### Что нужно сделать
 
@@ -112,7 +112,7 @@ make check        # все ДЗ
 Стартовый проект `hw67-broken` перенесён в общий репозиторий; код ДЗ 1–5 не менялся.
 Маршрут: `make up` (MLflow + Postgres, порт 5006, compose project `mlops-hw6`) →
 `make sweep` (шесть кандидатов LoRA) → `make report` (`docs/comparison.csv`) →
-`make candidate` → `make check-storage` → `make check-hw6`. Модель в реестре — `my-qwen-adapter`.
+`make candidate` → `make check-storage` → `make check-hw6`. Модель в реестре — `my-smollm-adapter`.
 Отдельно: `make check-hw6-defects` (юнит-тесты без сервера), `make check-hw6-all`.
 
 Конфиг ДЗ 6 лежит в секции `hw6:` файла `params.yaml` и собирается функцией

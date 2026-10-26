@@ -9,7 +9,7 @@ from typing import Any
 def _template_kwargs(params: dict) -> dict:
     """Доп. аргументы шаблона, которые есть не у всех моделей.
 
-    `enable_thinking` понимает только семейство с режимом рассуждений (Qwen3);
+    `enable_thinking` понимает только семейство с режимом рассуждений (Qwen3; SmolLM2 его не имеет);
     остальные шаблоны молча его игнорируют, поэтому передаём только если задан.
     """
     value = params["model"].get("enable_thinking")

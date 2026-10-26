@@ -246,7 +246,8 @@ def markdown_report(report: dict, params: dict) -> str:
         "",
         f"GQA: {config['num_attention_heads']} голов запроса на "
         f"{config['num_key_value_heads']} KV-головы — "
-        f"KV-cache вдвое меньше, чем при обычном multi-head.",
+        f"KV-cache в {config['num_attention_heads'] / config['num_key_value_heads']:g} раза меньше, "
+        f"чем при обычном multi-head.",
         "",
     ]
     lines += conditions_section(report)
