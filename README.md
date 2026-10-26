@@ -106,3 +106,23 @@ make check        # все ДЗ
 [docs/train_defects.md](docs/train_defects.md). Обучение на машине с 8 ГБ идёт ~1 час на
 вариант (127 шагов, примеры длиннее 768 токенов отбрасываются). Проверять ДЗ 5 нужно
 `make check-train`: полный `make check` запускает `dvc repro` и удаляет артефакты обучения.
+
+## ДЗ 6 — MLflow: трекинг экспериментов и реестр моделей
+
+Стартовый проект `hw67-broken` перенесён в общий репозиторий; код ДЗ 1–5 не менялся.
+Маршрут: `make up` (MLflow + Postgres, порт 5006, compose project `mlops-hw6`) →
+`make sweep` (шесть кандидатов LoRA) → `make report` (`docs/comparison.csv`) →
+`make candidate` → `make check-storage` → `make check-hw6`. Модель в реестре — `my-qwen-adapter`.
+Отдельно: `make check-hw6-defects` (юнит-тесты без сервера), `make check-hw6-all`.
+
+Конфиг ДЗ 6 лежит в секции `hw6:` файла `params.yaml` и собирается функцией
+`src.common.load_params()` (общие `model` и `data` + секции из `hw6`). Корневые `train`/`lora` — ДЗ 5/ДЗ 2.
+
+| Было в hw67 | Стало | Почему |
+|---|---|---|
+| `src/train.py` | `src/sweep_train.py` | `src/train.py` — обучение ДЗ 5, участвует в отпечатке стадии dvc |
+| `src/model.py` | `src/adapter_model.py` | `src/model.py` — загрузка модели ДЗ 1; pyfunc-файл должен быть автономным |
+| `src/report.py` | `src/sweep_report.py` | `src/report.py` — отчёт анатомии ДЗ 2 |
+| `tests/check.sh` | `tests/check_hw6.sh` (+ дословная копия `tests/hw67_check.sh` для отпечатка) | `tests/check.sh` — проверки ДЗ 1 |
+| Makefile `check` / `check-all` | `check-hw6` / `check-hw6-all` | `check` — проверки ДЗ 1–5 |
+| `params.yaml` hw67 | секция `hw6:` | не пересекается с корневыми `train`/`lora` |

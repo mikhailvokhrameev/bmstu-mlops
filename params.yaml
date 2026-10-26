@@ -315,3 +315,45 @@ compare:
     - "Тема:\nmlops\n\nВопрос:\nLog Pickle files as a part of Mlflow run\n\nI am running an MLflow experiment as a part of it I would like to log a few artifacts as a python pickle. \n\nEx: Trying out different categorical encoders, so wanted to log the encoder objects as a pickle file.\n\n\nIs there a way to achieve this?"
     - "Тема:\nmlops\n\nВопрос:\nDifference between tracking_uri and the backend store uri in MLFLOW\n\nI am using Mlflow for my project hosting it in an EC2 instance. I was wondering in MlFlow what is the difference between the backend_store_uri we set when we launch the server and the trarcking_uri ? \n\nThanks,"
   system: "Ты инженер по MLOps и отвечаешь на технические вопросы со Stack Overflow. Дан вопрос по инструменту или платформе. Дай точный практичный ответ, при необходимости с командой или фрагментом кода."
+
+# --- ДЗ 6: MLflow-эксперименты, реестр моделей ---
+# Секция hw6 НЕ пересекается с ДЗ 5: корневые train и lora остаются прежними
+# (ДЗ 5 и lora из ДЗ 2). src.common.load_params() собирает вид ДЗ 6:
+# model = общий model + hw6.model, data общая, остальное берётся отсюда.
+hw6:
+  model:
+    revision: main   # run сохраняет разрешённый commit HF, а не только main
+  # Один бюджет и один val для всех шести кандидатов. Это короткий учебный поиск.
+  train:
+    seed: 42
+    max_steps: 4
+    train_limit: 32
+    val_limit: 8
+    batch_size: 1
+    grad_accum: 2
+    eval_every: 2
+    gradient_checkpointing: true
+  lora:
+    dropout: 0.05
+    alpha_over_r: 2
+  sweep:
+    - {name: qv-r4-low, r: 4, lr: 0.0001, target_modules: [q_proj, v_proj]}
+    - {name: qv-r4-high, r: 4, lr: 0.0003, target_modules: [q_proj, v_proj]}
+    - {name: qv-r8-low, r: 8, lr: 0.0001, target_modules: [q_proj, v_proj]}
+    - {name: qv-r8-high, r: 8, lr: 0.0003, target_modules: [q_proj, v_proj]}
+    - {name: all-r8-low, r: 8, lr: 0.0001, target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]}
+    - {name: all-r8-high, r: 8, lr: 0.0003, target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]}
+  tracking:
+    uri: http://127.0.0.1:5006
+    experiment: hw6-lora
+  registry:
+    name: my-qwen-adapter
+    alias: champion
+    # Порог относительный к базе на ТОМ ЖЕ val; меньше loss — лучше.
+    max_val_ratio: 1.0
+  generation:
+    max_new_tokens: 16
+    system: "Выбери один правильный вариант. Ответь номером и текстом ответа."
+    prompts:
+      - "Метод подтверждения пневмонии: 0. общий анализ крови; 1. рентгенография грудной клетки; 2. спирометрия."
+      - "Показатель запасов железа: 0. сывороточное железо; 1. ферритин; 2. гемоглобин."
