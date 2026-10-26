@@ -63,3 +63,56 @@ OK
 ```
 
 Позже это подтвердится и в UI: шесть отдельных дочерних runs под `sweep`.
+
+## Дефект 2. Артефакты теряются при замене контейнера
+
+### Симптом
+
+После `docker compose up --force-recreate mlflow` (то же происходит при
+обновлении образа) runs и метрики в MLflow остаются, но файлы артефактов
+пропадают. Клиент получает ошибку при скачивании:
+
+```text
+API request to http://127.0.0.1:5006/api/2.0/mlflow-artifacts/artifacts/1/<run_id>/artifacts/persistence/probe.txt
+failed with exception ... ResponseError('too many 500 error responses')
+make: *** [check-storage] Error 1
+```
+
+### Причина
+
+MLflow хранит данные в двух местах. Postgres (volume `postgres`) держит только
+метаданные: runs, params, metrics и пути к артефактам. Сами файлы сервер
+пишет в каталог `--artifacts-destination=/mlartifacts` внутри своего
+контейнера. В `compose.yaml` volume `artifacts` был объявлен, но сервису
+`mlflow` не подключён, поэтому `/mlartifacts` жил в записываемом слое
+контейнера. При замене контейнера слой удаляется вместе с файлами, а в БД
+остаются ссылки на несуществующие объекты.
+
+### Исправление
+
+Сервису `mlflow` подключён именованный volume (точка монтирования совпадает с
+`--artifacts-destination`):
+
+```yaml
+volumes:
+  - artifacts:/mlartifacts
+```
+
+Volume не принадлежит контейнеру и переживает `--force-recreate` и
+`make down` (удалит его только `down -v`). Теперь метаданные в Postgres, а
+файлы в volume `artifacts`: оба хранилища переживают замену контейнера.
+
+Тесты `TestCompose` проверяют, что монтирование есть и что путь
+`--artifacts-destination` совпадает с точкой монтирования.
+
+### Проверка
+
+До исправления `make check-storage` падает (см. выше). После:
+
+```text
+PASS: новый контейнер вернул тот же артефакт, SHA256 совпал
+```
+
+Скрипт `tests/check_storage.py` логирует файл с уникальным содержимым,
+пересоздаёт только сервис `mlflow`, скачивает файл обратно и сравнивает SHA256.
+Результат записывается в `metrics/storage-check.json`.

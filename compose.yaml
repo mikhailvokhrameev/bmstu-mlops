@@ -28,7 +28,12 @@ services:
       - --backend-store-uri=postgresql://mlflow:classroom-local@db:5432/mlflow
       - --serve-artifacts
       - --artifacts-destination=/mlartifacts
-    # TODO: где хранятся файлы после замены контейнера?
+    # Postgres хранит только метаданные (runs, params, metrics, пути к артефактам).
+    # Сами ФАЙЛЫ артефактов лежат в /mlartifacts, и без монтирования это слой
+    # контейнера: после --force-recreate он исчезает, а в БД остаются «висячие»
+    # ссылки. Именованный volume `artifacts` переживает замену контейнера.
+    volumes:
+      - artifacts:/mlartifacts
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
       interval: 5s

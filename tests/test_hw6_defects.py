@@ -101,5 +101,27 @@ class TestSeparateRuns(unittest.TestCase):
             self._run_main(["a", "b", "c", "d", "e", "a"])
 
 
+class TestCompose(unittest.TestCase):
+    """Дефект 2: файлы артефактов должны лежать в volume, а не в контейнере."""
+
+    @staticmethod
+    def _mlflow_service():
+        import yaml
+
+        path = Path(__file__).resolve().parents[1] / "compose.yaml"
+        return yaml.safe_load(path.read_text(encoding="utf-8"))["services"]["mlflow"]
+
+    def test_mlflow_mounts_artifacts_volume(self):
+        self.assertIn("artifacts:/mlartifacts", self._mlflow_service().get("volumes", []))
+
+    def test_artifacts_destination_matches_mount(self):
+        service = self._mlflow_service()
+        prefix = "--artifacts-destination="
+        destinations = [a[len(prefix):] for a in service["command"] if a.startswith(prefix)]
+        self.assertEqual(len(destinations), 1)
+        mounts = [v.split(":")[1] for v in service.get("volumes", [])]
+        self.assertIn(destinations[0], mounts)
+
+
 if __name__ == "__main__":
     unittest.main()
