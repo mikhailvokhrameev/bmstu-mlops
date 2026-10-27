@@ -127,11 +127,12 @@ make check        # все ДЗ
 Пик памяти при этом 3,6–3,8 ГБ.
 
 Результат на SmolLM2-135M-Instruct: val loss базы 2.5915 (8 примеров val), лучший
-кандидат `all-r8-high` — 2.5831 (run `de51a3b4`), остальные 2.5867–2.5896; бюджет — 4 шага,
-32 примера train, поэтому разница небольшая. В реестре `my-smollm-adapter` версия 3 (run `de51a3b4`) с алиасом
-`candidate`, версии 1 и 2 остались без алиаса; алиас `champion` не выставлен: эталонного набора `data/eval/golden.jsonl`
-в репозитории нет, `make evaluate` и `make promote` не выполнены (подробности —
-[docs/hw6_defects.md](docs/hw6_defects.md)).
+кандидат `all-r8-high` — 2.5831 (run `56bfe730`), остальные 2.5867–2.5896; бюджет — 4 шага,
+32 примера train, поэтому разница небольшая. В реестре `my-smollm-adapter` кандидат — версия 4
+(alias `candidate`); версии 1–3 от прежних sweep остались без алиаса. Оценка ответов (часть B ДЗ 7)
+выполнена, gate отказал, `champion` не выставлен — см. раздел «ДЗ 6+7» ниже и
+[docs/conclusion.md](docs/conclusion.md); разбор дефектов — [docs/defects.md](docs/defects.md)
+и [docs/hw6_defects.md](docs/hw6_defects.md).
 
 Конфиг ДЗ 6 лежит в секции `hw6:` файла `params.yaml` и собирается функцией
 `src.common.load_params()` (общие `model` и `data` + секции из `hw6`). Корневые `train`/`lora` — ДЗ 5/ДЗ 2.
@@ -144,3 +145,42 @@ make check        # все ДЗ
 | `tests/check.sh` | `tests/check_hw6.sh` (+ дословная копия `tests/hw67_check.sh` для отпечатка) | `tests/check.sh` — проверки ДЗ 1 |
 | Makefile `check` / `check-all` | `check-hw6` (девять проверок MLflow) / `check-all` (= `check-hw6` + `check-eval`; `check-hw6-all` — синоним) | `check` — проверки ДЗ 1–5 |
 | `params.yaml` hw67 | секция `hw6:` | не пересекается с корневыми `train`/`lora` |
+
+## ДЗ 6+7 — маршрут, решение и состав сдачи
+
+**Маршрут команд** (MLflow на `http://127.0.0.1:5006`, compose project `mlops-hw6`):
+
+```text
+make up                 # MLflow + Postgres
+make sweep              # шесть кандидатов, каждый в своём run (см. запуск с MPS выше)
+make report             # docs/comparison.csv
+make candidate          # версия в реестре + alias candidate
+make baseline-init      # один раз; baseline не перезаписывать
+make evaluate           # ответы baseline и candidate на golden и behavioral
+make eval               # отчёты, eval-diff.json, quality gate; отказ даёт код возврата != 0
+make check-negative     # испорченная копия ответов должна быть отклонена
+make check-storage      # артефакт переживает пересоздание контейнера
+make check-eval         # 39 тестов score и quality_gate, без модели
+make check-all          # девять проверок MLflow (check-hw6) + check-eval
+```
+
+**Решение.** `make promote` не выполнялся, `champion` не назначен: quality gate отказал
+(«Behavioral: прошли 0 из 5», accuracy и format_rate 0.0 у обеих моделей). Это допустимый итог;
+причина — рассогласование обучения и оценки, подробности в [docs/conclusion.md](docs/conclusion.md).
+
+**Что сдавать** (веса, тензоры, `.venv`, volumes и секреты в Git не входят):
+
+- `docs/comparison.csv`, `docs/defects.md`, один `docs/conclusion.md`;
+- `evaluation/params.json`, `evaluation/baseline.json`, данные оценки под DVC (стадия `eval_data`:
+  `data/eval/golden.jsonl` — 50, `behavioral.jsonl` — 5, `training-index.jsonl` — 1330);
+- `metrics/{baseline,candidate}-{outputs,eval}.json`, `eval-diff.json`, `quality-gate.json`,
+  `negative-gate.json`, `storage-check.json` (все в Git: `.gitignore` исключает из `metrics/` только
+  `train_*.json` и `compare_*.json` от ДЗ 5);
+- ссылки на runs в MLflow: sweep и шесть дочерних runs, probe-run хранения, run оценки
+  `89c1fd76efac4270a3882c3032ced549` (эксперимент `hw67-evaluation`).
+
+**Сценарий видео (5–8 минут).** 1) UI MLflow: родитель `sweep` и шесть дочерних runs, лучший по loss;
+2) реестр: `my-smollm-adapter` версия 4 и alias `candidate`, `champion` нет; 3) `make eval`: результаты по
+срезам, пары ответов и отказ gate; 4) `make check-negative`: отклонение испорченной копии;
+5) `make check-storage` и `storage-check.json`; 6) `make check-eval` и `make check-all`; 7) вывод:
+почему отказ честный итог и что дальше (данные в формате оценки и переобучение).
