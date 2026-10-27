@@ -356,19 +356,19 @@ stages:
       size: 2862
     - path: src/prompt.py
       hash: md5
-      md5: e6781570e654df149cdd72521a7ca6c9
-      size: 5010
+      md5: c2cb668e99a41b6d51c18b963ee20626
+      size: 6855
     - path: src/tokenize_data.py
       hash: md5
-      md5: 849aa05efb13158170ca42ee7aae5971
-      size: 15495
+      md5: 88f10a3d78d70d476712207c6eed74cf
+      size: 15570
     params:
       params.yaml:
         data.out_dir: data/tokenized
         data.train_jsonl: data/train.jsonl
         data.val_jsonl: data/val.jsonl
         model:
-          name: Qwen/Qwen3-0.6B
+          name: HuggingFaceTB/SmolLM2-135M-Instruct
           dtype: bfloat16
           device: auto
           enable_thinking: false
@@ -381,14 +381,350 @@ stages:
           padding_side: left
         train_estimate:
           epochs: 3
-          tokens_per_sec: 52
+          tokens_per_sec: 128
     outs:
     - path: data/tokenized
       hash: md5
-      md5: 084a4009c5e2ee59e861a6d9b62cb004.dir
-      size: 16899904
+      md5: 94579bc961f3e884a453fae55f343e94.dir
+      size: 20206848
       nfiles: 4
     - path: metrics/tokenize.json
       hash: md5
-      md5: f0ffb99b603a77886cd33526036c375c
-      size: 2672
+      md5: 745c81588d025e381aebfea1ff1d65da
+      size: 2701
+  train_all:
+    cmd: python -m src.train --variant all_layers
+    deps:
+    - path: data/tokenized/train.pt
+      hash: md5
+      md5: a44f73cf15671b870e89c7bddef0ba70
+      size: 8925665
+    - path: data/tokenized/val.pt
+      hash: md5
+      md5: fb05cb48fd5da8be9b63a49e5d913962
+      size: 1201749
+    - path: src/config.py
+      hash: md5
+      md5: 1a7f038ddcad4cc719c02fd4de52e2de
+      size: 1426
+    - path: src/data.py
+      hash: md5
+      md5: d78a3ccae087e8bcfdc3b3c945d66089
+      size: 1985
+    - path: src/runtime.py
+      hash: md5
+      md5: 19e2a30dbb77c96c004c0e26f360c53c
+      size: 2225
+    - path: src/train.py
+      hash: md5
+      md5: 07c49b844e48e3cebd33fb2b874725ab
+      size: 15801
+    params:
+      params.yaml:
+        lora_train:
+          r: 8
+          alpha: 16
+          dropout: 0.05
+          target_modules:
+          - q_proj
+          - k_proj
+          - v_proj
+          - o_proj
+          - gate_proj
+          - up_proj
+          - down_proj
+        model:
+          name: HuggingFaceTB/SmolLM2-135M-Instruct
+          dtype: bfloat16
+          device: auto
+          enable_thinking: false
+        train:
+          seed: 42
+          epochs: 1
+          batch_size: 1
+          grad_accum: 8
+          lr: 0.0002
+          warmup_ratio: 0.03
+          weight_decay: 0.0
+          max_grad_norm: 1.0
+          eval_every: 10
+          eval_batch_size: 1
+          gradient_checkpointing: true
+          max_steps:
+          max_example_tokens: 768
+        variants:
+        - name: all_layers
+          freeze_first: 0
+        - name: freeze14
+          freeze_first: 14
+    outs:
+    - path: metrics/train_all_layers.json
+      hash: md5
+      md5: 246ac6025b5b75f7a8e54160c826e755
+      size: 4680
+    - path: models/adapter_all_layers
+      hash: md5
+      md5: 3319783016e34187b3f58ebb273c86f6.dir
+      size: 13353299
+      nfiles: 6
+  train_freeze:
+    cmd: python -m src.train --variant freeze14
+    deps:
+    - path: data/tokenized/train.pt
+      hash: md5
+      md5: a44f73cf15671b870e89c7bddef0ba70
+      size: 8925665
+    - path: data/tokenized/val.pt
+      hash: md5
+      md5: fb05cb48fd5da8be9b63a49e5d913962
+      size: 1201749
+    - path: src/config.py
+      hash: md5
+      md5: 1a7f038ddcad4cc719c02fd4de52e2de
+      size: 1426
+    - path: src/data.py
+      hash: md5
+      md5: d78a3ccae087e8bcfdc3b3c945d66089
+      size: 1985
+    - path: src/runtime.py
+      hash: md5
+      md5: 19e2a30dbb77c96c004c0e26f360c53c
+      size: 2225
+    - path: src/train.py
+      hash: md5
+      md5: 07c49b844e48e3cebd33fb2b874725ab
+      size: 15801
+    params:
+      params.yaml:
+        lora_train:
+          r: 8
+          alpha: 16
+          dropout: 0.05
+          target_modules:
+          - q_proj
+          - k_proj
+          - v_proj
+          - o_proj
+          - gate_proj
+          - up_proj
+          - down_proj
+        model:
+          name: HuggingFaceTB/SmolLM2-135M-Instruct
+          dtype: bfloat16
+          device: auto
+          enable_thinking: false
+        train:
+          seed: 42
+          epochs: 1
+          batch_size: 1
+          grad_accum: 8
+          lr: 0.0002
+          warmup_ratio: 0.03
+          weight_decay: 0.0
+          max_grad_norm: 1.0
+          eval_every: 10
+          eval_batch_size: 1
+          gradient_checkpointing: true
+          max_steps:
+          max_example_tokens: 768
+        variants:
+        - name: all_layers
+          freeze_first: 0
+        - name: freeze14
+          freeze_first: 14
+    outs:
+    - path: metrics/train_freeze14.json
+      hash: md5
+      md5: 91a42ca31d4646f2c00d29aa9d5ea163
+      size: 4675
+    - path: models/adapter_freeze14
+      hash: md5
+      md5: 41825cb327302af11845bee73e9f77ca.dir
+      size: 8769307
+      nfiles: 6
+  compare:
+    cmd: python -m src.compare --variant all_layers
+    deps:
+    - path: models/adapter_all_layers
+      hash: md5
+      md5: 3319783016e34187b3f58ebb273c86f6.dir
+      size: 13353299
+      nfiles: 6
+    - path: src/compare.py
+      hash: md5
+      md5: 65cc27d9d49c05648f51f40a8772c239
+      size: 4002
+    params:
+      params.yaml:
+        compare:
+          max_new_tokens: 40
+          prompts:
+          - "Тема:\nnetflix-metaflow\n\nВопрос:\nHow to store and retrieve figures
+            as artifacts in MetaFlow?\n\nHow do I save a plot as a data artifact in
+            MetaFlow? Plotting libraries usually have you write out to a file on disk.
+            How do I view the figure afterwards?"
+          - "Тема:\nray-tune\n\nВопрос:\nBest Config after Hyperparameter Search with
+            Ray Tune\n\nI just run my first Ray Tune. I got nice terminal output an
+            all that but now I'm wondering: Which configuration gave me the best score?\n\
+            \nI see that there are a ton of results files but is there an easy way
+            to get the best config?"
+          - "Тема:\nmlops\n\nВопрос:\nHow to set a tag at the experiment level in
+            MLFlow\n\nI can see that an experiment in MLFlow can have tags (like runs
+            can have tags).\nI'm able to set a run's tag using `mlflow.set_tag`, but
+            how do I set it for an experiment?"
+          - "Тема:\nmlops\n\nВопрос:\nLog Pickle files as a part of Mlflow run\n\n\
+            I am running an MLflow experiment as a part of it I would like to log
+            a few artifacts as a python pickle. \n\nEx: Trying out different categorical
+            encoders, so wanted to log the encoder objects as a pickle file.\n\n\n\
+            Is there a way to achieve this?"
+          - "Тема:\nmlops\n\nВопрос:\nDifference between tracking_uri and the backend
+            store uri in MLFLOW\n\nI am using Mlflow for my project hosting it in
+            an EC2 instance. I was wondering in MlFlow what is the difference between
+            the backend_store_uri we set when we launch the server and the trarcking_uri
+            ? \n\nThanks,"
+          system: Ты инженер по MLOps и отвечаешь на технические вопросы со 
+            Stack Overflow. Дан вопрос по инструменту или платформе. Дай точный 
+            практичный ответ, при необходимости с командой или фрагментом кода.
+    outs:
+    - path: docs/compare.md
+      hash: md5
+      md5: bce1110ffb419338e1ba6a737292da1f
+      size: 3106
+    - path: metrics/compare_all_layers.json
+      hash: md5
+      md5: e6aec17d6a60103162b20390b7f1dd0c
+      size: 2034
+  eval_data:
+    cmd: python -m evaluation.prep.build_eval_data
+    deps:
+    - path: data/train.jsonl
+      hash: md5
+      md5: a60b0556a8aef4f3bb335770c8c51988
+      size: 3533127
+    - path: evaluation/prep/build_eval_data.py
+      hash: md5
+      md5: 38d1b28300b4c04854388564256e779e
+      size: 18282
+    outs:
+    - path: data/eval/behavioral.jsonl
+      hash: md5
+      md5: 8a59af70abad29ccd06752da2ae3e009
+      size: 2286
+    - path: data/eval/golden.jsonl
+      hash: md5
+      md5: d4ba4f6f2d125b4e4430e77cac5b3732
+      size: 22980
+    - path: data/eval/training-index.jsonl
+      hash: md5
+      md5: 542e1ae1130c6d989ba4b65d81b8f360
+      size: 1727781
+  format_data:
+    cmd: python -m evaluation.prep.build_format_data
+    deps:
+    - path: data/eval/behavioral.jsonl
+      hash: md5
+      md5: 8a59af70abad29ccd06752da2ae3e009
+      size: 2286
+    - path: data/eval/golden.jsonl
+      hash: md5
+      md5: d4ba4f6f2d125b4e4430e77cac5b3732
+      size: 22980
+    - path: evaluation/params.json
+      hash: md5
+      md5: c8e1319596face9e41350f0d593a31aa
+      size: 841
+    - path: evaluation/prep/build_format_data.py
+      hash: md5
+      md5: 76b3d9f1d1d403512dfd2126e1c595b2
+      size: 45158
+    - path: src/config.py
+      hash: md5
+      md5: 1a7f038ddcad4cc719c02fd4de52e2de
+      size: 1426
+    params:
+      params.yaml:
+        hw6.data.train_jsonl: data/format/train.jsonl
+        hw6.data.val_jsonl: data/format/val.jsonl
+    outs:
+    - path: data/format/train.jsonl
+      hash: md5
+      md5: 4ecc086c083a594005bad74e70d3e9f2
+      size: 486971
+    - path: data/format/val.jsonl
+      hash: md5
+      md5: 7e988588e50658dc649ad85bed7b8821
+      size: 88280
+    - path: metrics/format_data.json
+      hash: md5
+      md5: f577d9b44c27916deafa53117d84272e
+      size: 1162
+  format_tokenize:
+    cmd: python -m evaluation.prep.tokenize_format
+    deps:
+    - path: data/format/train.jsonl
+      hash: md5
+      md5: 4ecc086c083a594005bad74e70d3e9f2
+      size: 486971
+    - path: data/format/val.jsonl
+      hash: md5
+      md5: 7e988588e50658dc649ad85bed7b8821
+      size: 88280
+    - path: evaluation/prep/tokenize_format.py
+      hash: md5
+      md5: 17031e014ca12c33a9c6fe1564744e01
+      size: 2221
+    - path: src/collate.py
+      hash: md5
+      md5: 3f589814c25be76d30b8e9ef565ef5a7
+      size: 1517
+    - path: src/common.py
+      hash: md5
+      md5: 2c2a889441e52252e5b29538a7987bb3
+      size: 1904
+    - path: src/config.py
+      hash: md5
+      md5: 1a7f038ddcad4cc719c02fd4de52e2de
+      size: 1426
+    - path: src/pack.py
+      hash: md5
+      md5: fe44de18d190fd5fb4b2a84a1fc3628f
+      size: 2862
+    - path: src/prompt.py
+      hash: md5
+      md5: c2cb668e99a41b6d51c18b963ee20626
+      size: 6855
+    - path: src/tokenize_data.py
+      hash: md5
+      md5: 88f10a3d78d70d476712207c6eed74cf
+      size: 15570
+    params:
+      params.yaml:
+        hw6.data:
+          train_jsonl: data/format/train.jsonl
+          val_jsonl: data/format/val.jsonl
+          train: data/format/tokenized/train.pt
+          val: data/format/tokenized/val.pt
+        hw6.model:
+          revision: 12fd25f77366fa6b3b4b768ec3050bf629380bac
+        model:
+          name: HuggingFaceTB/SmolLM2-135M-Instruct
+          dtype: bfloat16
+          device: auto
+          enable_thinking: false
+        tokenize:
+          max_seq_len: 1536
+          truncated_warn_ratio: 0.05
+          padding_side: left
+    outs:
+    - path: data/format/tokenized/train.pt
+      hash: md5
+      md5: 72cd6cf0083f0c8cd07eca2e1c6f170f
+      size: 1120481
+    - path: data/format/tokenized/val.pt
+      hash: md5
+      md5: 8fb97af07cefcbb91f0ddff98e9c664f
+      size: 204117
+    - path: metrics/format_tokenize.json
+      hash: md5
+      md5: 23dfc33a0dc95aa9825a625290c55d75
+      size: 1635

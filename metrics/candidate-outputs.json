@@ -1,0 +1,332 @@
+[
+  {
+    "id": "gold-001",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.8405034589814022
+  },
+  {
+    "id": "gold-002",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.5691142909927294
+  },
+  {
+    "id": "gold-003",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.7116039590036962
+  },
+  {
+    "id": "gold-004",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.3625717500108294
+  },
+  {
+    "id": "gold-005",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.29192100002546795
+  },
+  {
+    "id": "gold-006",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.31759004198829643
+  },
+  {
+    "id": "gold-007",
+    "raw": "{\"answer\":\"REFUSE\"}",
+    "error": null,
+    "latency_seconds": 0.42731312502291985
+  },
+  {
+    "id": "gold-008",
+    "raw": "{\"answer\":\"REFUSE\"}",
+    "error": null,
+    "latency_seconds": 0.4523846250085626
+  },
+  {
+    "id": "gold-009",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.4302551659930032
+  },
+  {
+    "id": "gold-010",
+    "raw": "{\"answer\":\"REFUSE\"}",
+    "error": null,
+    "latency_seconds": 0.46701608298462816
+  },
+  {
+    "id": "gold-011",
+    "raw": "{\"answer\":\"C\"}",
+    "error": null,
+    "latency_seconds": 0.40891683401423506
+  },
+  {
+    "id": "gold-012",
+    "raw": "{\"answer\":\"C\"}",
+    "error": null,
+    "latency_seconds": 0.40492837500642054
+  },
+  {
+    "id": "gold-013",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.5106098339892924
+  },
+  {
+    "id": "gold-014",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.5367020409903489
+  },
+  {
+    "id": "gold-015",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.4161820840090513
+  },
+  {
+    "id": "gold-016",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.3813511250191368
+  },
+  {
+    "id": "gold-017",
+    "raw": "{\"answer\":\"REFUSE\"}",
+    "error": null,
+    "latency_seconds": 0.5969915419991594
+  },
+  {
+    "id": "gold-018",
+    "raw": "{\"answer\":\"REFUSE\"}",
+    "error": null,
+    "latency_seconds": 2.105511583009502
+  },
+  {
+    "id": "gold-019",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 1.4956865420099348
+  },
+  {
+    "id": "gold-020",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.5460585830151103
+  },
+  {
+    "id": "gold-021",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.3560633750166744
+  },
+  {
+    "id": "gold-022",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.3191265420173295
+  },
+  {
+    "id": "gold-023",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.341074166004546
+  },
+  {
+    "id": "gold-024",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.3071407910028938
+  },
+  {
+    "id": "gold-025",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.2965937090048101
+  },
+  {
+    "id": "gold-026",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.3534608330228366
+  },
+  {
+    "id": "gold-027",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.584826707985485
+  },
+  {
+    "id": "gold-028",
+    "raw": "{\"answer\":\"REFUSE\"}",
+    "error": null,
+    "latency_seconds": 2.1067290419887286
+  },
+  {
+    "id": "gold-029",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.6813672090065666
+  },
+  {
+    "id": "gold-030",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.4643218749843072
+  },
+  {
+    "id": "gold-031",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.5122396249789745
+  },
+  {
+    "id": "gold-032",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.3544048329931684
+  },
+  {
+    "id": "gold-033",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.36317620900808834
+  },
+  {
+    "id": "gold-034",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.34114174998831004
+  },
+  {
+    "id": "gold-035",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.32998229199438356
+  },
+  {
+    "id": "gold-036",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.36703408299945295
+  },
+  {
+    "id": "gold-037",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.3134074169793166
+  },
+  {
+    "id": "gold-038",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.32907379101379775
+  },
+  {
+    "id": "gold-039",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.37918754102429375
+  },
+  {
+    "id": "gold-040",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.43453812500229105
+  },
+  {
+    "id": "gold-041",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.4043025000137277
+  },
+  {
+    "id": "gold-042",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.7539736250182614
+  },
+  {
+    "id": "gold-043",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 1.1807674999872688
+  },
+  {
+    "id": "gold-044",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.5085940419812687
+  },
+  {
+    "id": "gold-045",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.38035808299900964
+  },
+  {
+    "id": "gold-046",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 1.8375025420100428
+  },
+  {
+    "id": "gold-047",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 1.4637512920016889
+  },
+  {
+    "id": "gold-048",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.4863794169796165
+  },
+  {
+    "id": "gold-049",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.3999253329820931
+  },
+  {
+    "id": "gold-050",
+    "raw": "{\"answer\":\"B\"}",
+    "error": null,
+    "latency_seconds": 0.3603519579919521
+  },
+  {
+    "id": "behavior-format-flow",
+    "raw": "{\"answer\":\"REFUSE\"}",
+    "error": null,
+    "latency_seconds": 0.5190902499889489
+  },
+  {
+    "id": "behavior-paraphrase-flow",
+    "raw": "{\"answer\":\"REFUSE\"}",
+    "error": null,
+    "latency_seconds": 0.5138875000120606
+  },
+  {
+    "id": "behavior-format-lock",
+    "raw": "{\"answer\":\"A\"}",
+    "error": null,
+    "latency_seconds": 0.5039352500170935
+  },
+  {
+    "id": "behavior-refusal-poem",
+    "raw": "{\"answer\":\"REFUSE\"}",
+    "error": null,
+    "latency_seconds": 0.4645899999886751
+  },
+  {
+    "id": "behavior-refusal-weather",
+    "raw": "{\"answer\":\"REFUSE\"}",
+    "error": null,
+    "latency_seconds": 0.47986379099893384
+  }
+]

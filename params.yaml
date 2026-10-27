@@ -1,17 +1,17 @@
 # Единственное место, где живёт конфигурация. В src/ констант нет.
 model:
-  name: "Qwen/Qwen3-0.6B"
+  name: "HuggingFaceTB/SmolLM2-135M-Instruct"
   dtype: "bfloat16"
   device: "auto"            # auto | cpu | cuda | mps
-  # Qwen3 без этого флага ждёт от модели <think>-блок, и тогда шаблон
-  # инференса перестаёт быть префиксом шаблона обучения. См. docs/tokenize_report.md.
+  # У SmolLM2 режима рассуждений нет, шаблон флаг молча игнорирует. Оставлен
+  # для единообразия конфигурации. См. docs/tokenize_report.md.
   enable_thinking: false
 
 generate:
   max_new_tokens: 200
   temperature: 0.0          # 0 — жадный поиск, детерминированно
   seed: 42
-  enable_thinking: false    # Qwen3 без этого отвечает <think>-блоком
+  enable_thinking: false    # SmolLM2 флаг игнорирует (нет режима рассуждений)
 
 bench:
   warmup_runs: 1            # прогрев не засчитывается в замер
@@ -263,10 +263,13 @@ packing:
 
 train_estimate:
   epochs: 3
-  # 52 ток/с — замер ДЗ 1 на этой машине (Apple Silicon, Qwen3-0.6B, ГЕНЕРАЦИЯ).
-  # Обучение медленнее: forward + backward + optimizer. Реальное число
-  # подставляется сюда после первого прогона ДЗ 5.
-  tokens_per_sec: 52
+  # 128 ток/с — замер ДЗ 5 на этой машине (Apple Silicon, SmolLM2-135M-Instruct,
+  # вариант all_layers, train_tokens_per_sec = 128.5 из metrics/train_all_layers.json,
+  # прогон, зафиксированный в dvc.lock; у freeze14 — 321.3). Это ОБУЧЕНИЕ:
+  # forward + backward + optimizer, без val. Более ранний чистый прогон дал
+  # 367 / 405 ток/с: разброс между прогонами большой.
+  # Замер ГЕНЕРАЦИИ из ДЗ 1 (78 ток/с) для прогноза обучения не годится.
+  tokens_per_sec: 128
 
 # --- ДЗ 5: LoRA-обучение ---
 # Секция lora из ДЗ 2 (alpha_ratio/configs) — про оценку памяти; гиперпараметры
@@ -290,7 +293,7 @@ train:
   weight_decay: 0.0
   max_grad_norm: 1.0
   eval_every: 10            # шагов оптимизатора между замерами val loss
-  # Логиты на весь словарь: 1 пример x 1536 токенов x 151 936 x 4 байта = 0,93 ГБ
+  # Логиты на весь словарь: 1 пример x 1536 токенов x 49 152 x 4 байта = 0,30 ГБ
   # только в float32, плюс bf16-копия и градиент. Батч 2 — уже > 2 ГБ одних логитов,
   # а при 8 ГБ ОЗУ ноутбук уходит в своп.
   eval_batch_size: 1
@@ -315,3 +318,56 @@ compare:
     - "Тема:\nmlops\n\nВопрос:\nLog Pickle files as a part of Mlflow run\n\nI am running an MLflow experiment as a part of it I would like to log a few artifacts as a python pickle. \n\nEx: Trying out different categorical encoders, so wanted to log the encoder objects as a pickle file.\n\n\nIs there a way to achieve this?"
     - "Тема:\nmlops\n\nВопрос:\nDifference between tracking_uri and the backend store uri in MLFLOW\n\nI am using Mlflow for my project hosting it in an EC2 instance. I was wondering in MlFlow what is the difference between the backend_store_uri we set when we launch the server and the trarcking_uri ? \n\nThanks,"
   system: "Ты инженер по MLOps и отвечаешь на технические вопросы со Stack Overflow. Дан вопрос по инструменту или платформе. Дай точный практичный ответ, при необходимости с командой или фрагментом кода."
+
+# --- ДЗ 6: MLflow-эксперименты, реестр моделей ---
+# Секция hw6 НЕ пересекается с ДЗ 5: корневые train и lora остаются прежними
+# (ДЗ 5 и lora из ДЗ 2). src.common.load_params() собирает вид ДЗ 6:
+# model = общий model + hw6.model, data общая, остальное берётся отсюда.
+hw6:
+  model:
+    revision: 12fd25f77366fa6b3b4b768ec3050bf629380bac   # run сохраняет разрешённый commit HF, а не только main
+  # ДЗ 7: sweep учится на примерах формата оценки (вопрос с вариантами ->
+  # {"answer":"X"}), а не на ответах Stack Overflow. Ключ data здесь целиком
+  # заменяет общую секцию data в виде src.common.load_params(); ДЗ 4-5 читают
+  # корневую data через src.config и не затронуты. Стадии DVC: format_data,
+  # format_tokenize. Тензоры лежат вне data/tokenized: тот каталог — выход
+  # стадии tokenize, вложенный выход другой стадии DVC не допускает.
+  data:
+    train_jsonl: data/format/train.jsonl
+    val_jsonl: data/format/val.jsonl
+    train: data/format/tokenized/train.pt
+    val: data/format/tokenized/val.pt
+  # Один бюджет и один val для всех шести кандидатов. Это короткий учебный поиск.
+  train:
+    seed: 42
+    max_steps: 60
+    train_limit: 240
+    val_limit: 40
+    batch_size: 1
+    grad_accum: 2
+    eval_every: 10
+    gradient_checkpointing: true
+  lora:
+    dropout: 0.05
+    alpha_over_r: 2
+  sweep:
+    - {name: qv-r4-low, r: 4, lr: 0.0001, target_modules: [q_proj, v_proj]}
+    - {name: qv-r4-high, r: 4, lr: 0.0003, target_modules: [q_proj, v_proj]}
+    - {name: qv-r8-low, r: 8, lr: 0.0001, target_modules: [q_proj, v_proj]}
+    - {name: qv-r8-high, r: 8, lr: 0.0003, target_modules: [q_proj, v_proj]}
+    - {name: all-r8-low, r: 8, lr: 0.0001, target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]}
+    - {name: all-r8-high, r: 8, lr: 0.0003, target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]}
+  tracking:
+    uri: http://127.0.0.1:5006
+    experiment: hw6-lora
+  registry:
+    name: my-smollm-adapter
+    alias: champion
+    # Порог относительный к базе на ТОМ ЖЕ val; меньше loss — лучше.
+    max_val_ratio: 1.0
+  generation:
+    max_new_tokens: 16
+    system: "Выбери один правильный вариант. Ответь номером и текстом ответа."
+    prompts:
+      - "Метод подтверждения пневмонии: 0. общий анализ крови; 1. рентгенография грудной клетки; 2. спирометрия."
+      - "Показатель запасов железа: 0. сывороточное железо; 1. ферритин; 2. гемоглобин."

@@ -21,7 +21,7 @@ from transformers import AutoTokenizer
 from src.collate import LABEL_PAD_ID
 from src.config import load_params
 from src.pack import pack_examples, packing_report
-from src.prompt import build_chat_text, prompt_token_len
+from src.prompt import build_chat_text, encode_chat_text, prompt_token_len, split_messages
 
 METRICS_PATH = Path("metrics/tokenize.json")
 REPORT_PATH = Path("docs/tokenize_report.md")
@@ -47,12 +47,12 @@ def mask_prompt(input_ids: list[int], n_prompt: int) -> list[int]:
 def encode_example(tokenizer, record: dict, params: dict, max_seq_len: int) -> dict:
     """Один пример -> input_ids / attention_mask / labels + служебная статистика."""
     messages = record["messages"]
+    split_messages(messages)  # запись без ответа ассистента должна падать
     full_text = build_chat_text(tokenizer, messages, params, add_generation_prompt=False)
     prompt_text = build_chat_text(tokenizer, messages, params, add_generation_prompt=True)
 
-    encoded = tokenizer(full_text, add_special_tokens=False, return_offsets_mapping=True)
-    input_ids = encoded["input_ids"]
-    n_prompt, used_fallback = prompt_token_len(tokenizer, prompt_text, input_ids, encoded["offset_mapping"])
+    input_ids, offsets = encode_chat_text(tokenizer, full_text)
+    n_prompt, used_fallback = prompt_token_len(tokenizer, prompt_text, input_ids, offsets)
 
     full_len = len(input_ids)
     truncated = full_len > max_seq_len
@@ -165,9 +165,9 @@ def estimate_train_time(total_tokens: int, params: dict) -> dict:
         "seconds": round(seconds, 1),
         "hours": round(seconds / 3600, 2),
         "note": (
-            "tokens_per_sec взят из замера ГЕНЕРАЦИИ в ДЗ 1. Обучение считает "
-            "ещё backward и шаг оптимизатора, поэтому реальная скорость ниже "
-            "в 2-3 раза, а прогноз ниже — это оптимистичная граница."
+            "tokens_per_sec взят из замера ОБУЧЕНИЯ в ДЗ 5 (all_layers, без времени "
+            "val). Прогноз считает все токены train, а ДЗ 5 учит только примеры "
+            "не длиннее max_example_tokens, поэтому он завышает реальное время."
         ),
     }
 
@@ -254,7 +254,7 @@ def render_report(metrics: dict) -> str:
         "",
         f"Запасной путь по символьным офсетам сработал на {train['bpe_boundary_fallback']} "
         "примерах train. Основной путь (токены промпта совпадают с началом токенов "
-        "полного текста) держится, потому что шаблон Qwen3 заканчивает промпт "
+        "полного текста) держится, потому что шаблон SmolLM2 заканчивает промпт "
         "переводом строки — BPE не склеивает его с началом ответа. У шаблона, "
         "который обрывается посреди слова, склейка будет, и тогда границу задаёт "
         "первый токен, начинающийся не раньше конца промпта.",

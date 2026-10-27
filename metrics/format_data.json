@@ -1,0 +1,75 @@
+{
+  "seed": 42,
+  "train": {
+    "n": 348,
+    "groups": 116,
+    "labels": {
+      "A": 116,
+      "B": 116,
+      "C": 29,
+      "REFUSE": 87
+    },
+    "refuse_share": 0.25,
+    "options": {
+      "2": 232,
+      "3": 116
+    },
+    "strict_suffix": 114
+  },
+  "val": {
+    "n": 63,
+    "groups": 21,
+    "labels": {
+      "A": 22,
+      "B": 21,
+      "C": 5,
+      "REFUSE": 15
+    },
+    "refuse_share": 0.2381,
+    "options": {
+      "2": 42,
+      "3": 21
+    },
+    "strict_suffix": 20
+  },
+  "train_first_240": {
+    "n": 240,
+    "groups": 113,
+    "labels": {
+      "A": 81,
+      "B": 76,
+      "C": 24,
+      "REFUSE": 59
+    },
+    "refuse_share": 0.2458,
+    "options": {
+      "2": 158,
+      "3": 82
+    },
+    "strict_suffix": 74
+  },
+  "val_first_40": {
+    "n": 40,
+    "groups": 20,
+    "labels": {
+      "A": 13,
+      "B": 14,
+      "C": 5,
+      "REFUSE": 8
+    },
+    "refuse_share": 0.2,
+    "options": {
+      "2": 29,
+      "3": 11
+    },
+    "strict_suffix": 12
+  },
+  "leakage": {
+    "exact_or_group_intersections": 0,
+    "max_jaccard": 0.4091,
+    "max_jaccard_pair": [
+      "fmt-label-studio-v0",
+      "gold-040"
+    ]
+  }
+}

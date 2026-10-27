@@ -14,6 +14,7 @@ from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from src.config import load_params
+from src.prompt import build_chat_text
 from src.runtime import resolve_device, resolve_dtype
 
 
@@ -26,10 +27,7 @@ def generate(model, tok, prompts: list[str], system: str, params: dict, device) 
     out = []
     for user in prompts:
         messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
-        text = tok.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True,
-            enable_thinking=params["model"].get("enable_thinking", False),
-        )
+        text = build_chat_text(tok, messages, params, True)
         ids = tok(text, return_tensors="pt").to(device)
         gen = model.generate(**ids, max_new_tokens=params["compare"]["max_new_tokens"],
                              do_sample=False, pad_token_id=tok.pad_token_id)
@@ -63,7 +61,7 @@ def main() -> None:
     result = {"variant": args.variant, "adapter_dir": str(adapter_dir), "base": before, "adapter": after}
     out = Path(args.out) if args.out else Path(params["paths"]["metrics"]) / f"compare_{args.variant}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    out.write_text(json.dumps(result, ensure_ascii=True, indent=2) + "\n", encoding="utf-8")
     if args.out:
         print(f"-> {out}")
         return

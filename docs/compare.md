@@ -8,11 +8,11 @@ How do I save a plot as a data artifact in MetaFlow? Plotting libraries usually 
 
 **База:**
 
-> In **MetaFlow**, figures (plots) can be stored and retrieved as **data artifacts**. Here's how you can do it: /  / --- /  / ### **1. Store a Plot as a Data Artifact
+> Теперь вопрос называется "netflix-metaflow" и последним пои
 
 **Адаптер:**
 
-> You can use the `MetaFlow` class to create a new `Artifact` object, and then use the `save()` method to save the figure to a file. For example: /  / ```python
+> You can use the `plot` function from the `plotly` library. /  / ```python / import plotly.graph_objs as go /  / fig = go.Figure() / fig
 
 ## 2. Best Config after Hyperparameter Search with Ray Tune
 
@@ -22,11 +22,11 @@ I see that there are a ton of results files but is there an easy way to get the 
 
 **База:**
 
-> Вот, что можно сделать, чтобы определить лучшую конфигурацию после выполнения поиска параметров с **Ray Tune**: /  / ### 1. **П
+> Ты инженер по MLOps и отвечаешь на технические вопросы с
 
 **Адаптер:**
 
-> I think the best way to get the best configuration is to run the following command: /  / `tune run --config-file config.yaml --num-workers 1 --num-threads 1 --num-
+> I'm not sure if you're looking for a specific configuration or just a general question. /  / I would recommend checking out the Ray Tune documentation. /  / I also have a question about the
 
 ## 3. How to set a tag at the experiment level in MLFlow
 
@@ -35,11 +35,11 @@ I'm able to set a run's tag using `mlflow.set_tag`, but how do I set it for an e
 
 **База:**
 
-> In MLFlow, you can set a **tag** at the **experiment level** using the `mlflow.set_experiment_tag` function. This allows you to assign a tag to an entire experiment,
+> Мальше, вы можете понять, что вы можете создать и
 
 **Адаптер:**
 
-> You can set an experiment's tag using `mlflow.set_experiment_tag`: /  /     mlflow.set_experiment_tag("tag1", "value1") /     mlflow.set_experiment_tag("tag2",
+> You can set a tag in MLFlow using the `mlflow.set_tag` method. /  / ```python / mlflow.set_tag( /     "run_name", /     "
 
 ## 4. Log Pickle files as a part of Mlflow run
 
@@ -52,11 +52,11 @@ Is there a way to achieve this?
 
 **База:**
 
-> Да, вы можете сохранить pickle-файлы в MLOps, используя инструменты MLOps, таких как `mlflow.log_artifacts` или `
+> Yes, you can use the `pickle` module in Python to serialize and deserialize Python objects. Here's an example of how you can log the encoder objects as a pickle file: /  / ```
 
 **Адаптер:**
 
-> You can use the `mlflow.log_artifacts` function to log the pickle files.  /  / For example: /  / ```python / from mlflow import log_artifacts /  / log_artifacts( /     artifact_path
+> You can use the `pickle` module in MLflow. /  / ```python / from mlflow.core import encoder / from mlflow.core import encoder_encoder /  / encoder = encoder.
 
 ## 5. Difference between tracking_uri and the backend store uri in MLFLOW
 
@@ -66,8 +66,8 @@ Thanks,
 
 **База:**
 
-> В MLOps, `tracking_uri` и `backend_store_uri` — это два разных аспекта, связанных с **множеством хранилищ** в систем
+> In Mlflow, the backend_store_uri and the trarcking_uri are two different URI formats used to represent the backend store. /  / The backend_store_uri is a
 
 **Адаптер:**
 
-> The backend store URI is the URL where MLFlow will store the data that you want to track. The tracking URI is the URL where MLFlow will store the data that you want to track.
+> The backend store uri is the URI that is used to retrieve the backend data from the backend store. The backend store uri is the URI that is used to retrieve the data from the backend store.

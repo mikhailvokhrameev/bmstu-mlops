@@ -140,3 +140,23 @@ v2 тоже пуст. То есть исправление подтвержде�
 назвал 4 нарушенных порога» (считает строки с определёнными ключевыми словами),
 а пункт 7 подтверждает, что настоящий датасет гейт по-прежнему проходит:
 1128 строк, 5 системных промптов, 54 группы.
+
+# Дефекты sweep ДЗ 6/7 (MLflow)
+
+Четыре намеренных дефекта `hw67-broken` исправлены в ДЗ 6. Полный разбор с кодом
+«до/после» и выводом тестов — в [docs/hw6_defects.md](hw6_defects.md); здесь
+только указатель. Каждый дефект закреплён тестом в
+`tests/test_hw6_defects.py` (`make check-hw6-defects`, 15 тестов вместе с
+проверками конфигурации); хранение проверяет ещё и `make check-storage`.
+
+| # | Причина | Исправление | Доказательство |
+|---|---|---|---|
+| 1 | `src/sweep.py` открывал один run `all-candidates` на весь цикл; параметры писались только первому кандидату (условие `if not ...data.params`) | один вложенный run на кандидата, `log_params` без условия; родитель `sweep` → шесть дочерних | `4a34311`; `TestSeparateRuns` (RED: `['all-candidates'] != ['c0'…'c5']`) |
+| 2 | volume `artifacts` объявлен, но не подключён к сервису `mlflow`: `/mlartifacts` жил в слое контейнера и исчезал при `--force-recreate` | `volumes: - artifacts:/mlartifacts` в `compose.yaml`, путь совпадает с `--artifacts-destination` | `b5d7766`; `TestCompose`; `make check-storage` → `metrics/storage-check.json` (SHA256 совпал после пересоздания) |
+| 3 | фильтр `not k.startswith("data_")` выбрасывал `data_train_sha256` и `data_val_sha256` из тегов | `versions = provenance(p)` — все шесть ключей в тегах родителя и кандидатов | `35beabe`; `TestVersions` (RED: нет `data_train_sha256` в тегах) |
+| 4 | `promote` регистрировал версию и ставил `validation=passed` без проверки порога; `--max-val-ratio` мог ослабить порог | `gate(run, threshold)` до `register_model`; `effective_threshold = min(config, override)` — флаг только ужесточает | `7b12f35`; `TestPromoteGate` (RED: 4 failures, 2 errors) |
+
+Что это не доказывает: тесты подменяют `mlflow` заглушками, поэтому реальное
+поведение сервера подтверждают отдельно `make check-hw6` (девять проверок на
+шести runs) и `make check-storage`; в этом ДЗ они не перезапускались, использованы
+сохранённые результаты.

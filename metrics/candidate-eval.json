@@ -1,0 +1,758 @@
+{
+  "overall": {
+    "n": 50,
+    "correct": 23,
+    "valid": 50,
+    "errors": 0,
+    "accuracy": 0.46,
+    "format_rate": 1.0
+  },
+  "slices": {
+    "2_options": {
+      "n": 45,
+      "correct": 22,
+      "valid": 45,
+      "errors": 0,
+      "accuracy": 0.4888888888888889,
+      "format_rate": 1.0
+    },
+    "3_options": {
+      "n": 5,
+      "correct": 1,
+      "valid": 5,
+      "errors": 0,
+      "accuracy": 0.2,
+      "format_rate": 1.0
+    },
+    "data-versioning": {
+      "n": 12,
+      "correct": 6,
+      "valid": 12,
+      "errors": 0,
+      "accuracy": 0.5,
+      "format_rate": 1.0
+    },
+    "experiment-tracking": {
+      "n": 12,
+      "correct": 4,
+      "valid": 12,
+      "errors": 0,
+      "accuracy": 0.3333333333333333,
+      "format_rate": 1.0
+    },
+    "orchestration": {
+      "n": 13,
+      "correct": 6,
+      "valid": 13,
+      "errors": 0,
+      "accuracy": 0.46153846153846156,
+      "format_rate": 1.0
+    },
+    "serving": {
+      "n": 13,
+      "correct": 7,
+      "valid": 13,
+      "errors": 0,
+      "accuracy": 0.5384615384615384,
+      "format_rate": 1.0
+    }
+  },
+  "per_item": [
+    {
+      "id": "gold-001",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-002",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-003",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-004",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-005",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-006",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-007",
+      "raw": "{\"answer\":\"REFUSE\"}",
+      "parsed": "REFUSE",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-008",
+      "raw": "{\"answer\":\"REFUSE\"}",
+      "parsed": "REFUSE",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-009",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-010",
+      "raw": "{\"answer\":\"REFUSE\"}",
+      "parsed": "REFUSE",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-011",
+      "raw": "{\"answer\":\"C\"}",
+      "parsed": "C",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "3_options"
+      ]
+    },
+    {
+      "id": "gold-012",
+      "raw": "{\"answer\":\"C\"}",
+      "parsed": "C",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "3_options"
+      ]
+    },
+    {
+      "id": "gold-013",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-014",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-015",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-016",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-017",
+      "raw": "{\"answer\":\"REFUSE\"}",
+      "parsed": "REFUSE",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-018",
+      "raw": "{\"answer\":\"REFUSE\"}",
+      "parsed": "REFUSE",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-019",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-020",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-021",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "3_options"
+      ]
+    },
+    {
+      "id": "gold-022",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-023",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-024",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-025",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-026",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-027",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-028",
+      "raw": "{\"answer\":\"REFUSE\"}",
+      "parsed": "REFUSE",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-029",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-030",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-031",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-032",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-033",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-034",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-035",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-036",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "3_options"
+      ]
+    },
+    {
+      "id": "gold-037",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-038",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-039",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-040",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-041",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-042",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-043",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-044",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-045",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "3_options"
+      ]
+    },
+    {
+      "id": "gold-046",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-047",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-048",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-049",
+      "raw": "{\"answer\":\"A\"}",
+      "parsed": "A",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-050",
+      "raw": "{\"answer\":\"B\"}",
+      "parsed": "B",
+      "valid": true,
+      "correct": true,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    }
+  ],
+  "status": "complete",
+  "model": {
+    "kind": "adapter",
+    "name": "my-smollm-adapter",
+    "version": "5",
+    "run_id": "370a4f53aac247df806ae78de09be252",
+    "uri": "models:/my-smollm-adapter/5"
+  },
+  "protocol_sha256": "f6585e433765d1baf0d202504506d6538bb124bfd46882ae5c31206fa8df57d7",
+  "golden_sha256": "821553370b380ea95c6dca8882b805a61f993cfe5c07bada1259b93d84eca785",
+  "baseline_spec_sha256": "705d8f7a4eadd7c4dd711bd8d03532a173efc96fba8fb21dc4b712985b74d66f",
+  "behavioral": {
+    "overall": {
+      "n": 5,
+      "correct": 3,
+      "valid": 5,
+      "errors": 0,
+      "accuracy": 0.6,
+      "format_rate": 1.0
+    },
+    "slices": {
+      "behavior": {
+        "n": 5,
+        "correct": 3,
+        "valid": 5,
+        "errors": 0,
+        "accuracy": 0.6,
+        "format_rate": 1.0
+      }
+    },
+    "per_item": [
+      {
+        "id": "behavior-format-flow",
+        "raw": "{\"answer\":\"REFUSE\"}",
+        "parsed": "REFUSE",
+        "valid": true,
+        "correct": false,
+        "error": null,
+        "slices": [
+          "behavior"
+        ]
+      },
+      {
+        "id": "behavior-paraphrase-flow",
+        "raw": "{\"answer\":\"REFUSE\"}",
+        "parsed": "REFUSE",
+        "valid": true,
+        "correct": false,
+        "error": null,
+        "slices": [
+          "behavior"
+        ]
+      },
+      {
+        "id": "behavior-format-lock",
+        "raw": "{\"answer\":\"A\"}",
+        "parsed": "A",
+        "valid": true,
+        "correct": true,
+        "error": null,
+        "slices": [
+          "behavior"
+        ]
+      },
+      {
+        "id": "behavior-refusal-poem",
+        "raw": "{\"answer\":\"REFUSE\"}",
+        "parsed": "REFUSE",
+        "valid": true,
+        "correct": true,
+        "error": null,
+        "slices": [
+          "behavior"
+        ]
+      },
+      {
+        "id": "behavior-refusal-weather",
+        "raw": "{\"answer\":\"REFUSE\"}",
+        "parsed": "REFUSE",
+        "valid": true,
+        "correct": true,
+        "error": null,
+        "slices": [
+          "behavior"
+        ]
+      }
+    ]
+  },
+  "leakage": {
+    "exact_or_group_intersections": 0,
+    "n_train_index": 1330,
+    "n_golden": 50,
+    "n_behavioral": 5
+  },
+  "outputs_sha256": "76756968a281946f25de889a3d80090775c5506f9e636685a349ee2d5823ccdc",
+  "evaluation_run_id": "2d82968b4f044e3bad82b9cd187d8ecd"
+}

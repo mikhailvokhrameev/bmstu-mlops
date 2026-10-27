@@ -1,0 +1,7 @@
+{
+  "kind": "adapter",
+  "name": "my-smollm-adapter",
+  "version": "5",
+  "run_id": "370a4f53aac247df806ae78de09be252",
+  "uri": "models:/my-smollm-adapter/5"
+}
