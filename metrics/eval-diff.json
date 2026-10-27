@@ -1,4 +1,28 @@
 {
-  "improved": [],
+  "improved": [
+    "gold-001",
+    "gold-004",
+    "gold-006",
+    "gold-011",
+    "gold-013",
+    "gold-014",
+    "gold-015",
+    "gold-016",
+    "gold-020",
+    "gold-022",
+    "gold-027",
+    "gold-030",
+    "gold-031",
+    "gold-032",
+    "gold-033",
+    "gold-034",
+    "gold-038",
+    "gold-039",
+    "gold-040",
+    "gold-044",
+    "gold-048",
+    "gold-049",
+    "gold-050"
+  ],
   "regressed": []
 }
