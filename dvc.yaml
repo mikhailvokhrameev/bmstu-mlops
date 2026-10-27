@@ -193,3 +193,16 @@ stages:
     metrics:
       - metrics/compare_all_layers.json:
           cache: false
+
+  # --- ДЗ 6+7, часть B: данные проверки качества ответов ---
+  # golden и behavioral написаны вручную (исходник - сам скрипт), индекс train
+  # строится из data/train.jsonl. Проверка утечки: evaluation/contract.py.
+  eval_data:
+    cmd: python -m evaluation.prep.build_eval_data
+    deps:
+      - data/train.jsonl
+      - evaluation/prep/build_eval_data.py
+    outs:
+      - data/eval/golden.jsonl
+      - data/eval/behavioral.jsonl
+      - data/eval/training-index.jsonl

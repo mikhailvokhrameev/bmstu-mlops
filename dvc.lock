@@ -594,3 +594,27 @@ stages:
       hash: md5
       md5: e6aec17d6a60103162b20390b7f1dd0c
       size: 2034
+  eval_data:
+    cmd: python -m evaluation.prep.build_eval_data
+    deps:
+    - path: data/train.jsonl
+      hash: md5
+      md5: a60b0556a8aef4f3bb335770c8c51988
+      size: 3533127
+    - path: evaluation/prep/build_eval_data.py
+      hash: md5
+      md5: 38d1b28300b4c04854388564256e779e
+      size: 18282
+    outs:
+    - path: data/eval/behavioral.jsonl
+      hash: md5
+      md5: 8a59af70abad29ccd06752da2ae3e009
+      size: 2286
+    - path: data/eval/golden.jsonl
+      hash: md5
+      md5: d4ba4f6f2d125b4e4430e77cac5b3732
+      size: 22980
+    - path: data/eval/training-index.jsonl
+      hash: md5
+      md5: 542e1ae1130c6d989ba4b65d81b8f360
+      size: 1727781

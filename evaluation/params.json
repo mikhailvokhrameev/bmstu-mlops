@@ -2,9 +2,11 @@
   "golden": "data/eval/golden.jsonl",
   "training_index": "data/eval/training-index.jsonl",
   "behavioral": "data/eval/behavioral.jsonl",
-  "critical_slices": ["geography"],
+  "critical_slices": [
+    "experiment-tracking"
+  ],
   "seed": 42,
-  "system": "Реши задачу выбора варианта. Верни только JSON с единственным полем answer и строковой меткой из choices, указанных в вопросе. На запрос за пределами географии верни {\"answer\":\"REFUSE\"}.",
+  "system": "Ты помощник по MLOps-инструментам. Реши задачу выбора варианта. Верни только JSON с единственным полем answer и строковой меткой из choices, указанных в вопросе, например {\"answer\":\"A\"}. На запрос за пределами MLOps (не про трекинг экспериментов, версионирование данных, оркестрацию и развёртывание моделей) верни {\"answer\":\"REFUSE\"}.",
   "max_new_tokens": 32,
   "enable_thinking": false
 }
