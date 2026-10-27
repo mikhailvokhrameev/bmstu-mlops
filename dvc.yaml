@@ -206,3 +206,51 @@ stages:
       - data/eval/golden.jsonl
       - data/eval/behavioral.jsonl
       - data/eval/training-index.jsonl
+
+  # --- ДЗ 7, задача 9A: обучающие примеры формата оценки для sweep ---
+  # Факты и шаблоны - исходник в самом скрипте; golden и behavioral - deps,
+  # потому что стадия проверяет утечку (текст, group_id, Жаккар < 0.5) и
+  # падает при нарушении. Пути - hw6.data в params.yaml.
+  format_data:
+    cmd: python -m evaluation.prep.build_format_data
+    deps:
+      - evaluation/prep/build_format_data.py
+      - evaluation/params.json
+      - data/eval/golden.jsonl
+      - data/eval/behavioral.jsonl
+      - src/config.py
+    params:
+      - hw6.data.train_jsonl
+      - hw6.data.val_jsonl
+    outs:
+      - data/format/train.jsonl
+      - data/format/val.jsonl
+    metrics:
+      - metrics/format_data.json:
+          cache: false
+
+  # Токенизация тем же кодом, что стадия tokenize ДЗ 4; выход вне
+  # data/tokenized (тот каталог целиком - выход стадии tokenize).
+  format_tokenize:
+    cmd: python -m evaluation.prep.tokenize_format
+    deps:
+      - data/format/train.jsonl
+      - data/format/val.jsonl
+      - evaluation/prep/tokenize_format.py
+      - src/tokenize_data.py
+      - src/prompt.py
+      - src/collate.py
+      - src/pack.py
+      - src/common.py
+      - src/config.py
+    params:
+      - model
+      - hw6.model
+      - hw6.data
+      - tokenize
+    outs:
+      - data/format/tokenized/train.pt
+      - data/format/tokenized/val.pt
+    metrics:
+      - metrics/format_tokenize.json:
+          cache: false

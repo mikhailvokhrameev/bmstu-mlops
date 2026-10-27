@@ -16,7 +16,8 @@ class TestMerge(unittest.TestCase):
             set(params),
             {"model", "data", "train", "lora", "sweep", "tracking", "registry", "generation"},
         )
-        self.assertEqual(params["train"]["max_steps"], 4)
+        # ДЗ 7 (задача 9A): бюджет sweep поднят с 4 до 60 шагов под данные формата.
+        self.assertEqual(params["train"]["max_steps"], 60)
         self.assertEqual(params["train"]["grad_accum"], 2)
         self.assertEqual(len(params["sweep"]), 6)
 

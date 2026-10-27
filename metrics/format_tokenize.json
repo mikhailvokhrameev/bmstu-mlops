@@ -1,0 +1,77 @@
+{
+  "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+  "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+  "max_seq_len": 1536,
+  "splits": {
+    "train": {
+      "examples_in": 348,
+      "examples_kept": 348,
+      "dropped_no_supervision": 0,
+      "length_tokens": {
+        "count": 348,
+        "mean": 322.0,
+        "p50": 318,
+        "p90": 351,
+        "p99": 395,
+        "max": 415
+      },
+      "prompt_tokens": {
+        "count": 348,
+        "mean": 314.7,
+        "p50": 311,
+        "p90": 344,
+        "p99": 388,
+        "max": 408
+      },
+      "answer_tokens": {
+        "count": 348,
+        "mean": 7.2,
+        "p50": 7,
+        "p90": 8,
+        "p99": 8,
+        "max": 8
+      },
+      "bpe_boundary_fallback": 0,
+      "total_tokens": 112044,
+      "supervised_tokens": 2523,
+      "truncated": 0,
+      "truncated_ratio": 0.0,
+      "packing": null
+    },
+    "val": {
+      "examples_in": 63,
+      "examples_kept": 63,
+      "dropped_no_supervision": 0,
+      "length_tokens": {
+        "count": 63,
+        "mean": 323.1,
+        "p50": 320,
+        "p90": 346,
+        "p99": 405,
+        "max": 430
+      },
+      "prompt_tokens": {
+        "count": 63,
+        "mean": 315.9,
+        "p50": 313,
+        "p90": 339,
+        "p99": 398,
+        "max": 423
+      },
+      "answer_tokens": {
+        "count": 63,
+        "mean": 7.2,
+        "p50": 7,
+        "p90": 8,
+        "p99": 8,
+        "max": 8
+      },
+      "bpe_boundary_fallback": 0,
+      "total_tokens": 20358,
+      "supervised_tokens": 456,
+      "truncated": 0,
+      "truncated_ratio": 0.0,
+      "packing": null
+    }
+  }
+}

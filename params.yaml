@@ -326,15 +326,26 @@ compare:
 hw6:
   model:
     revision: 12fd25f77366fa6b3b4b768ec3050bf629380bac   # run сохраняет разрешённый commit HF, а не только main
+  # ДЗ 7: sweep учится на примерах формата оценки (вопрос с вариантами ->
+  # {"answer":"X"}), а не на ответах Stack Overflow. Ключ data здесь целиком
+  # заменяет общую секцию data в виде src.common.load_params(); ДЗ 4-5 читают
+  # корневую data через src.config и не затронуты. Стадии DVC: format_data,
+  # format_tokenize. Тензоры лежат вне data/tokenized: тот каталог — выход
+  # стадии tokenize, вложенный выход другой стадии DVC не допускает.
+  data:
+    train_jsonl: data/format/train.jsonl
+    val_jsonl: data/format/val.jsonl
+    train: data/format/tokenized/train.pt
+    val: data/format/tokenized/val.pt
   # Один бюджет и один val для всех шести кандидатов. Это короткий учебный поиск.
   train:
     seed: 42
-    max_steps: 4
-    train_limit: 32
-    val_limit: 8
+    max_steps: 60
+    train_limit: 240
+    val_limit: 40
     batch_size: 1
     grad_accum: 2
-    eval_every: 2
+    eval_every: 10
     gradient_checkpointing: true
   lora:
     dropout: 0.05
