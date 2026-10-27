@@ -273,14 +273,15 @@ Sweep, отчёт и регистрация кандидата выполнен�
   один FAILED-run `sweep`; в MLflow также остались FAILED-runs от прежних попыток
   на Qwen3-0.6B. Ничего из этого не удалялось.
 - `make report`, `make candidate`: `docs/comparison.csv`, в реестре
-  `my-smollm-adapter` версия 3 (run `de51a3b4`) с алиасом `candidate`; версии 1 и 2 от прежних sweep остались без алиаса. Модель
+  `my-smollm-adapter` версия 4 (run `56bfe730`) с алиасом `candidate`; версии 1-3 от прежних sweep остались без алиаса. Модель
   `my-qwen-adapter` в реестре не существовала.
-- Не выполнено: `make evaluate`, `make promote`, `make check-negative`. Файлов
-  `data/eval/golden.jsonl`, `training-index.jsonl`, `behavioral.jsonl` нет (их
-  составляет студент, и придумывать их я не стал), `metrics/quality-gate.json`
-  содержит `passed: false` по этой причине. Алиас `champion` не выставлен.
-- `make check-hw6`: пункты 1–8 зелёные, пункт 9 красный: нет `docs/conclusion.md`,
-  который пишется по результатам оценки.
-- `make check-eval`: 39 тестов, 22 ошибки из-за `NotImplementedError` в стартовой
-  заглушке `evaluation/solution.py`. Они были и до смены модели.
+- Оценка выполнена: `make evaluate` и `make eval` дали accuracy и format_rate 0.0 у baseline и candidate,
+  behavioral 0/5, `metrics/quality-gate.json`: `passed: false`, причина «Behavioral: прошли 0 из 5».
+  `make promote` не выполнялся, алиас `champion` не выставлен.
+- Причина нуля: не обрезка и не язык промпта (диагностика: RU/EN system, 32/96 токенов, везде 0.0), а
+  рассогласование обучения и оценки: в train нет формата «вариант -> JSON», кандидат выбран по loss на
+  StackOverflow. Адаптер загружен корректно, 47 из 55 ответов совпадают с baseline. Golden и пороги не
+  менялись; диагностика на том же golden, не независимый аудит. Возможный путь (не выполнен):
+  данные в формате оценки и переобучение.
+- `make check-hw6` и `make check-eval` (39 тестов): см. `docs/conclusion.md`; `docs/conclusion.md` существует.
 - `make check-storage` и `make check-hw6-defects` (15 тестов) проходят.
