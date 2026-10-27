@@ -21,7 +21,7 @@ from transformers import AutoTokenizer
 from src.collate import LABEL_PAD_ID
 from src.config import load_params
 from src.pack import pack_examples, packing_report
-from src.prompt import build_chat_text, encode_chat_text, prompt_token_len
+from src.prompt import build_chat_text, encode_chat_text, prompt_token_len, split_messages
 
 METRICS_PATH = Path("metrics/tokenize.json")
 REPORT_PATH = Path("docs/tokenize_report.md")
@@ -47,6 +47,7 @@ def mask_prompt(input_ids: list[int], n_prompt: int) -> list[int]:
 def encode_example(tokenizer, record: dict, params: dict, max_seq_len: int) -> dict:
     """Один пример -> input_ids / attention_mask / labels + служебная статистика."""
     messages = record["messages"]
+    split_messages(messages)  # запись без ответа ассистента должна падать
     full_text = build_chat_text(tokenizer, messages, params, add_generation_prompt=False)
     prompt_text = build_chat_text(tokenizer, messages, params, add_generation_prompt=True)
 

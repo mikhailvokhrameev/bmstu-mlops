@@ -27,12 +27,12 @@ class AdapterModel(mlflow.pyfunc.PythonModel):
 
     def predict(self, context, model_input, params=None):
         import torch
+        from src.prompt import build_chat_text
         outputs = []
         g = self.manifest["generation"]
         for prompt in model_input["prompt"]:
             messages = [{"role": "system", "content": g["system"]}, {"role": "user", "content": str(prompt)}]
-            text = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True,
-                enable_thinking=self.manifest["model"]["enable_thinking"])
+            text = build_chat_text(self.tokenizer, messages, {"model": self.manifest["model"]}, True)
             batch = self.tokenizer(text, return_tensors="pt").to(self.device)
             with torch.inference_mode():
                 out = self.model.generate(**batch, max_new_tokens=g["max_new_tokens"], do_sample=False,

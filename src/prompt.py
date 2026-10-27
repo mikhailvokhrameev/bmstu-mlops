@@ -58,7 +58,7 @@ def build_chat_text(
     `add_generation_prompt=False` — путь обучения: весь диалог вместе
         с ответом и eos.
     """
-    if add_generation_prompt:
+    if add_generation_prompt and messages and messages[-1]["role"] == "assistant":
         messages, _ = split_messages(messages)
     return render_chat_template(
         tokenizer, messages, add_generation_prompt, **_template_kwargs(params)

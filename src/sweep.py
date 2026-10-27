@@ -32,7 +32,7 @@ def run_candidate(params, candidate, versions):
         mlflow.log_table(samples, "samples.json")
         example = pd.DataFrame({"prompt": samples["prompt"][:1]})
         mlflow.pyfunc.log_model(artifact_path="model", python_model="src/adapter_model.py",
-            artifacts={"adapter": str(out)}, signature=infer_signature(example, answers[:1]),
+            artifacts={"adapter": str(out)}, code_paths=["src"], signature=infer_signature(example, answers[:1]),
             input_example=example,
             pip_requirements=["mlflow==2.22.2", *(f"{n}=={version(n)}" for n in ("torch", "transformers", "peft")), "pandas<3"])
         return {"run_id": mlflow.active_run().info.run_id, "name": candidate["name"], **results}
