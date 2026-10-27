@@ -61,7 +61,7 @@ def main() -> None:
     result = {"variant": args.variant, "adapter_dir": str(adapter_dir), "base": before, "adapter": after}
     out = Path(args.out) if args.out else Path(params["paths"]["metrics"]) / f"compare_{args.variant}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    out.write_text(json.dumps(result, ensure_ascii=True, indent=2) + "\n", encoding="utf-8")
     if args.out:
         print(f"-> {out}")
         return
