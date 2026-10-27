@@ -262,7 +262,7 @@ OK
 Sweep, отчёт и регистрация кандидата выполнены на `HuggingFaceTB/SmolLM2-135M-Instruct`
 (ревизия `12fd25f77366fa6b3b4b768ec3050bf629380bac`). Что сделано и что нет:
 
-- `make sweep`: шесть кандидатов, 4 шага, val loss базы 2.5915, лучший `all-r8-high`
+- Попытка 1: `make sweep`: шесть кандидатов, 4 шага, val loss базы 2.5915, лучший `all-r8-high`
   2.58313 (`qv-r8-high` 2.58669, `all-r8-low` 2.58856, `qv-r8-low` 2.58898,
   `qv-r4-high` 2.58924, `qv-r4-low` 2.58963). Все шесть чуть лучше базы; разброс
   невелик, ведь бюджет учебный (32 примера, 8 примеров val). Пик памяти 3602–3814 МБ.
@@ -272,13 +272,13 @@ Sweep, отчёт и регистрация кандидата выполнен�
   прошёл без правок кода. Упавший запуск оставил в MLflow один FAILED-run `qv-r4-low` и
   один FAILED-run `sweep`; в MLflow также остались FAILED-runs от прежних попыток
   на Qwen3-0.6B. Ничего из этого не удалялось.
-- `make report`, `make candidate`: `docs/comparison.csv`, в реестре
+- Попытка 1: `make report`, `make candidate`: `docs/comparison.csv`, в реестре
   `my-smollm-adapter` версия 4 (run `56bfe730`) с алиасом `candidate`; версии 1-3 от прежних sweep остались без алиаса. Модель
   `my-qwen-adapter` в реестре не существовала.
-- Оценка выполнена: `make evaluate` и `make eval` дали accuracy и format_rate 0.0 у baseline и candidate,
-  behavioral 0/5, `metrics/quality-gate.json`: `passed: false`, причина «Behavioral: прошли 0 из 5».
+- Попытка 1: оценка выполнена: `make evaluate` и `make eval` дали accuracy и format_rate 0.0 у baseline и candidate,
+  behavioral 0/5, `metrics/attempt1-v4/quality-gate.json`: `passed: false`, причина «Behavioral: прошли 0 из 5».
   `make promote` не выполнялся, алиас `champion` не выставлен.
-- Причина нуля: не обрезка и не язык промпта (диагностика: RU/EN system, 32/96 токенов, везде 0.0), а
+- Попытка 1: причина нуля: не обрезка и не язык промпта (диагностика: RU/EN system, 32/96 токенов, везде 0.0), а
   рассогласование обучения и оценки: в train нет формата «вариант -> JSON», кандидат выбран по loss на
   StackOverflow. Адаптер загружен корректно, 47 из 55 ответов совпадают с baseline. Golden и пороги не
   менялись; диагностика на том же golden, не независимый аудит. Этот путь (данные в формате оценки
