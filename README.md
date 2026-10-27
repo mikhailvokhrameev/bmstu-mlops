@@ -142,5 +142,5 @@ make check        # все ДЗ
 | `src/model.py` | `src/adapter_model.py` | `src/model.py` — загрузка модели ДЗ 1; pyfunc-файл должен быть автономным |
 | `src/report.py` | `src/sweep_report.py` | `src/report.py` — отчёт анатомии ДЗ 2 |
 | `tests/check.sh` | `tests/check_hw6.sh` (+ дословная копия `tests/hw67_check.sh` для отпечатка) | `tests/check.sh` — проверки ДЗ 1 |
-| Makefile `check` / `check-all` | `check-hw6` / `check-hw6-all` | `check` — проверки ДЗ 1–5 |
+| Makefile `check` / `check-all` | `check-hw6` (девять проверок MLflow) / `check-all` (= `check-hw6` + `check-eval`; `check-hw6-all` — синоним) | `check` — проверки ДЗ 1–5 |
 | `params.yaml` hw67 | секция `hw6:` | не пересекается с корневыми `train`/`lora` |

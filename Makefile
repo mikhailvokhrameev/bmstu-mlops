@@ -1,4 +1,4 @@
-.PHONY: up down sweep promote predict check-storage report candidate baseline-init evaluate eval check-eval check-negative check-hw6 check-hw6-defects check-hw6-all baseline-update predict-candidate train train-all train-freeze plot compare check-train install generate bench inspect repro v1 v2 diff dag diversity contamination check check-data clean sample tokenize check-tokenize
+.PHONY: up down sweep promote predict check-storage report candidate baseline-init evaluate eval check-eval check-negative check-hw6 check-hw6-defects check-hw6-all check-allbaseline-update predict-candidate train train-all train-freeze plot compare check-train install generate bench inspect repro v1 v2 diff dag diversity contamination check check-data clean sample tokenize check-tokenize
 
 install:
 	uv sync
@@ -111,6 +111,7 @@ check-eval:
 check-negative:
 	uv run python -m evaluation.cli negative
 check-hw6-all: check-hw6 check-eval
+check-all: check-hw6 check-eval
 baseline-update:
 	uv run python -m evaluation.cli baseline-update
 predict-candidate:
