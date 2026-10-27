@@ -108,11 +108,9 @@ LLM-as-judge, BLEU/ROUGE/BERTScore и платный API для обязател
 
 ## Состояние выполнения на SmolLM2-135M-Instruct
 
-Часть B в репозитории не выполнена до конца. Файлов `data/eval/golden.jsonl`,
-`data/eval/training-index.jsonl` и `data/eval/behavioral.jsonl` нет: это набор,
-который составляет студент вручную, и придумывать его я не стал. Поэтому
-`make evaluate` и `make promote` падают на отсутствии golden, `metrics/quality-gate.json`
-содержит `passed: false` с этой причиной, алиас `champion` в реестре не выставлен
-(есть только `candidate` у `my-smollm-adapter` версии 2; версия 1 осталась без алиаса). `docs/conclusion.md` не написан.
-`make check-eval` даёт 22 ошибки из 39 тестов: они вызваны заглушками стартового
-`evaluation/solution.py` (`NotImplementedError`), а не сменой модели.
+Часть B выполнена, quality gate отказал. Данные (`golden` 50, `behavioral` 5, индекс train 1330)
+строит DVC-стадия `eval_data` (`evaluation/prep/build_eval_data.py`). `score` и `quality_gate`
+реализованы в `evaluation/solution.py`, `make check-eval` проходит (39 тестов). Оценка баз и
+кандидата (версия 4) дала accuracy и format_rate 0.0 у обеих моделей, behavioral 0/5, gate отказал:
+`metrics/quality-gate.json`, отрицательная проверка прошла. `champion` не выставлен, `baseline`
+не менялся. Подробности и решение: [docs/conclusion.md](docs/conclusion.md).

@@ -1,0 +1,332 @@
+[
+  {
+    "id": "gold-001",
+    "raw": "Какие функции MLflow записывает числовую",
+    "error": null,
+    "latency_seconds": 1.1392536250059493
+  },
+  {
+    "id": "gold-002",
+    "raw": "Что в MLflow хранит версии зарегистрированных модел",
+    "error": null,
+    "latency_seconds": 0.9641267090046313
+  },
+  {
+    "id": "gold-003",
+    "raw": "Какие функции MLflow сохраняет гиперпарамет",
+    "error": null,
+    "latency_seconds": 0.9441086669976357
+  },
+  {
+    "id": "gold-004",
+    "raw": "Из чего TensorBoard читает данные для графиков? A -",
+    "error": null,
+    "latency_seconds": 0.9393710419826675
+  },
+  {
+    "id": "gold-005",
+    "raw": "Какой командой запускает веб-интерфейс MLflow Tracking",
+    "error": null,
+    "latency_seconds": 0.9378028750070371
+  },
+  {
+    "id": "gold-006",
+    "raw": "Что в MLflow называется artifact? A - файл, сохранё",
+    "error": null,
+    "latency_seconds": 1.0615252089919522
+  },
+  {
+    "id": "gold-007",
+    "raw": "Как в Optuna называется объект всей оптими",
+    "error": null,
+    "latency_seconds": 0.9707804170029704
+  },
+  {
+    "id": "gold-008",
+    "raw": "Как в Optuna называется одна попытка с конкретны",
+    "error": null,
+    "latency_seconds": 0.9602084160142113
+  },
+  {
+    "id": "gold-009",
+    "raw": "Какие метрики в TensorBoard? Возвращается какие метри",
+    "error": null,
+    "latency_seconds": 0.9650436669762712
+  },
+  {
+    "id": "gold-010",
+    "raw": "Что такое alias (например, champion) в реестре моделей MLflow",
+    "error": null,
+    "latency_seconds": 0.9690938330022618
+  },
+  {
+    "id": "gold-011",
+    "raw": "Самый как у вас, где в MLflow хранятся мет",
+    "error": null,
+    "latency_seconds": 0.9619567920162808
+  },
+  {
+    "id": "gold-012",
+    "raw": "Какой метод Optuna запускает оптимизацию? A - study",
+    "error": null,
+    "latency_seconds": 0.9711771670263261
+  },
+  {
+    "id": "gold-013",
+    "raw": "Какой командой DVC начинает отслеживать файл",
+    "error": null,
+    "latency_seconds": 0.9398904160188977
+  },
+  {
+    "id": "gold-014",
+    "raw": "Какой командой DVC отправляет данные из кеша в ",
+    "error": null,
+    "latency_seconds": 0.9468229159829207
+  },
+  {
+    "id": "gold-015",
+    "raw": "Что Git хранит вместо большого файла, добав",
+    "error": null,
+    "latency_seconds": 0.944808333995752
+  },
+  {
+    "id": "gold-016",
+    "raw": "Какой командой DVC восстанавливает файлы раб",
+    "error": null,
+    "latency_seconds": 0.9436537919973489
+  },
+  {
+    "id": "gold-017",
+    "raw": "Что описывает секция deps стадии в dvc.yaml? A",
+    "error": null,
+    "latency_seconds": 0.9754462910059374
+  },
+  {
+    "id": "gold-018",
+    "raw": "Что записывает файл dvc.lock? A - точные х",
+    "error": null,
+    "latency_seconds": 0.9573875829810277
+  },
+  {
+    "id": "gold-019",
+    "raw": "Какие стадии пайплайна устарели? A - dvc status, B",
+    "error": null,
+    "latency_seconds": 0.9497536669950932
+  },
+  {
+    "id": "gold-020",
+    "raw": "Не простое, если вы хотите получать следу",
+    "error": null,
+    "latency_seconds": 0.9653787910065148
+  },
+  {
+    "id": "gold-021",
+    "raw": "Какой командой DVC воспроизводит пайплайн, п",
+    "error": null,
+    "latency_seconds": 0.9410479160142131
+  },
+  {
+    "id": "gold-022",
+    "raw": "Что означает cache: false у метрики в dvc.yaml? A - фай",
+    "error": null,
+    "latency_seconds": 0.974393250013236
+  },
+  {
+    "id": "gold-023",
+    "raw": "Какой командой DVC скачивает данные из удалё",
+    "error": null,
+    "latency_seconds": 0.9457263330114074
+  },
+  {
+    "id": "gold-024",
+    "raw": "Что показывает команда dvc dag? A - граф зави",
+    "error": null,
+    "latency_seconds": 0.9394917500030715
+  },
+  {
+    "id": "gold-025",
+    "raw": "Как в Airflow называется Python-описание набора задач",
+    "error": null,
+    "latency_seconds": 0.9498682499979623
+  },
+  {
+    "id": "gold-026",
+    "raw": "Что в Airflow выполняет одну единицу работы вн",
+    "error": null,
+    "latency_seconds": 0.9351403340115212
+  },
+  {
+    "id": "gold-027",
+    "raw": "Какой компонент Airflow запускает задачи по рас",
+    "error": null,
+    "latency_seconds": 1.0517625830252655
+  },
+  {
+    "id": "gold-028",
+    "raw": "Каким методом задача Luigi объявляет свои з",
+    "error": null,
+    "latency_seconds": 0.9417399170051794
+  },
+  {
+    "id": "gold-029",
+    "raw": "Какой декоратор Prefect превращает Python-функцию в з",
+    "error": null,
+    "latency_seconds": 0.9534667920088395
+  },
+  {
+    "id": "gold-030",
+    "raw": "Что в Dagster называется asset? A - объект данных (т",
+    "error": null,
+    "latency_seconds": 0.9463282079959754
+  },
+  {
+    "id": "gold-031",
+    "raw": "Как потоки внутри одного Python-процесса? В",
+    "error": null,
+    "latency_seconds": 0.9795150419813581
+  },
+  {
+    "id": "gold-032",
+    "raw": "Как Kubeflow Pipelines описывает конвейер? Выполня",
+    "error": null,
+    "latency_seconds": 0.9719512909941841
+  },
+  {
+    "id": "gold-033",
+    "raw": "Для чего в Kedro нужен Data Catalog? A - описывает наб",
+    "error": null,
+    "latency_seconds": 1.0251019159913994
+  },
+  {
+    "id": "gold-034",
+    "raw": "Что реализует Argo CD? A - обучение нейросетей",
+    "error": null,
+    "latency_seconds": 0.9681258329947013
+  },
+  {
+    "id": "gold-035",
+    "raw": "Как Tekton Pipelines описывает шаги CI/CD? A - как ",
+    "error": null,
+    "latency_seconds": 0.9504940829938278
+  },
+  {
+    "id": "gold-036",
+    "raw": "На основе какого проекта построены управ",
+    "error": null,
+    "latency_seconds": 0.9324984999839216
+  },
+  {
+    "id": "gold-037",
+    "raw": "Что задаёт cron-выражение в расписании DAG",
+    "error": null,
+    "latency_seconds": 0.9436006670002826
+  },
+  {
+    "id": "gold-038",
+    "raw": "Модели какого формата загружает TensorFlow Serving? A - Saved",
+    "error": null,
+    "latency_seconds": 0.9584545410179999
+  },
+  {
+    "id": "gold-039",
+    "raw": "Не так, это открытый формат представл",
+    "error": null,
+    "latency_seconds": 0.9549112500099
+  },
+  {
+    "id": "gold-040",
+    "raw": "Не простое. Вот так:\n\nНе простое, чт",
+    "error": null,
+    "latency_seconds": 0.9643024999822956
+  },
+  {
+    "id": "gold-041",
+    "raw": "Что оптимизирует NVIDIA TensorRT? A - инференс ней",
+    "error": null,
+    "latency_seconds": 0.9454640830226708
+  },
+  {
+    "id": "gold-042",
+    "raw": "На каком оборудовании OpenVINO в первую очередь",
+    "error": null,
+    "latency_seconds": 0.9608977920142934
+  },
+  {
+    "id": "gold-043",
+    "raw": "Что используют, чтобы контейнеры Docker пол",
+    "error": null,
+    "latency_seconds": 0.9562892920221202
+  },
+  {
+    "id": "gold-044",
+    "raw": "Что позволяет Knative Serving? A - версионировать датас",
+    "error": null,
+    "latency_seconds": 0.9694301670242567
+  },
+  {
+    "id": "gold-045",
+    "raw": "Какой объект Kubernetes описывает желаемое ч",
+    "error": null,
+    "latency_seconds": 0.94899620799697
+  },
+  {
+    "id": "gold-046",
+    "raw": "Какой порт использует REST API TensorFlow Serving в официальном",
+    "error": null,
+    "latency_seconds": 0.9888362500059884
+  },
+  {
+    "id": "gold-047",
+    "raw": "Самый какой-то разработчик, есть предло�",
+    "error": null,
+    "latency_seconds": 0.956330082990462
+  },
+  {
+    "id": "gold-048",
+    "raw": "Что такое Vertex AI в Google Cloud? A - библиотека для постр",
+    "error": null,
+    "latency_seconds": 0.9761187499971129
+  },
+  {
+    "id": "gold-049",
+    "raw": "Какие ресурсы в Azure Machine Learning? Верни эксперимент",
+    "error": null,
+    "latency_seconds": 0.9863145409908611
+  },
+  {
+    "id": "gold-050",
+    "raw": "Что делает Ray Serve? A - версионирует датасеты в Git, B",
+    "error": null,
+    "latency_seconds": 0.9889640829933342
+  },
+  {
+    "id": "behavior-format-flow",
+    "raw": "Что объявляет декоратор @flow в Prefect? A - поток",
+    "error": null,
+    "latency_seconds": 0.9389507499872707
+  },
+  {
+    "id": "behavior-paraphrase-flow",
+    "raw": "Для чего в Prefect применяют декоратор @flow? A - т",
+    "error": null,
+    "latency_seconds": 0.9446750420029275
+  },
+  {
+    "id": "behavior-format-lock",
+    "raw": "Не простое, если выполненный файл DVC фи",
+    "error": null,
+    "latency_seconds": 0.9869655419897754
+  },
+  {
+    "id": "behavior-refusal-poem",
+    "raw": "Сочини стихотворение про осень. A - строфа и",
+    "error": null,
+    "latency_seconds": 0.968823583010817
+  },
+  {
+    "id": "behavior-refusal-weather",
+    "raw": "Какой погода будет завтра в Москве? A - солне",
+    "error": null,
+    "latency_seconds": 0.9478796659968793
+  }
+]
