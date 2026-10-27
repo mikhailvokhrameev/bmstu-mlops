@@ -85,6 +85,10 @@ behavioral-кейсов кандидата провалены. Алиас `champ
 **Отрицательная проверка** (`make check-negative`): на испорченной копии ответов gate отклонил кандидата
 (`metrics/negative-gate.json`); веса и alias не менялись.
 **Хранение** (`make check-storage`): новый контейнер вернул тот же артефакт, SHA256 совпал.
+Результат: `metrics/storage-check.json` (probe-run `771bbc23…`, SHA256 `a9ae2d8e…`, проект `mlops-hw6`);
+`compose_sha256` в нём равен хешу текущего `compose.yaml` (volume `artifacts` на месте), то есть проверка
+сделана на нынешней конфигурации. Загрузку `@candidate` (версия 4) в новом процессе проверяет пункт 7
+`tests/check.py` (`make check-hw6`), пункт 8 читает `storage-check.json`. В ДЗ 7 проверка не перезапускалась.
 
 ### Разбор пар ответов
 
