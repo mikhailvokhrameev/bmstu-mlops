@@ -124,13 +124,20 @@ make check        # все ДЗ
 На машине с 8 ГБ `make sweep` с настройками MPS по умолчанию падает по OOM в первой
 оценке базы (лимит аллокатора около 2,7 ГиБ при последовательностях до 1536 токенов).
 Запускать так: `PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.8 PYTORCH_MPS_LOW_WATERMARK_RATIO=0.6 make sweep`.
-Пик памяти при этом 3,6–3,8 ГБ.
+Пик памяти при этом 3,6–3,8 ГБ в попытке 1 и 1,5–2,6 ГБ в попытке 2.
 
-Результат на SmolLM2-135M-Instruct: val loss базы 2.5915 (8 примеров val), лучший
-кандидат `all-r8-high` — 2.5831 (run `56bfe730`), остальные 2.5867–2.5896; бюджет — 4 шага,
-32 примера train, поэтому разница небольшая. В реестре `my-smollm-adapter` кандидат — версия 4
-(alias `candidate`); версии 1–3 от прежних sweep остались без алиаса. Оценка ответов (часть B ДЗ 7)
-выполнена, gate отказал, `champion` не выставлен — см. раздел «ДЗ 6+7» ниже и
+Результат на SmolLM2-135M-Instruct.
+
+- Попытка 1, обучение на StackOverflow, бюджет 4 шага и 32 примера train. Val loss базы 2.5915
+  (8 примеров val), лучший кандидат `all-r8-high` — 2.5831 (run `56bfe730`), версия 4.
+  Результаты сохранены в `metrics/attempt1-v4/`.
+- Попытка 2 (текущая), обучение на примерах формата оценки (`data/format/`, стадии DVC
+  `format_data` и `format_tokenize`), бюджет 60 шагов, train[:240], val[:40]. Val loss базы 2.0490,
+  лучший кандидат `qv-r8-high` — 0.1503 (run `370a4f53`), остальные 0.1730–0.6436.
+
+В реестре `my-smollm-adapter` alias `candidate` указывает на версию 5. Версии 1–4 остались без алиаса.
+Оценка ответов (часть B ДЗ 7) выполнена: accuracy кандидата 0.46 против 0.0 у базы, format_rate 1.0,
+но behavioral 3/5, поэтому gate отказал и `champion` не выставлен. Подробности — в разделе «ДЗ 6+7» ниже и
 [docs/conclusion.md](docs/conclusion.md); разбор дефектов — [docs/defects.md](docs/defects.md)
 и [docs/hw6_defects.md](docs/hw6_defects.md).
 
@@ -160,13 +167,20 @@ make evaluate           # ответы baseline и candidate на golden и beha
 make eval               # отчёты, eval-diff.json, quality gate; отказ даёт код возврата != 0
 make check-negative     # испорченная копия ответов должна быть отклонена
 make check-storage      # артефакт переживает пересоздание контейнера
-make check-eval         # 39 тестов score и quality_gate, без модели
+make check-eval         # 57 юнит-тестов (score, quality_gate, данные формата), без модели
 make check-all          # девять проверок MLflow (check-hw6) + check-eval
 ```
 
-**Решение.** `make promote` не выполнялся, `champion` не назначен: quality gate отказал
-(«Behavioral: прошли 0 из 5», accuracy и format_rate 0.0 у обеих моделей). Это допустимый итог;
-причина — рассогласование обучения и оценки, подробности в [docs/conclusion.md](docs/conclusion.md).
+**Решение.** `make promote` не выполнялся, `champion` не назначен: quality gate отказал в обеих
+попытках.
+
+- Попытка 1 (версия 4): «Behavioral: прошли 0 из 5», accuracy и format_rate 0.0 у обеих моделей.
+  Причина — рассогласование обучения и оценки.
+- Попытка 2 (версия 5, обучение на данных формата): accuracy 0.46, format_rate 1.0, критический срез
+  4/12 против 0/12 у базы, но «Behavioral: прошли 3 из 5»: на вопрос по теме про `@flow` в Prefect
+  модель ложно отвечает REFUSE.
+
+Подробности в [docs/conclusion.md](docs/conclusion.md).
 
 **Что сдавать** (веса, тензоры, `.venv`, volumes и секреты в Git не входят):
 
@@ -175,12 +189,14 @@ make check-all          # девять проверок MLflow (check-hw6) + che
   `data/eval/golden.jsonl` — 50, `behavioral.jsonl` — 5, `training-index.jsonl` — 1330);
 - `metrics/{baseline,candidate}-{outputs,eval}.json`, `eval-diff.json`, `quality-gate.json`,
   `negative-gate.json`, `storage-check.json` (все в Git: `.gitignore` исключает из `metrics/` только
-  `train_*.json` и `compare_*.json` от ДЗ 5);
-- ссылки на runs в MLflow: sweep и шесть дочерних runs, probe-run хранения, run оценки
-  `89c1fd76efac4270a3882c3032ced549` (эксперимент `hw67-evaluation`).
+  `train_*.json` и `compare_*.json` от ДЗ 5). Результаты попытки 1 лежат в `metrics/attempt1-v4/`;
+- ссылки на runs в MLflow: sweep `f4a4ddf971cd47419766b96582079c8e` и шесть дочерних runs, probe-run
+  хранения `16b2d85fae834766a52533fd0bc40fb4`, run оценки `2d82968b4f044e3bad82b9cd187d8ecd`
+  (эксперимент `hw67-evaluation`). Run оценки попытки 1 — `89c1fd76efac4270a3882c3032ced549`.
 
 **Сценарий видео (5–8 минут).** 1) UI MLflow: родитель `sweep` и шесть дочерних runs, лучший по loss;
-2) реестр: `my-smollm-adapter` версия 4 и alias `candidate`, `champion` нет; 3) `make eval`: результаты по
-срезам, пары ответов и отказ gate; 4) `make check-negative`: отклонение испорченной копии;
+2) реестр: `my-smollm-adapter` версия 5 и alias `candidate`, `champion` нет; 3) `make eval`: результаты по
+срезам, пары ответов и отказ gate (behavioral 3/5); 4) `make check-negative`: отклонение испорченной копии;
 5) `make check-storage` и `storage-check.json`; 6) `make check-eval` и `make check-all`; 7) вывод:
-почему отказ честный итог и что дальше (данные в формате оценки и переобучение).
+попытка 1 (0.0, рассогласование) → попытка 2 (данные формата, 0.46, ложные REFUSE), почему отказ —
+честный итог.

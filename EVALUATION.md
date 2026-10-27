@@ -108,16 +108,25 @@ LLM-as-judge, BLEU/ROUGE/BERTScore и платный API для обязател
 
 ## Состояние выполнения на SmolLM2-135M-Instruct
 
-Часть B выполнена, quality gate отказал. Данные (`golden` 50, `behavioral` 5, индекс train 1330)
-строит DVC-стадия `eval_data` (`evaluation/prep/build_eval_data.py`). `score` и `quality_gate`
-реализованы в `evaluation/solution.py`, `make check-eval` проходит (39 тестов). Оценка баз и
-кандидата (версия 4) дала accuracy и format_rate 0.0 у обеих моделей, behavioral 0/5, gate отказал:
+Часть B выполнена, quality gate отказал в обеих попытках. Данные (`golden` 50, `behavioral` 5,
+индекс train 1330) строит DVC-стадия `eval_data` (`evaluation/prep/build_eval_data.py`). `score` и
+`quality_gate` реализованы в `evaluation/solution.py`. В попытке 1 `make check-eval` проходил
+(39 тестов), сейчас проходит 57 тестов, включая тесты данных формата.
+
+**Попытка 2 (текущая).** Sweep переобучен на примерах формата оценки (`data/format/`, стадии
+`format_data` и `format_tokenize`). Кандидат — `my-smollm-adapter` версия 5 (run `370a4f53`,
+`qv-r8-high`). Протокол и baseline те же (`protocol_sha256` `f6585e43…`). Результат: accuracy 0.46
+против 0.0 у базы, format_rate 1.0, критический срез 4/12, behavioral 3/5. Gate отказал с причиной
+«Behavioral: прошли 3 из 5»: на вопросы про `@flow` модель ложно отвечает REFUSE. Run оценки —
+`2d82968b4f044e3bad82b9cd187d8ecd`.
+
+**Попытка 1** (результаты в `metrics/attempt1-v4/`). Оценка базы и кандидата (версия 4) дала accuracy и format_rate 0.0 у обеих моделей, behavioral 0/5, gate отказал:
 `metrics/quality-gate.json`, отрицательная проверка прошла. `champion` не выставлен, `baseline`
 не менялся. Причина нуля не в протоколе (лимит токенов и язык промпта проверены диагностикой, при 96
 токенах результат тот же), а в рассогласовании обучения и оценки: адаптер учился на свободных ответах
 StackOverflow, формата «вариант -> JSON» в данных нет; адаптер загружен корректно, 47 из 55 ответов
 совпадают с baseline. Golden и пороги не менялись; диагностика на том же golden, не независимый аудит.
-Возможный путь (не выполнен): добавить данные в формате оценки и переобучить. Подробности и решение:
+Этот путь (данные в формате оценки и переобучение) выполнен как попытка 2. Подробности и решение:
 [docs/conclusion.md](docs/conclusion.md).
 
 ### Протокол и контроль утечки (проверено для ДЗ 7)
