@@ -273,7 +273,7 @@ Sweep, отчёт и регистрация кандидата выполнен�
   один FAILED-run `sweep`; в MLflow также остались FAILED-runs от прежних попыток
   на Qwen3-0.6B. Ничего из этого не удалялось.
 - `make report`, `make candidate`: `docs/comparison.csv`, в реестре
-  `my-smollm-adapter` версия 2 (run `c55591ce`) с алиасом `candidate`; версия 1 от первого sweep осталась без алиаса. Модель
+  `my-smollm-adapter` версия 3 (run `de51a3b4`) с алиасом `candidate`; версии 1 и 2 от прежних sweep остались без алиаса. Модель
   `my-qwen-adapter` в реестре не существовала.
 - Не выполнено: `make evaluate`, `make promote`, `make check-negative`. Файлов
   `data/eval/golden.jsonl`, `training-index.jsonl`, `behavioral.jsonl` нет (их
