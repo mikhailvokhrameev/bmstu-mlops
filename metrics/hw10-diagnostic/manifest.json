@@ -1,0 +1,35 @@
+{
+  "artifact": {
+    "kind": "base",
+    "root": "/private/tmp/hw10-diagnostic-snapshot",
+    "base_model": {
+      "name": "HuggingFaceTB/SmolLM2-135M-Instruct",
+      "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+    },
+    "files": {
+      "config.json": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+      "generation_config.json": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+      "merges.txt": "0b54e8aa4e53d5383e2e4bc635a56b43f9647f7b13832d5d9ecd8f82dac4f510",
+      "model.safetensors": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+      "special_tokens_map.json": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+      "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "tokenizer_config.json": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+      "vocab.json": "82b84012e3add4d01d12ba14442026e49b8cbbaead1f79ecf3d919784f82dc79"
+    }
+  },
+  "runtime": {
+    "base_model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "base_revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+    "device": "cpu",
+    "dtype": "float32",
+    "generation": {
+      "system": "\u0422\u044b \u043f\u043e\u043c\u043e\u0449\u043d\u0438\u043a \u043f\u043e MLOps-\u0438\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u0430\u043c. \u0420\u0435\u0448\u0438 \u0437\u0430\u0434\u0430\u0447\u0443 \u0432\u044b\u0431\u043e\u0440\u0430 \u0432\u0430\u0440\u0438\u0430\u043d\u0442\u0430. \u0412\u0435\u0440\u043d\u0438 \u0442\u043e\u043b\u044c\u043a\u043e JSON \u0441 \u0435\u0434\u0438\u043d\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u043c \u043f\u043e\u043b\u0435\u043c answer \u0438 \u0441\u0442\u0440\u043e\u043a\u043e\u0432\u043e\u0439 \u043c\u0435\u0442\u043a\u043e\u0439 \u0438\u0437 choices, \u0443\u043a\u0430\u0437\u0430\u043d\u043d\u044b\u0445 \u0432 \u0432\u043e\u043f\u0440\u043e\u0441\u0435, \u043d\u0430\u043f\u0440\u0438\u043c\u0435\u0440 {\"answer\":\"A\"}. \u041d\u0430 \u0437\u0430\u043f\u0440\u043e\u0441 \u0437\u0430 \u043f\u0440\u0435\u0434\u0435\u043b\u0430\u043c\u0438 MLOps (\u043d\u0435 \u043f\u0440\u043e \u0442\u0440\u0435\u043a\u0438\u043d\u0433 \u044d\u043a\u0441\u043f\u0435\u0440\u0438\u043c\u0435\u043d\u0442\u043e\u0432, \u0432\u0435\u0440\u0441\u0438\u043e\u043d\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435 \u0434\u0430\u043d\u043d\u044b\u0445, \u043e\u0440\u043a\u0435\u0441\u0442\u0440\u0430\u0446\u0438\u044e \u0438 \u0440\u0430\u0437\u0432\u0451\u0440\u0442\u044b\u0432\u0430\u043d\u0438\u0435 \u043c\u043e\u0434\u0435\u043b\u0435\u0439) \u0432\u0435\u0440\u043d\u0438 {\"answer\":\"REFUSE\"}.",
+      "max_new_tokens": 32,
+      "enable_thinking": false,
+      "seed": 42
+    },
+    "do_sample": false
+  },
+  "model_id": "diagnostic-smollm2-135m-12fd25f-cpu",
+  "runtime_sha256": "2bc721ed36665f1f95ad55642dc8b35eeea28adc6983d52fa6e3a4829ac48646"
+}

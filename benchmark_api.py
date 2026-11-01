@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import statistics
 import time
+import threading
 import urllib.request
 import uuid
 
@@ -13,7 +14,10 @@ PROMPTS=['Choose a color.','Say hello.','What is 2+2?','Name an animal.',
 
 def run(url,output):
     output=Path(output); output.mkdir(parents=True,exist_ok=True)
-    rows=[]; summary=[]
+    summary=[]
+    lock=threading.Lock()
+    (output/'attempts.jsonl').write_text('')
+    (output/'summary.json').write_text('[]')
     for concurrency in (1,2):
         def attempt(item):
             index,prompt=item
@@ -29,12 +33,14 @@ def run(url,output):
                 row['error']=f'{type(exc).__name__}: {exc}'
                 row['status']=getattr(exc,'code',None)
             row['client_seconds']=time.perf_counter()-started
+            with lock:
+                with (output/'attempts.jsonl').open('a') as stream:
+                    stream.write(json.dumps(row,ensure_ascii=False)+'\n')
             return row
         started=time.perf_counter()
         with ThreadPoolExecutor(max_workers=concurrency) as pool:
             batch=list(pool.map(attempt,enumerate(PROMPTS)))
         elapsed=time.perf_counter()-started
-        rows.extend(batch)
         successes=[r for r in batch if r['status']==200 and r['error'] is None]
         latencies=[r['client_seconds'] for r in successes]
         summary.append(dict(concurrency=concurrency,n=len(batch),successes=len(successes),errors=len(batch)-len(successes),
@@ -42,11 +48,12 @@ def run(url,output):
             mean_success_seconds=statistics.mean(latencies) if latencies else None,
             max_success_seconds=max(latencies) if latencies else None,
             error_latencies_seconds=[r['client_seconds'] for r in batch if r not in successes]))
-        (output/'attempts.jsonl').write_text(''.join(json.dumps(r,ensure_ascii=False)+'\n' for r in rows))
         (output/'summary.json').write_text(json.dumps(summary,indent=2))
     return summary
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(); p.add_argument('--url',default='http://127.0.0.1:8092')
     p.add_argument('--output',type=Path,default=Path('metrics/hw10'))
-    args=p.parse_args(); print(json.dumps(run(args.url,args.output),indent=2))
+    args=p.parse_args(); result=run(args.url,args.output)
+    print(json.dumps(result,indent=2))
+    raise SystemExit(1 if any(batch['errors'] for batch in result) else 0)

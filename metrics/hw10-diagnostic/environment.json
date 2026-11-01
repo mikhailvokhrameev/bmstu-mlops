@@ -1,0 +1,42 @@
+{
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]",
+  "device": "cpu",
+  "model_id": "diagnostic-smollm2-135m-12fd25f-cpu",
+  "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+  "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+  "runtime_sha256": "2bc721ed36665f1f95ad55642dc8b35eeea28adc6983d52fa6e3a4829ac48646",
+  "artifact_sha256": "e58a141dab2633485eac80bf518158549c35e998f101396eceeee773818c00ad",
+  "versions": {
+    "torch": "2.14.0",
+    "transformers": "5.16.1",
+    "fastapi": "0.162.0",
+    "uvicorn": "0.54.0",
+    "tokenizers": "0.23.2"
+  },
+  "server_command": [
+    ".venv/bin/python",
+    "api_service.py",
+    "--backend",
+    "diagnostic",
+    "--diagnostic-manifest",
+    "metrics/hw10-diagnostic/manifest.json",
+    "--max-parallel",
+    "1",
+    "--port",
+    "8092"
+  ],
+  "benchmark_command": [
+    ".venv/bin/python",
+    "benchmark_api.py",
+    "--url",
+    "http://127.0.0.1:8092",
+    "--output",
+    "metrics/hw10-diagnostic"
+  ],
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}

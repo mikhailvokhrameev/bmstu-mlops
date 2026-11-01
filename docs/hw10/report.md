@@ -252,3 +252,53 @@ PYCODE
 
 
 Дополнительно после device fix проверена совместимость прежней pipeline fixture без adapter artifact: `python3 -m unittest discover -s tests -p test_pipeline.py -v` — **5 tests OK**, `metrics/hw10/device-pipeline-compatibility.log`. Для этой неподписываемой fixture сохранён четырёхаргументный вызов generate; реальная bound adapter-оценка всегда получает concrete runtime явным аргументом. Существующие pipeline tests не изменялись. Повторные compileall и diff-check успешны.
+
+## Диагностический реальный HTTP запуск (2026-11-01)
+
+Дополнительно выполнен отдельный режим `--backend diagnostic`: это реальная генерация pinned base на CPU, **diagnostic_only=true, accepted_release=false**. Этот запуск не публикует модель, не читает accepted и не заменяет проверенный выпуск. Gate остаётся **0/5**, принятого real smoke и benchmark по-прежнему нет. Исторические результаты STUB выше относятся к отдельному опыту.
+
+Артефакты нового опыта: `metrics/hw10-diagnostic/manifest.json`, `environment.json`, `smoke.json`, `attempts.jsonl`, `summary.json`, `server.log`, `benchmark.log`. В manifest записаны SHA-256 всех файлов материализованного snapshot, canonical runtime hash и фиксированный model_id. Веса находятся только в `/private/tmp/hw10-diagnostic-snapshot`, вне Git. Модель `HuggingFaceTB/SmolLM2-135M-Instruct`, revision `12fd25f77366fa6b3b4b768ec3050bf629380bac`, float32/CPU. Среда macOS 26.6.2 arm64, Python 3.12.4, torch 2.14.0, transformers 5.16.1, FastAPI 0.162.0, uvicorn 0.54.0, tokenizers 0.23.2. Потоки OMP/MKL=2, `TOKENIZERS_PARALLELISM=false`; сервер имеет один compute слот.
+
+Первый реальный запуск загрузил веса и завершил прогрев, но sandbox запретил bind loopback. Ошибка сохранена в `server-sandbox-failure.log`, `run-sandbox-failure.log`, `smoke-sandbox-failure.json`. Повтор выполнен с разрешённой эскалацией локального HTTP. `/health`, `/ready`, `/generate` после startup возвращают 200; identity и диагностические флаги ready/generate проверены. Сервер остановлен в finally после измерений.
+
+Точные команды сервера и benchmark (переменные среды применяются к обеим):
+
+```sh
+export OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 TOKENIZERS_PARALLELISM=false
+.venv/bin/python api_service.py --backend diagnostic --diagnostic-manifest metrics/hw10-diagnostic/manifest.json --max-parallel 1 --port 8092
+# После завершения startup/прогрева, из другого терминала:
+curl http://127.0.0.1:8092/health
+curl http://127.0.0.1:8092/ready
+curl -H 'Content-Type: application/json' -d '{"prompt":"Say hello."}' http://127.0.0.1:8092/generate
+.venv/bin/python benchmark_api.py --url http://127.0.0.1:8092 --output metrics/hw10-diagnostic
+```
+
+Восстановление snapshot после удаления временного каталога: скопировать pinned HF cache с разыменованием ссылок; заново сверить identity с manifest. При несовпадении сервер закрывает startup. Для нового пути создать новый диагностический manifest с пересчитанной identity, сохранив исходный архив опыта:
+
+```sh
+.venv/bin/python - <<'PYCODE'
+import json, shutil
+from pathlib import Path
+import release
+out=Path('/private/tmp/hw10-diagnostic-reproduction'); out.mkdir()
+runtime=json.loads(Path('metrics/hw10/base-runtime.json').read_text())
+cache=Path.home()/'.cache/huggingface/hub'/('models--'+runtime['base_model'].replace('/','--'))/'snapshots'/runtime['base_revision']
+snapshot=out/'snapshot'; shutil.copytree(cache,snapshot,symlinks=False)
+artifact=release.base_artifact_identity(snapshot,dict(name=runtime['base_model'],revision=runtime['base_revision']))
+manifest=dict(artifact=artifact,runtime=runtime,model_id='diagnostic-smollm2-135m-12fd25f-cpu',runtime_sha256=release.sha256(release.canonical(runtime)))
+(out/'manifest.json').write_text(json.dumps(manifest,indent=2))
+PYCODE
+# Использовать --diagnostic-manifest /private/tmp/hw10-diagnostic-reproduction/manifest.json
+# и отдельный --output; не перезаписывать сохранённый опыт.
+```
+
+`queue_seconds` измеряет серверное ожидание единственного compute слота; `generation_seconds` — весь backend вызов, включая токенизацию, полное `model.generate`, decode и thread overhead; `total_seconds` — серверный интервал, `client_seconds` также включает HTTP и клиентское планирование. Prefill/decode отдельно не инструментированы; единый нестриминговый JSON не даёт TTFT/ITL. Измерения не доказывают batching или скорость принятого выпуска.
+
+Для видео: показать gate 0/5 и отсутствие accepted; затем manifest без весов, реальный diagnostic startup, `/ready` и `/generate` с обоими флагами, все 16 попыток и таблицу ниже. Пояснить отличие этого опыта от принятого serving и прежнего STUB. Видео пользователем пока не записано.
+
+| Клиенты | n | Успехи | Ошибки | Пакет, с | Успешные req/s | Средняя client, с | Макс. client, с | Средняя queue, с | Средняя generation, с |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 8 | 8 | 0 | 14.020578 | 0.570590 | 1.751410 | 2.761310 | 0.000024 | 1.736335 |
+| 2 | 8 | 8 | 0 | 12.581309 | 0.635864 | 2.788943 | 5.622430 | 1.212015 | 1.570121 |
+
+Оба режима: одинаковые восемь prompts, max_new_tokens=32, 16/16 HTTP 200, ошибок 0, одна identity и runtime. При двух клиентах средняя клиентская задержка выросла из-за ожидания слота. Небольшая разница throughput на восьми запросах не доказывает ускорение вычислений. При завершении сервер вывел предупреждение Python resource_tracker об одном semaphore; shutdown завершён штатно, предупреждение сохранено в server.log.

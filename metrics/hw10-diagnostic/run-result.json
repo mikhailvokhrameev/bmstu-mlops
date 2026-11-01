@@ -1,0 +1,11 @@
+{
+  "diagnostic_only": true,
+  "accepted_release": false,
+  "driver_exit_code": 0,
+  "benchmark_exit_code": 0,
+  "attempts": 16,
+  "successes": 16,
+  "errors": 0,
+  "server_terminated_in_finally": true,
+  "shutdown_warning": "resource_tracker: one leaked semaphore object; server shutdown completed"
+}
