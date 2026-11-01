@@ -1,4 +1,4 @@
-"""FastAPI inference. Real mode accepts only release.load_verified envelopes."""
+"""FastAPI inference with separate verified and explicitly diagnostic modes."""
 import argparse
 import asyncio
 from contextlib import asynccontextmanager
@@ -92,7 +92,28 @@ class GenerateRequest(BaseModel):
     max_new_tokens: StrictInt | None=Field(default=None,ge=1,le=512)
 
 
-def create_app(pointer=Path('accepted.json'),backend='transformers',max_parallel=1):
+def load_diagnostic(manifest_path):
+    """Recheck local base bytes and pinned runtime without consulting a release pointer."""
+    if manifest_path is None:
+        raise ValueError('Diagnostic backend requires an explicit diagnostic manifest')
+    manifest=json.loads(Path(manifest_path).read_text())
+    identity=manifest['artifact']; runtime=manifest['runtime']
+    if identity.get('kind') != 'base':
+        raise ValueError('Diagnostic backend requires a base snapshot')
+    actual=release.base_artifact_identity(identity['root'],identity['base_model'])
+    if actual != identity:
+        raise ValueError('Diagnostic base snapshot inventory mismatch')
+    if release.sha256(release.canonical(runtime)) != manifest['runtime_sha256']:
+        raise ValueError('Diagnostic runtime hash mismatch')
+    release.validate_runtime_device(runtime)
+    if (runtime['base_model'],runtime['base_revision']) != (identity['base_model']['name'],identity['base_model']['revision']):
+        raise ValueError('Diagnostic runtime/base identity mismatch')
+    if not isinstance(manifest['model_id'],str) or not manifest['model_id'].strip():
+        raise ValueError('Diagnostic model_id must be nonempty')
+    return manifest
+
+
+def create_app(pointer=Path('accepted.json'),backend='transformers',max_parallel=1,diagnostic_manifest=None):
     if max_parallel < 1:
         raise ValueError('max_parallel must be positive')
     @asynccontextmanager
@@ -100,6 +121,9 @@ def create_app(pointer=Path('accepted.json'),backend='transformers',max_parallel
         app.state.ready=False
         if backend == 'stub':
             instance=StubBackend(json.loads(Path(pointer).read_text()))
+        elif backend == 'diagnostic':
+            manifest=await asyncio.to_thread(load_diagnostic,diagnostic_manifest)
+            instance=await asyncio.to_thread(TransformersBackend,manifest)
         elif backend == 'transformers':
             manifest,_=release.load_verified(pointer)
             instance=await asyncio.to_thread(TransformersBackend,manifest)
@@ -116,6 +140,8 @@ def create_app(pointer=Path('accepted.json'),backend='transformers',max_parallel
     app=FastAPI(lifespan=lifespan)
     app.state.ready=False
 
+    release_status=dict(diagnostic_only=backend != 'transformers',accepted_release=backend == 'transformers')
+
     @app.get('/health')
     def health():
         return {'alive':True,'backend':backend}
@@ -124,7 +150,7 @@ def create_app(pointer=Path('accepted.json'),backend='transformers',max_parallel
     def ready():
         if not app.state.ready:
             raise HTTPException(503,'Loading or warming up')
-        return {'ready':True,'model_id':app.state.backend.model_id,'runtime_sha256':app.state.backend.runtime_sha256}
+        return {'ready':True,'model_id':app.state.backend.model_id,'runtime_sha256':app.state.backend.runtime_sha256,**release_status}
 
     @app.post('/generate')
     async def generate(request:GenerateRequest):
@@ -136,7 +162,7 @@ def create_app(pointer=Path('accepted.json'),backend='transformers',max_parallel
         instance=app.state.backend
         limit=instance.limit if request.max_new_tokens is None else request.max_new_tokens
         # Real quality approval covers exactly the evaluated limit, not arbitrary settings.
-        if (backend == 'transformers' and limit != instance.limit) or limit > instance.limit:
+        if (backend in ('transformers','diagnostic') and limit != instance.limit) or limit > instance.limit:
             raise HTTPException(422,'Unsupported generation limit')
         async with app.state.semaphore:
             acquired=time.perf_counter()
@@ -153,7 +179,7 @@ def create_app(pointer=Path('accepted.json'),backend='transformers',max_parallel
             finished=time.perf_counter()
         return dict(result,request_id=str(uuid.uuid4()),model_id=instance.model_id,
             runtime_sha256=instance.runtime_sha256,queue_seconds=acquired-started,
-            generation_seconds=finished-acquired,total_seconds=finished-started,max_new_tokens=limit)
+            generation_seconds=finished-acquired,total_seconds=finished-started,max_new_tokens=limit,**release_status)
     return app
 
 
@@ -161,11 +187,12 @@ def main():
     import uvicorn
     parser=argparse.ArgumentParser()
     parser.add_argument('--pointer',type=Path,default=Path('accepted.json'))
-    parser.add_argument('--backend',choices=['stub','transformers'],default='transformers')
+    parser.add_argument('--backend',choices=['stub','transformers','diagnostic'],default='transformers')
+    parser.add_argument('--diagnostic-manifest',type=Path)
     parser.add_argument('--port',type=int,default=8092)
     parser.add_argument('--max-parallel',type=int,default=1)
     args=parser.parse_args()
-    uvicorn.run(create_app(args.pointer,args.backend,args.max_parallel),host='127.0.0.1',port=args.port)
+    uvicorn.run(create_app(args.pointer,args.backend,args.max_parallel,args.diagnostic_manifest),host='127.0.0.1',port=args.port)
 
 if __name__=='__main__':
     main()
