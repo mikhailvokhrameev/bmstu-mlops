@@ -85,22 +85,6 @@ Prefill обрабатывает весь вход и строит KV-cache; dec
 
 Runtime JSON должен происходить от реально выполненной оценки, а не угадываться ради публикации. Для base baseline теперь реализован strict snapshot контракт и backend без PEFT. Всё ещё требуется существующий проверяемый принятый envelope либо полноценная новая связанная оценка, прошедшая неизменённый gate; старый baseline-eval без release_binding сам по себе недостаточен. Ни новые пороги, ни новое обучение не выполнялись. После восстановления обязательны real API smoke и такой же 8+8 benchmark, отдельные от stub данных.
 
-## Видео 5–8 минут (для записи пользователем)
-
-0:00–0:45 — требования, семь дефектов и исправленный pipeline по сохранённым материалам ДЗ8–9.
-0:45–2:00 — Prefect сбой/восстановление, cache/invalidation, gate отказ и неизменность accepted.
-2:00–3:00 — зелёные быстрые проверки, отрицательный отчёт и ограничения реального выпуска.
-3:00–4:30 — FastAPI health/ready/generate, invalid запрос до backend; A → pointer B → всё ещё A → restart B → rollback A по сохранённому JSON.
-4:30–5:45 — таблица 8+8 и per-attempt журнал, queue vs compute, prefill/decode и отсутствие TTFT/ITL.
-5:45–6:30 — реальная модель: после восстановления выпуска показать ready и реальный ответ; до восстановления прямо показать blocked availability, не выдавая stub за real.
-6:30–7:00 — артефакты/команды воспроизведения, ограничения и план отката. Реальный smoke обязателен для полной сдачи.
-
-## Изменённые/добавленные файлы
-
-`api_service.py`, `benchmark_api.py`, `hw10_experiment.py`, `tests_hw8910/test_api.py`, `requirements-hw8910.txt`; `metrics/hw10/attempts.jsonl`, `summary.json`, `stub-version-scenario.json`, `real-availability.json`, `tests.log`, `tests-environment-failure.log`, `experiment.log`; `docs/hw10/report.md`.
-
-Чужие изменения `.gitignore` и `metrics/storage-check.json` не изменялись и не добавлялись в индекс. Веса, секреты, кеши и окружения не добавлялись. `git commit` не выполнялся. Частичный статус, ограничения real и неуспешный полный прогон зафиксированы в этом отчёте.
-
 
 ## Исправления после ревью: строгая base baseline
 
