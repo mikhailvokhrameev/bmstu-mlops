@@ -1,7 +1,7 @@
 """Исполняемый прототип для расследования. Только синтетические данные, без модели.
 
-Запускайте в отдельном каталоге .lab. Этот последовательный прототип надо
-превратить в корректный Prefect-flow; его зелёный статус не доказывает корректность.
+Запускайте в отдельном каталоге .lab. Последовательный CLI сохранён для совместимости;
+Prefect-оркестрация находится в prefect_flow.py. STUB не доказывает качество модели.
 """
 import argparse
 import hashlib
@@ -59,7 +59,7 @@ def prepare(root):
         result=read(entry);print('CACHE_HIT',result['input_sha256']);return result
     payload=(root/'input.txt').read_bytes()
     result={'input_sha256':digest(payload),'rows':len(payload.splitlines()),'config':config}
-    write(entry,result);print('PREPARED',result['input_sha256']);return result
+    release.atomic_write(entry, canonical(result));print('PREPARED',result['input_sha256']);return result
 
 
 def reconcile(root):
@@ -82,7 +82,7 @@ def reconcile(root):
     pending.unlink()
 
 
-def run(root,report_name,fail_after_prepare=False):
+def start_attempt(root, report_name):
     import uuid
     # Attempt identity is independent of cached result and release identity.
     with (root/'attempts.jsonl').open('a') as stream:
@@ -91,10 +91,9 @@ def run(root,report_name,fail_after_prepare=False):
         import os
         os.fsync(stream.fileno())
     reconcile(root)
-    prepared=prepare(root)
-    if fail_after_prepare:raise RuntimeError('Инъекция сбоя после подготовки')
-    manifest=read(root/'manifest-B.json');report=read(root/report_name)
-    release.validate_release(manifest, report)
+
+
+def publish_prepared(root, prepared, manifest, report):
     release_id = digest(canonical({'manifest':manifest, 'report':report}))
     intent = {'manifest':manifest, 'report':report,
               'event':{'release_id':release_id,'model_id':manifest['model_id'],
@@ -103,6 +102,15 @@ def run(root,report_name,fail_after_prepare=False):
     release.atomic_write(root/'publication-pending.json', canonical(intent))
     reconcile(root)
     print('PUBLISHED',manifest['model_id'])
+
+
+def run(root,report_name,fail_after_prepare=False):
+    start_attempt(root, report_name)
+    prepared=prepare(root)
+    if fail_after_prepare:raise RuntimeError('Инъекция сбоя после подготовки')
+    manifest=read(root/'manifest-B.json');report=read(root/report_name)
+    release.validate_release(manifest, report)
+    publish_prepared(root, prepared, manifest, report)
 
 
 def main():
