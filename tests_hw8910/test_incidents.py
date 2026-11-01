@@ -87,16 +87,13 @@ class Incidents(unittest.TestCase):
         target = self.root/'accepted.json'; before = target.read_bytes()
         self.assertNotEqual(self.cli('run', '--report', 'report-reject.json').returncode, 0)
         self.assertEqual(before, target.read_bytes())
-        original = Path.write_text
-        def broken_write(path, data, *args, **kwargs):
-            if path == target:
-                original(path, data[:12])
-                raise OSError('injected write failure')
-            return original(path, data, *args, **kwargs)
-        with patch.object(Path, 'write_text', broken_write):
+        # Atomic publishers must fsync their temporary file before replacing target.
+        # This fault applies to fdopen/NamedTemporaryFile implementations alike.
+        with patch('os.fsync', side_effect=OSError('injected temporary-file fsync failure')):
             with self.assertRaises(OSError):
                 release.publish(self.read('manifest-B.json'), self.read('report-B.json'), target)
         self.assertEqual(before, target.read_bytes())
+        self.assertEqual([], list(self.root.glob('*.tmp')))
 
     def test_03b_replace_failure_preserves_pointer(self):
         target = self.root/'accepted.json'; before = target.read_bytes()
@@ -113,6 +110,46 @@ class Incidents(unittest.TestCase):
         events = [json.loads(line) for line in (self.root/'publications.jsonl').read_text().splitlines()]
         self.assertEqual('fixture-B', self.read('accepted.json')['model_id'])
         self.assertEqual(1, len(events))
+
+    def test_04b_runtime_and_evaluation_are_release_identity(self):
+        manifest = self.read('manifest-B.json')
+        report = self.read('report-B.json')
+        for revision in range(3):
+            if revision == 1:
+                manifest['runtime']['generation']['max_new_tokens'] = 16
+                manifest['runtime_sha256'] = lab.digest(lab.canonical(manifest['runtime']))
+                report['runtime_sha256'] = manifest['runtime_sha256']
+                report['evaluation_run_id'] = 'fixture-runtime-16'
+            elif revision == 2:
+                report['evaluation_run_id'] = 'fixture-new-evaluation'
+                report['metrics']['accuracy'] = .9
+            lab.write(self.root/'manifest-B.json', manifest)
+            lab.write(self.root/'report-B.json', report)
+            for _ in range(2):
+                result = self.cli('run')
+                self.assertEqual(0, result.returncode, result.stderr)
+        events = [json.loads(line) for line in (self.root/'publications.jsonl').read_text().splitlines()]
+        self.assertEqual('fixture-B', self.read('accepted.json')['model_id'])
+        self.assertEqual(manifest['runtime_sha256'], self.read('accepted.json')['runtime_sha256'])
+        self.assertEqual(3, len(events), 'Three distinct releases, each retried, must produce exactly three events')
+
+    def test_04c_recovery_between_pointer_and_journal(self):
+        # Fault at the publish/run boundary: pointer publication has completed,
+        # but run has not had a chance to append its publication event.
+        original_publish = release.publish
+        def interrupted(*args, **kwargs):
+            original_publish(*args, **kwargs)
+            raise OSError('injected interruption after publish before journal append')
+        with patch.object(release, 'publish', interrupted):
+            with self.assertRaises(OSError):
+                lab.run(self.root, 'report-B.json')
+        self.assertEqual('fixture-B', self.read('accepted.json')['model_id'])
+        for _ in range(2):
+            result = self.cli('run')
+            self.assertEqual(0, result.returncode, result.stderr)
+        events = [json.loads(line) for line in (self.root/'publications.jsonl').read_text().splitlines()]
+        self.assertEqual(1, len(events), 'Recovery must reconcile accepted pointer with exactly one durable release event')
+        self.assertEqual('fixture-B', events[0]['model_id'])
 
     def test_05_warmup_http(self):
         with self.server(warmup=10) as url:

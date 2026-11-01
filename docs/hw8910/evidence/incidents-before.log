@@ -12,40 +12,42 @@ POINTER report-A.json before=aca0bc1332936349f868b84d800dec94e1a042f4aec3196fe4c
 test_03_rejection_and_interrupted_write (test_incidents.Incidents.test_03_rejection_and_interrupted_write) ... FAIL
 test_03b_replace_failure_preserves_pointer (test_incidents.Incidents.test_03b_replace_failure_preserves_pointer) ... FAIL
 test_04_duplicate_publication_across_processes (test_incidents.Incidents.test_04_duplicate_publication_across_processes) ... FAIL
-test_05_warmup_http (test_incidents.Incidents.test_05_warmup_http) ... 127.0.0.1 - - [01/Nov/2026 15:28:08] "GET /health HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:08] "GET /debug HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:08] "GET /ready HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:09] "POST /generate HTTP/1.1" 200 -
+test_04b_runtime_and_evaluation_are_release_identity (test_incidents.Incidents.test_04b_runtime_and_evaluation_are_release_identity) ... FAIL
+test_04c_recovery_between_pointer_and_journal (test_incidents.Incidents.test_04c_recovery_between_pointer_and_journal) ... FAIL
+test_05_warmup_http (test_incidents.Incidents.test_05_warmup_http) ... 127.0.0.1 - - [01/Nov/2026 15:30:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:26] "GET /debug HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:26] "GET /ready HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:26] "POST /generate HTTP/1.1" 200 -
 
   test_05_warmup_http (test_incidents.Incidents.test_05_warmup_http) (endpoint='ready') ... FAIL
   test_05_warmup_http (test_incidents.Incidents.test_05_warmup_http) (endpoint='generate') ... FAIL
-127.0.0.1 - - [01/Nov/2026 15:28:09] "GET /debug HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:26] "GET /debug HTTP/1.1" 200 -
 test_05_warmup_http (test_incidents.Incidents.test_05_warmup_http) ... FAIL
-test_06_loaded_version_and_restart_http (test_incidents.Incidents.test_06_loaded_version_and_restart_http) ... 127.0.0.1 - - [01/Nov/2026 15:28:09] "POST /generate HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:09] "POST /generate HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:10] "POST /generate HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:10] "POST /generate HTTP/1.1" 200 -
+test_06_loaded_version_and_restart_http (test_incidents.Incidents.test_06_loaded_version_and_restart_http) ... 127.0.0.1 - - [01/Nov/2026 15:30:27] "POST /generate HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:27] "POST /generate HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:28] "POST /generate HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:28] "POST /generate HTTP/1.1" 200 -
 FAIL
-test_07_invalid_requests_do_not_compute_http (test_incidents.Incidents.test_07_invalid_requests_do_not_compute_http) ... 127.0.0.1 - - [01/Nov/2026 15:28:11] "GET /debug HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:11] "POST /generate HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:11] "GET /debug HTTP/1.1" 200 -
+test_07_invalid_requests_do_not_compute_http (test_incidents.Incidents.test_07_invalid_requests_do_not_compute_http) ... 127.0.0.1 - - [01/Nov/2026 15:30:29] "GET /debug HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "POST /generate HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "GET /debug HTTP/1.1" 200 -
 
   test_07_invalid_requests_do_not_compute_http (test_incidents.Incidents.test_07_invalid_requests_do_not_compute_http) (payload={'prompt': ''}) ... FAIL
-127.0.0.1 - - [01/Nov/2026 15:28:11] "GET /debug HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:11] "POST /generate HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:11] "GET /debug HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "GET /debug HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "POST /generate HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "GET /debug HTTP/1.1" 200 -
   test_07_invalid_requests_do_not_compute_http (test_incidents.Incidents.test_07_invalid_requests_do_not_compute_http) (payload={'prompt': 'hello', 'max_new_tokens': 0}) ... FAIL
-127.0.0.1 - - [01/Nov/2026 15:28:11] "GET /debug HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:11] "POST /generate HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:11] "GET /debug HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "GET /debug HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "POST /generate HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "GET /debug HTTP/1.1" 200 -
   test_07_invalid_requests_do_not_compute_http (test_incidents.Incidents.test_07_invalid_requests_do_not_compute_http) (payload={'prompt': 'hello', 'max_new_tokens': 100000}) ... FAIL
-127.0.0.1 - - [01/Nov/2026 15:28:11] "GET /debug HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:11] "POST /generate HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:11] "GET /debug HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "GET /debug HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "POST /generate HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "GET /debug HTTP/1.1" 200 -
   test_07_invalid_requests_do_not_compute_http (test_incidents.Incidents.test_07_invalid_requests_do_not_compute_http) (payload={'prompt': 'hello', 'max_new_tokens': '2'}) ... FAIL
-127.0.0.1 - - [01/Nov/2026 15:28:11] "GET /debug HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:11] "POST /generate HTTP/1.1" 200 -
-127.0.0.1 - - [01/Nov/2026 15:28:11] "GET /debug HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "GET /debug HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "POST /generate HTTP/1.1" 200 -
+127.0.0.1 - - [01/Nov/2026 15:30:29] "GET /debug HTTP/1.1" 200 -
 
 ======================================================================
 FAIL: test_01_resume_content_and_config_cache (test_incidents.Incidents.test_01_resume_content_and_config_cache) (field='input')
@@ -107,15 +109,15 @@ AssertionError: 0 == 0
 FAIL: test_03_rejection_and_interrupted_write (test_incidents.Incidents.test_03_rejection_and_interrupted_write)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 99, in test_03_rejection_and_interrupted_write
-    self.assertEqual(before, target.read_bytes())
-AssertionError: b'{\n  "schema_version": 1,\n  "model_id": "fixture-A",\[851 chars]}\n}' != b'{\n  "schema_'
+  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 93, in test_03_rejection_and_interrupted_write
+    with self.assertRaises(OSError):
+AssertionError: OSError not raised
 
 ======================================================================
 FAIL: test_03b_replace_failure_preserves_pointer (test_incidents.Incidents.test_03b_replace_failure_preserves_pointer)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 104, in test_03b_replace_failure_preserves_pointer
+  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 101, in test_03b_replace_failure_preserves_pointer
     with self.assertRaises(OSError):
 AssertionError: OSError not raised
 
@@ -123,15 +125,31 @@ AssertionError: OSError not raised
 FAIL: test_04_duplicate_publication_across_processes (test_incidents.Incidents.test_04_duplicate_publication_across_processes)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 115, in test_04_duplicate_publication_across_processes
+  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 112, in test_04_duplicate_publication_across_processes
     self.assertEqual(1, len(events))
 AssertionError: 1 != 3
+
+======================================================================
+FAIL: test_04b_runtime_and_evaluation_are_release_identity (test_incidents.Incidents.test_04b_runtime_and_evaluation_are_release_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 134, in test_04b_runtime_and_evaluation_are_release_identity
+    self.assertEqual(3, len(events), 'Three distinct releases, each retried, must produce exactly three events')
+AssertionError: 3 != 6 : Three distinct releases, each retried, must produce exactly three events
+
+======================================================================
+FAIL: test_04c_recovery_between_pointer_and_journal (test_incidents.Incidents.test_04c_recovery_between_pointer_and_journal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 151, in test_04c_recovery_between_pointer_and_journal
+    self.assertEqual(1, len(events), 'Recovery must reconcile accepted pointer with exactly one durable release event')
+AssertionError: 1 != 2 : Recovery must reconcile accepted pointer with exactly one durable release event
 
 ======================================================================
 FAIL: test_05_warmup_http (test_incidents.Incidents.test_05_warmup_http) (endpoint='ready')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 124, in test_05_warmup_http
+  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 161, in test_05_warmup_http
     self.assertEqual(503, ready[0])
 AssertionError: 503 != 200
 
@@ -139,7 +157,7 @@ AssertionError: 503 != 200
 FAIL: test_05_warmup_http (test_incidents.Incidents.test_05_warmup_http) (endpoint='generate')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 126, in test_05_warmup_http
+  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 163, in test_05_warmup_http
     self.assertEqual(503, generated[0])
 AssertionError: 503 != 200
 
@@ -147,7 +165,7 @@ AssertionError: 503 != 200
 FAIL: test_05_warmup_http (test_incidents.Incidents.test_05_warmup_http)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 127, in test_05_warmup_http
+  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 164, in test_05_warmup_http
     self.assertEqual(0, self.http(url, '/debug')[1]['calls'])
 AssertionError: 0 != 1
 
@@ -155,27 +173,27 @@ AssertionError: 0 != 1
 FAIL: test_06_loaded_version_and_restart_http (test_incidents.Incidents.test_06_loaded_version_and_restart_http)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 147, in test_06_loaded_version_and_restart_http
+  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 184, in test_06_loaded_version_and_restart_http
     self.assertEqual([], mismatches)
-AssertionError: Lists differ: [] != [{'answer': 'STUB ONLY: fixture-A', 'outpu[218 chars]153}]
+AssertionError: Lists differ: [] != [{'answer': 'STUB ONLY: fixture-A', 'outpu[218 chars]424}]
 
 Second list contains 1 additional elements.
 First extra element 0:
-{'answer': 'STUB ONLY: fixture-A', 'output_tokens': 1, 'model_id': 'fixture-B', 'runtime_sha256': 'bc7bd5a4806e2e0e3b8569666b251d6c59a8d8e01e37fc37bf95b534023ca547', 'request_id': 'dc965566-4fbe-499b-98f3-56167a6c5281', 'generation_seconds': 0.012685749970842153}
+{'answer': 'STUB ONLY: fixture-A', 'output_tokens': 1, 'model_id': 'fixture-B', 'runtime_sha256': 'bc7bd5a4806e2e0e3b8569666b251d6c59a8d8e01e37fc37bf95b534023ca547', 'request_id': 'ffbbcfeb-70c8-43bf-923e-b1b501a5040b', 'generation_seconds': 0.011480624962132424}
 
 - []
 + [{'answer': 'STUB ONLY: fixture-A',
-+   'generation_seconds': 0.012685749970842153,
++   'generation_seconds': 0.011480624962132424,
 +   'model_id': 'fixture-B',
 +   'output_tokens': 1,
-+   'request_id': 'dc965566-4fbe-499b-98f3-56167a6c5281',
++   'request_id': 'ffbbcfeb-70c8-43bf-923e-b1b501a5040b',
 +   'runtime_sha256': 'bc7bd5a4806e2e0e3b8569666b251d6c59a8d8e01e37fc37bf95b534023ca547'}]
 
 ======================================================================
 FAIL: test_07_invalid_requests_do_not_compute_http (test_incidents.Incidents.test_07_invalid_requests_do_not_compute_http) (payload={'prompt': ''})
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 156, in test_07_invalid_requests_do_not_compute_http
+  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 193, in test_07_invalid_requests_do_not_compute_http
     self.assertTrue(400 <= status < 500, (status, before, after))
 AssertionError: False is not true : (200, 0, 1)
 
@@ -183,7 +201,7 @@ AssertionError: False is not true : (200, 0, 1)
 FAIL: test_07_invalid_requests_do_not_compute_http (test_incidents.Incidents.test_07_invalid_requests_do_not_compute_http) (payload={'prompt': 'hello', 'max_new_tokens': 0})
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 156, in test_07_invalid_requests_do_not_compute_http
+  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 193, in test_07_invalid_requests_do_not_compute_http
     self.assertTrue(400 <= status < 500, (status, before, after))
 AssertionError: False is not true : (200, 1, 2)
 
@@ -191,7 +209,7 @@ AssertionError: False is not true : (200, 1, 2)
 FAIL: test_07_invalid_requests_do_not_compute_http (test_incidents.Incidents.test_07_invalid_requests_do_not_compute_http) (payload={'prompt': 'hello', 'max_new_tokens': 100000})
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 156, in test_07_invalid_requests_do_not_compute_http
+  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 193, in test_07_invalid_requests_do_not_compute_http
     self.assertTrue(400 <= status < 500, (status, before, after))
 AssertionError: False is not true : (200, 2, 3)
 
@@ -199,11 +217,12 @@ AssertionError: False is not true : (200, 2, 3)
 FAIL: test_07_invalid_requests_do_not_compute_http (test_incidents.Incidents.test_07_invalid_requests_do_not_compute_http) (payload={'prompt': 'hello', 'max_new_tokens': '2'})
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 156, in test_07_invalid_requests_do_not_compute_http
+  File "/private/tmp/bmstu-mlops-hw8910/tests_hw8910/test_incidents.py", line 193, in test_07_invalid_requests_do_not_compute_http
     self.assertTrue(400 <= status < 500, (status, before, after))
 AssertionError: False is not true : (200, 3, 4)
 
 ----------------------------------------------------------------------
-Ran 8 tests in 3.808s
+Ran 10 tests in 4.321s
 
-FAILED (failures=18)
+FAILED (failures=20)
+PREPARED 88bbd559a04a7a432693a1c611ef2704bb711ac17dd5e22203ee9e5020f59fd4
