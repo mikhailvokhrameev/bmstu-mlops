@@ -101,15 +101,109 @@ def artifact_identity(root, model):
     return dict(root=str(root), base_model=dict(name=model['name'], revision=model['revision']), files=files)
 
 
+def base_artifact_identity(root, model):
+    """Hash a materialized pinned base snapshot, including tokenizer and all shards.
+
+    HF cache symlinks must first be materialized outside Git. No implicit network
+    resolution or adapter/training manifest is involved in a base release.
+    """
+    root = Path(root)
+    if root.is_symlink():
+        raise ValueError('Base snapshot root symlinks are forbidden')
+    root = root.resolve()
+    if not root.is_dir() or not model.get('name') or not re.fullmatch('[0-9a-f]{40}', model.get('revision', '')):
+        raise ValueError('Base snapshot requires directory, name and exact commit revision')
+    files = {}
+    for path in sorted(root.rglob('*')):
+        if path.is_symlink():
+            raise ValueError('Base snapshot symlinks are forbidden')
+        if path.is_file():
+            files[path.relative_to(root).as_posix()] = sha256(path.read_bytes())
+    if not {'config.json', 'tokenizer_config.json'} <= files.keys():
+        raise ValueError('Missing base config/tokenizer config')
+    if not ('tokenizer.json' in files or {'vocab.json', 'merges.txt'} <= files.keys() or 'tokenizer.model' in files):
+        raise ValueError('Missing tokenizer vocabulary')
+    if not any(name in files for name in ('model.safetensors', 'pytorch_model.bin')):
+        indexes = [name for name in ('model.safetensors.index.json', 'pytorch_model.bin.index.json') if name in files]
+        if len(indexes) != 1:
+            raise ValueError('Missing base weights or unambiguous shard index')
+        weights = json.loads((root / indexes[0]).read_text()).get('weight_map')
+        if not isinstance(weights, dict) or not weights or not set(weights.values()) <= files.keys():
+            raise ValueError('Missing indexed base weight shards')
+    return dict(kind='base', root=str(root), base_model=dict(name=model['name'], revision=model['revision']), files=files)
+
+
+def canonical_device_name(device):
+    """Canonical concrete devices; CUDA always carries its actual index."""
+    name = str(device)
+    if name in ('cpu', 'cpu:0'):
+        return 'cpu'
+    if name in ('mps', 'mps:0'):
+        return 'mps'
+    if re.fullmatch(r'cuda:(0|[1-9][0-9]*)', name):
+        return name
+    raise ValueError('Runtime device must be concrete: cpu, mps or cuda:N')
+
+
+def validate_runtime_device(runtime):
+    name = runtime.get('device')
+    concrete = canonical_device_name(name)
+    if name != concrete:
+        raise ValueError('Runtime device must use canonical concrete spelling')
+    return concrete
+
+
+def verify_model_device(model, expected):
+    """Fail before warmup if any loaded parameter/buffer is on another device."""
+    expected = validate_runtime_device(dict(device=expected))
+    count = 0
+    for tensors in (model.parameters(), model.buffers()):
+        for tensor in tensors:
+            count += 1
+            if canonical_device_name(tensor.device) != expected:
+                raise ValueError('Loaded model device differs from evaluated runtime device')
+    if not count:
+        raise ValueError('Cannot verify loaded model device without tensors')
+    return expected
+
+
+def validate_base_runtime(runtime, model, config):
+    validate_runtime_device(runtime)
+    if set(runtime) != {'base_model', 'base_revision', 'device', 'dtype', 'generation', 'do_sample'}:
+        raise ValueError('Unsupported base runtime')
+    if runtime['base_model'] != model['name'] or runtime['base_revision'] != model['revision'] or runtime['do_sample'] is not False:
+        raise ValueError('Base runtime does not match pinned snapshot')
+    generation = {key: config.get(key) for key in ('system', 'max_new_tokens', 'seed', 'enable_thinking')}
+    if runtime['generation'] != generation:
+        raise ValueError('Base runtime differs from evaluated generation protocol')
+    if (not isinstance(generation['system'], str) or not generation['system'].strip()
+            or type(generation['max_new_tokens']) is not int or not 1 <= generation['max_new_tokens'] <= 512
+            or type(generation['seed']) is not int or type(generation['enable_thinking']) is not bool):
+        raise ValueError('Invalid base generation settings')
+
+
 def verify_artifacts(manifest, report):
     """Strict real-release contract. Legacy lab metadata cannot enter this path."""
+    validate_runtime_device(manifest['runtime'])
     identity = manifest.get('artifact')
     if not isinstance(identity, dict):
         raise ValueError('Missing real artifact inventory')
-    actual = artifact_identity(identity['root'], identity['base_model'])
-    training = json.loads((Path(identity['root']) / 'manifest.json').read_text())
-    if any(training.get('model', {}).get(k) != identity['base_model'][k] for k in ('name', 'revision')):
-        raise ValueError('Training manifest base identity mismatch')
+    kind = identity.get('kind', 'adapter')
+    if kind == 'base':
+        actual = base_artifact_identity(identity['root'], identity['base_model'])
+        spec = manifest.get('model_spec', {})
+        if spec.get('kind') != 'base' or any(spec.get(k) != identity['base_model'][k] for k in ('name', 'revision')):
+            raise ValueError('Base release specification does not match pinned snapshot')
+        if spec.get('uri') != identity['root']:
+            raise ValueError('Base release URI must identify the inventoried local snapshot')
+        validate_base_runtime(manifest['runtime'], spec, manifest['protocol']['config'])
+    elif kind == 'adapter':
+        actual = artifact_identity(identity['root'], identity['base_model'])
+        training = json.loads((Path(identity['root']) / 'manifest.json').read_text())
+        if any(training.get('model', {}).get(k) != identity['base_model'][k] for k in ('name', 'revision')):
+            raise ValueError('Training manifest base identity mismatch')
+    else:
+        raise ValueError('Unsupported real artifact kind')
     if actual != identity or sha256(canonical(actual)) != manifest['model_sha256']:
         raise ValueError('Artifact changed since evaluation')
     for key in ('artifact', 'model_spec', 'protocol_id', 'golden_id', 'runtime_id', 'evidence', 'protocol'):
@@ -135,6 +229,11 @@ def verify_artifacts(manifest, report):
         raise ValueError('Artifact/runtime was not bound at evaluation time')
     from evaluation.solution import quality_gate
     baseline = json.loads(Path(evidence['baseline-eval.json']['path']).read_text())
+    if kind == 'base' and baseline.get('release_binding') != source.get('release_binding'):
+        raise ValueError('Base reference evaluation lacks matching snapshot/runtime binding')
+    if kind == 'base' and (baseline.get('model', {}).get('kind') != 'base' or any(
+            baseline.get('model', {}).get(key) != identity['base_model'][key] for key in ('name', 'revision'))):
+        raise ValueError('Base reference specification differs from bound snapshot')
     from evaluation.contract import fingerprint, validate_golden
     from evaluation.solution import score
     protocol = manifest['protocol']

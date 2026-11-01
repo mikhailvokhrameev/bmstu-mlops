@@ -1,0 +1,57 @@
+{
+  "accepted_exists": false,
+  "evaluation_exit_code": 1,
+  "release_evidence_exit_code": 1,
+  "evidence_directory": "metrics/hw10/base-evaluation-real",
+  "note": "Real generation, unchanged gate refused. No accepted API smoke or accepted-model benchmark.",
+  "baseline": {
+    "evaluation_run_id": "base-c1ab7438bde14743a18f0e40482f7631",
+    "overall": {
+      "n": 50,
+      "correct": 0,
+      "valid": 0,
+      "errors": 0,
+      "accuracy": 0.0,
+      "format_rate": 0.0
+    },
+    "behavioral": {
+      "n": 5,
+      "correct": 0,
+      "valid": 0,
+      "errors": 0,
+      "accuracy": 0.0,
+      "format_rate": 0.0
+    },
+    "output_attempts": 55,
+    "generation_errors": 0,
+    "sum_generation_seconds": 43.99969516583951,
+    "bound_snapshot_runtime": true
+  },
+  "candidate": {
+    "evaluation_run_id": "base-c1ab7438bde14743a18f0e40482f7631",
+    "overall": {
+      "n": 50,
+      "correct": 0,
+      "valid": 0,
+      "errors": 0,
+      "accuracy": 0.0,
+      "format_rate": 0.0
+    },
+    "behavioral": {
+      "n": 5,
+      "correct": 0,
+      "valid": 0,
+      "errors": 0,
+      "accuracy": 0.0,
+      "format_rate": 0.0
+    },
+    "output_attempts": 55,
+    "generation_errors": 0,
+    "sum_generation_seconds": 41.39232137904037,
+    "bound_snapshot_runtime": true
+  },
+  "gate": {
+    "passed": false,
+    "reason": "ValueError: Behavioral: прошли 0 из 5"
+  }
+}

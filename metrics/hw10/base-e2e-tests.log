@@ -1,0 +1,40 @@
+test_bound_base_evaluation_to_verified_pointer (tests_hw8910.test_base_evaluation.BaseEvaluation.test_bound_base_evaluation_to_verified_pointer) ... ok
+test_changed_snapshot_during_generation_closes_evaluation (tests_hw8910.test_base_evaluation.BaseEvaluation.test_changed_snapshot_during_generation_closes_evaluation) ... ok
+test_cli_evaluate_base_dispatches_without_adapter_lookup (tests_hw8910.test_base_evaluation.BaseEvaluation.test_cli_evaluate_base_dispatches_without_adapter_lookup) ... ok
+test_existing_evidence_directory_is_not_overwritten (tests_hw8910.test_base_evaluation.BaseEvaluation.test_existing_evidence_directory_is_not_overwritten) ... ok
+test_new_runtime_does_not_inherit_previous_base_evaluation (tests_hw8910.test_base_evaluation.BaseEvaluation.test_new_runtime_does_not_inherit_previous_base_evaluation) ... ok
+test_rejected_real_gate_persists_outputs_and_cannot_publish (tests_hw8910.test_base_evaluation.BaseEvaluation.test_rejected_real_gate_persists_outputs_and_cannot_publish) ... ok
+test_release_evidence_cli_publishes_bound_base (tests_hw8910.test_base_evaluation.BaseEvaluation.test_release_evidence_cli_publishes_bound_base) ... ok
+test_tampered_outputs_cannot_pass_assembly (tests_hw8910.test_base_evaluation.BaseEvaluation.test_tampered_outputs_cannot_pass_assembly) ... ok
+test_base_loads_verified_local_snapshot_without_peft (tests_hw8910.test_base_release.BaseBackend.test_base_loads_verified_local_snapshot_without_peft) ... ok
+test_base_cannot_change_runtime_identity_or_evaluated_generation (tests_hw8910.test_base_release.BaseRelease.test_base_cannot_change_runtime_identity_or_evaluated_generation) ... ok
+test_base_failed_behavior_cannot_be_published_as_pass (tests_hw8910.test_base_release.BaseRelease.test_base_failed_behavior_cannot_be_published_as_pass) ... ok
+test_base_inventory_rejects_symlink (tests_hw8910.test_base_release.BaseRelease.test_base_inventory_rejects_symlink) ... ok
+test_base_inventory_rejects_unpinned_and_missing_tokenizer (tests_hw8910.test_base_release.BaseRelease.test_base_inventory_rejects_unpinned_and_missing_tokenizer) ... ok
+test_base_revision_and_kind_must_match_inventory (tests_hw8910.test_base_release.BaseRelease.test_base_revision_and_kind_must_match_inventory) ... ok
+test_base_roundtrip_and_detect_changed_weights_on_load (tests_hw8910.test_base_release.BaseRelease.test_base_roundtrip_and_detect_changed_weights_on_load) ... ok
+test_legacy_baseline_without_bound_evaluation_cannot_publish (tests_hw8910.test_base_release.BaseRelease.test_legacy_baseline_without_bound_evaluation_cannot_publish) ... ok
+test_rejected_candidate_preserves_accepted_base_pointer (tests_hw8910.test_base_release.BaseRelease.test_rejected_candidate_preserves_accepted_base_pointer) ... ok
+test_incomplete_attempt_is_persisted (tests_hw8910.test_real_release.RealRelease.test_incomplete_attempt_is_persisted) ... ok
+test_inventory_detects_any_changed_or_extra_file (tests_hw8910.test_real_release.RealRelease.test_inventory_detects_any_changed_or_extra_file) ... ok
+test_legacy_cannot_publish_real_pointer (tests_hw8910.test_real_release.RealRelease.test_legacy_cannot_publish_real_pointer) ... ok
+test_behavioral_raw_tampering_rejected_with_updated_hashes (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_behavioral_raw_tampering_rejected_with_updated_hashes) ... ok
+test_critical_slices_cannot_be_removed_from_report (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_critical_slices_cannot_be_removed_from_report) ... ok
+test_file_reference_rejects_symlink (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_file_reference_rejects_symlink) ... ok
+test_model_id_and_uri_must_match_model_spec (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_model_id_and_uri_must_match_model_spec) ... ok
+test_pinned_golden_data_changes_rejected (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_pinned_golden_data_changes_rejected) ... ok
+test_raw_tampering_rejected_even_with_updated_hashes (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_raw_tampering_rejected_even_with_updated_hashes) ... ok
+test_verified_roundtrip (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_verified_roundtrip) ... ok
+test_real_rejects_legacy (tests_hw8910.test_api.API.test_real_rejects_legacy) ... ok
+test_restart_and_rollback (tests_hw8910.test_api.API.test_restart_and_rollback) ... ok
+test_unready_and_compute_bound (tests_hw8910.test_api.API.test_unready_and_compute_bound) ... ok
+test_validation_before_compute (tests_hw8910.test_api.API.test_validation_before_compute) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 0.589s
+
+OK
+Создан синтетический стенд: /var/folders/ss/4960hrgn57dbwxnwknt3jpp00000gn/T/tmpf5vpl3fp/workspace
+Создан синтетический стенд: /var/folders/ss/4960hrgn57dbwxnwknt3jpp00000gn/T/tmptpeel88d/workspace
+Создан синтетический стенд: /var/folders/ss/4960hrgn57dbwxnwknt3jpp00000gn/T/tmpe65dmy3m/workspace
+Создан синтетический стенд: /var/folders/ss/4960hrgn57dbwxnwknt3jpp00000gn/T/tmp7ezvje9u/workspace

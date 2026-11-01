@@ -1,0 +1,52 @@
+{
+  "python": "3.12.4",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "baseline": {
+    "kind": "base",
+    "name": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+  },
+  "gate": {
+    "passed": false,
+    "reason": "Behavioral: \u043f\u0440\u043e\u0448\u043b\u0438 3 \u0438\u0437 5"
+  },
+  "packages": {
+    "torch": true,
+    "transformers": true,
+    "peft": false,
+    "fastapi": true,
+    "prefect": false
+  },
+  "candidate_release_binding": null,
+  "baseline_release_binding": null,
+  "adapter_manifests": {
+    "models/adapter_all_layers/manifest.json": false,
+    "models/adapter_freeze14/manifest.json": false
+  },
+  "accepted_exists": false,
+  "real_smoke_blocked": "FileNotFoundError: [Errno 2] No such file or directory: 'accepted.json'",
+  "baseline_cache": {
+    "snapshot_exists": true,
+    "files": [
+      "model.safetensors",
+      "tokenizer_config.json",
+      "special_tokens_map.json",
+      "config.json",
+      "tokenizer.json",
+      "generation_config.json",
+      "merges.txt",
+      "vocab.json"
+    ]
+  },
+  "project_venv": {
+    "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]",
+    "packages": {
+      "torch": true,
+      "transformers": true,
+      "peft": true,
+      "fastapi": true,
+      "prefect": false
+    }
+  },
+  "strict_adapter_check": "ValueError: Incomplete adapter/tokenizer inventory"
+}

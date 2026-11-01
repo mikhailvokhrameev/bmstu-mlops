@@ -84,7 +84,7 @@ def inputs():
     return config, rows, behavioral, baseline, proof, fingerprint(protocol)
 
 
-def generate(spec, common_manifest, config, rows):
+def generate(spec, common_manifest, config, rows, runtime=None):
     """Одинаковый eval prompt и decoding. База и адаптер загружаются последовательно."""
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -98,8 +98,16 @@ def generate(spec, common_manifest, config, rows):
     revision = spec['revision'] if spec['kind'] == 'base' else model_cfg['revision']
     if len(revision) != 40:
         raise ValueError('Нужна точная commit-ревизия базы')
-    device = resolve_device(os.environ.get('HW6_DEVICE', model_cfg['device']))
-    dtype = resolve_dtype(os.environ.get('HW6_DTYPE', model_cfg['dtype']))
+    if runtime is not None:
+        import release as release_contract
+        release_contract.validate_runtime_device(runtime)
+        device = resolve_device(runtime['device'])
+        if release_contract.canonical_device_name(device) != runtime['device']:
+            raise ValueError('Evaluation device differs from bound runtime')
+        dtype = resolve_dtype(runtime['dtype'])
+    else:
+        device = resolve_device(os.environ.get('HW6_DEVICE', model_cfg['device']))
+        dtype = resolve_dtype(os.environ.get('HW6_DTYPE', model_cfg['dtype']))
     set_seed(config['seed'])
     tokenizer = AutoTokenizer.from_pretrained(str(adapter) if adapter else base_name,
                                               **({'local_files_only': True} if adapter else {'revision': revision}))
@@ -108,6 +116,8 @@ def generate(spec, common_manifest, config, rows):
         from peft import PeftModel
         model = PeftModel.from_pretrained(model, adapter)
     model = model.to(device).eval()
+    if runtime is not None:
+        release_contract.verify_model_device(model,runtime['device'])
     outputs = []
     for row in rows:
         started = time.monotonic()
@@ -147,7 +157,10 @@ def evaluate():
                                runtime=evaluation_runtime(manifest, config))
     reports = {}
     for role, spec in [('baseline', baseline), ('candidate', candidate)]:
-        outputs = generate(spec, manifest, config, rows + behavioral)
+        if release_binding is not None:
+            outputs = generate(spec, manifest, config, rows + behavioral, runtime=release_binding['runtime'])
+        else:
+            outputs = generate(spec, manifest, config, rows + behavioral)
         by_id = {o['id']: o for o in outputs}
         write_json(f'metrics/{role}-outputs.json', outputs)
         report = score(rows, [by_id[r['id']] for r in rows])
@@ -259,12 +272,21 @@ def negative():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('command', choices=['candidate', 'baseline-init', 'evaluate', 'gate', 'promote', 'baseline-update', 'negative'])
+    ap.add_argument('command', choices=['candidate', 'baseline-init', 'evaluate', 'gate', 'promote', 'baseline-update', 'negative', 'evaluate-base'])
+    ap.add_argument('--snapshot', type=Path)
+    ap.add_argument('--runtime', type=Path)
+    ap.add_argument('--output-dir', type=Path)
     args = ap.parse_args()
     commands = {'candidate': prepare_candidate, 'baseline-init': init_baseline, 'evaluate': evaluate,
                 'gate': gate, 'promote': release, 'baseline-update': update_baseline, 'negative': negative}
     try:
-        commands[args.command]()
+        if args.command == 'evaluate-base':
+            if not all((args.snapshot, args.runtime, args.output_dir)):
+                ap.error('evaluate-base requires --snapshot, --runtime and --output-dir')
+            from evaluation.base_evaluation import evaluate_base
+            evaluate_base(args.snapshot, args.runtime, args.output_dir)
+        else:
+            commands[args.command]()
     except (ValueError, KeyError, FileNotFoundError, NotImplementedError) as exc:
         if args.command in ('gate', 'promote'):
             write_json('metrics/quality-gate.json', dict(passed=False, reason=str(exc)))

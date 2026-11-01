@@ -1,0 +1,87 @@
+test_adapter_evaluation_pins_auto_before_generation (tests_hw8910.test_runtime_device.RuntimeDevice.test_adapter_evaluation_pins_auto_before_generation) ... FAIL
+test_bound_auto_cannot_publish_even_with_matching_hashes (tests_hw8910.test_runtime_device.RuntimeDevice.test_bound_auto_cannot_publish_even_with_matching_hashes) ... FAIL
+test_cuda_requires_an_explicit_index (tests_hw8910.test_runtime_device.RuntimeDevice.test_cuda_requires_an_explicit_index) ... 
+  test_cuda_requires_an_explicit_index (tests_hw8910.test_runtime_device.RuntimeDevice.test_cuda_requires_an_explicit_index) (name='auto') ... ERROR
+  test_cuda_requires_an_explicit_index (tests_hw8910.test_runtime_device.RuntimeDevice.test_cuda_requires_an_explicit_index) (name='cuda') ... ERROR
+  test_cuda_requires_an_explicit_index (tests_hw8910.test_runtime_device.RuntimeDevice.test_cuda_requires_an_explicit_index) (name='cpu:0') ... ERROR
+  test_cuda_requires_an_explicit_index (tests_hw8910.test_runtime_device.RuntimeDevice.test_cuda_requires_an_explicit_index) (name='bogus') ... ERROR
+test_cuda_requires_an_explicit_index (tests_hw8910.test_runtime_device.RuntimeDevice.test_cuda_requires_an_explicit_index) ... ERROR
+test_model_parameters_must_match_evaluated_device (tests_hw8910.test_runtime_device.RuntimeDevice.test_model_parameters_must_match_evaluated_device) ... ERROR
+
+======================================================================
+ERROR: test_cuda_requires_an_explicit_index (tests_hw8910.test_runtime_device.RuntimeDevice.test_cuda_requires_an_explicit_index) (name='auto')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/tests_hw8910/test_runtime_device.py", line 37, in test_cuda_requires_an_explicit_index
+    release.validate_runtime_device({'device':name})
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'release' has no attribute 'validate_runtime_device'
+
+======================================================================
+ERROR: test_cuda_requires_an_explicit_index (tests_hw8910.test_runtime_device.RuntimeDevice.test_cuda_requires_an_explicit_index) (name='cuda')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/tests_hw8910/test_runtime_device.py", line 37, in test_cuda_requires_an_explicit_index
+    release.validate_runtime_device({'device':name})
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'release' has no attribute 'validate_runtime_device'
+
+======================================================================
+ERROR: test_cuda_requires_an_explicit_index (tests_hw8910.test_runtime_device.RuntimeDevice.test_cuda_requires_an_explicit_index) (name='cpu:0')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/tests_hw8910/test_runtime_device.py", line 37, in test_cuda_requires_an_explicit_index
+    release.validate_runtime_device({'device':name})
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'release' has no attribute 'validate_runtime_device'
+
+======================================================================
+ERROR: test_cuda_requires_an_explicit_index (tests_hw8910.test_runtime_device.RuntimeDevice.test_cuda_requires_an_explicit_index) (name='bogus')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/tests_hw8910/test_runtime_device.py", line 37, in test_cuda_requires_an_explicit_index
+    release.validate_runtime_device({'device':name})
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'release' has no attribute 'validate_runtime_device'
+
+======================================================================
+ERROR: test_cuda_requires_an_explicit_index (tests_hw8910.test_runtime_device.RuntimeDevice.test_cuda_requires_an_explicit_index)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/tests_hw8910/test_runtime_device.py", line 39, in test_cuda_requires_an_explicit_index
+    self.assertEqual(name,release.validate_runtime_device({'device':name}))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'release' has no attribute 'validate_runtime_device'
+
+======================================================================
+ERROR: test_model_parameters_must_match_evaluated_device (tests_hw8910.test_runtime_device.RuntimeDevice.test_model_parameters_must_match_evaluated_device)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/tests_hw8910/test_runtime_device.py", line 32, in test_model_parameters_must_match_evaluated_device
+    release.verify_model_device(model,'cpu')
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'release' has no attribute 'verify_model_device'
+
+======================================================================
+FAIL: test_adapter_evaluation_pins_auto_before_generation (tests_hw8910.test_runtime_device.RuntimeDevice.test_adapter_evaluation_pins_auto_before_generation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/tests_hw8910/test_runtime_device.py", line 47, in test_adapter_evaluation_pins_auto_before_generation
+    self.assertEqual('mps',runtime['device'])
+AssertionError: 'mps' != 'auto'
+- mps
++ auto
+
+
+======================================================================
+FAIL: test_bound_auto_cannot_publish_even_with_matching_hashes (tests_hw8910.test_runtime_device.RuntimeDevice.test_bound_auto_cannot_publish_even_with_matching_hashes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/tests_hw8910/test_runtime_device.py", line 25, in test_bound_auto_cannot_publish_even_with_matching_hashes
+    with self.assertRaisesRegex(ValueError,'device'):
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.029s
+
+FAILED (failures=2, errors=6)

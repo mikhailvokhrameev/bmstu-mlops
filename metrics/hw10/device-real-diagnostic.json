@@ -1,0 +1,12 @@
+{
+  "purpose": "Post-fix actual tensor device diagnostic, not accepted API smoke",
+  "accepted_release": false,
+  "requested_device": "cpu",
+  "verified_loaded_device": "cpu",
+  "parameter_devices": [
+    "cpu"
+  ],
+  "buffer_devices": [
+    "cpu"
+  ]
+}

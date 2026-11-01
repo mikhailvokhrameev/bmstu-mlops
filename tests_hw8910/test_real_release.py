@@ -66,7 +66,7 @@ class VerifiedEvidenceTests(unittest.TestCase):
         self.raw = [dict(id=r['id'], raw='{"answer":"B"}', error=None, latency_seconds=0.0)
                     for r in rows + behavioral]
         spec = dict(run_id='fixture-run', uri='models:/fixture/1', name='fixture', version='1')
-        runtime = dict(dtype='float32')
+        runtime = dict(dtype='float32', device='cpu')
         baseline_spec = dict(kind='base', name='fixture', revision='a' * 40)
         self.reports = {}
         for role, model_spec in [('baseline', baseline_spec), ('candidate', spec)]:

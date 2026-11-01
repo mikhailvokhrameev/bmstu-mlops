@@ -1,0 +1,58 @@
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights:   0%|          | 1/272 [00:00<03:31,  1.28it/s]Loading weights:  94%|█████████▍| 256/272 [00:00<00:00, 391.24it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 294.75it/s]
+{
+  "kind": "base-availability-diagnostic",
+  "accepted_release": false,
+  "baseline": {
+    "kind": "base",
+    "name": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+  },
+  "snapshot_exists": true,
+  "accepted_api_smoke_blocked": "FileNotFoundError: [Errno 2] No such file or directory: 'accepted.json'",
+  "existing_baseline_eval": {
+    "evaluation_run_id": "2d82968b4f044e3bad82b9cd187d8ecd",
+    "overall": {
+      "n": 50,
+      "correct": 0,
+      "valid": 0,
+      "errors": 0,
+      "accuracy": 0.0,
+      "format_rate": 0.0
+    },
+    "behavioral": {
+      "n": 5,
+      "correct": 0,
+      "valid": 0,
+      "errors": 0,
+      "accuracy": 0.0,
+      "format_rate": 0.0
+    },
+    "release_binding_present": false
+  },
+  "diagnostic_baseline_gate": {
+    "passed": false,
+    "reason": "ValueError: Behavioral: прошли 0 из 5",
+    "note": "No new evaluation or acceptance; diagnostic of saved baseline against unchanged gate."
+  },
+  "snapshot_files_sha256": {
+    "config.json": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+    "generation_config.json": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+    "merges.txt": "0b54e8aa4e53d5383e2e4bc635a56b43f9647f7b13832d5d9ecd8f82dac4f510",
+    "model.safetensors": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+    "special_tokens_map.json": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+    "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+    "tokenizer_config.json": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+    "vocab.json": "82b84012e3add4d01d12ba14442026e49b8cbbaead1f79ecf3d919784f82dc79"
+  },
+  "inventory_status": "verified local bytes; not acceptance evidence",
+  "diagnostic_load": {
+    "status": "ok",
+    "device": "cpu",
+    "dtype": "float32",
+    "load_seconds": 1.1890220000059344,
+    "generation_seconds": 1.0723121670307592,
+    "output_tokens": 32,
+    "text": "Общественное компонентное компонентное компо",
+    "note": "Direct local model capability check. No API, release, quality approval or accepted-model benchmark."
+  }
+}

@@ -1,0 +1,78 @@
+test_base_loads_verified_local_snapshot_without_peft (tests_hw8910.test_base_release.BaseBackend.test_base_loads_verified_local_snapshot_without_peft) ... ERROR
+test_base_inventory_rejects_symlink (tests_hw8910.test_base_release.BaseRelease.test_base_inventory_rejects_symlink) ... ERROR
+test_base_inventory_rejects_unpinned_and_missing_tokenizer (tests_hw8910.test_base_release.BaseRelease.test_base_inventory_rejects_unpinned_and_missing_tokenizer) ... ERROR
+test_base_revision_and_kind_must_match_inventory (tests_hw8910.test_base_release.BaseRelease.test_base_revision_and_kind_must_match_inventory) ... ok
+test_base_roundtrip_and_detect_changed_weights_on_load (tests_hw8910.test_base_release.BaseRelease.test_base_roundtrip_and_detect_changed_weights_on_load) ... ERROR
+test_legacy_baseline_without_bound_evaluation_cannot_publish (tests_hw8910.test_base_release.BaseRelease.test_legacy_baseline_without_bound_evaluation_cannot_publish) ... ok
+test_rejected_candidate_preserves_accepted_base_pointer (tests_hw8910.test_base_release.BaseRelease.test_rejected_candidate_preserves_accepted_base_pointer) ... ERROR
+test_behavioral_raw_tampering_rejected_with_updated_hashes (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_behavioral_raw_tampering_rejected_with_updated_hashes) ... ok
+test_critical_slices_cannot_be_removed_from_report (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_critical_slices_cannot_be_removed_from_report) ... ok
+test_file_reference_rejects_symlink (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_file_reference_rejects_symlink) ... ok
+test_model_id_and_uri_must_match_model_spec (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_model_id_and_uri_must_match_model_spec) ... ok
+test_pinned_golden_data_changes_rejected (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_pinned_golden_data_changes_rejected) ... ok
+test_raw_tampering_rejected_even_with_updated_hashes (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_raw_tampering_rejected_even_with_updated_hashes) ... ok
+test_verified_roundtrip (tests_hw8910.test_real_release.VerifiedEvidenceTests.test_verified_roundtrip) ... ok
+
+======================================================================
+ERROR: test_base_loads_verified_local_snapshot_without_peft (tests_hw8910.test_base_release.BaseBackend.test_base_loads_verified_local_snapshot_without_peft)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/tests_hw8910/test_base_release.py", line 85, in test_base_loads_verified_local_snapshot_without_peft
+    loaded=TransformersBackend(manifest)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/api_service.py", line 41, in __init__
+    from peft import PeftModel
+ModuleNotFoundError: import of peft halted; None in sys.modules
+
+======================================================================
+ERROR: test_base_inventory_rejects_symlink (tests_hw8910.test_base_release.BaseRelease.test_base_inventory_rejects_symlink)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/tests_hw8910/test_base_release.py", line 69, in test_base_inventory_rejects_symlink
+    with self.assertRaises(ValueError):release.base_artifact_identity(root,dict(name='fixture',revision='a'*40))
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'release' has no attribute 'base_artifact_identity'. Did you mean: 'artifact_identity'?
+
+======================================================================
+ERROR: test_base_inventory_rejects_unpinned_and_missing_tokenizer (tests_hw8910.test_base_release.BaseRelease.test_base_inventory_rejects_unpinned_and_missing_tokenizer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/tests_hw8910/test_base_release.py", line 62, in test_base_inventory_rejects_unpinned_and_missing_tokenizer
+    with self.assertRaises(ValueError):release.base_artifact_identity(root,dict(name='fixture',revision='main'))
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'release' has no attribute 'base_artifact_identity'. Did you mean: 'artifact_identity'?
+
+======================================================================
+ERROR: test_base_roundtrip_and_detect_changed_weights_on_load (tests_hw8910.test_base_release.BaseRelease.test_base_roundtrip_and_detect_changed_weights_on_load)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/tests_hw8910/test_base_release.py", line 31, in test_base_roundtrip_and_detect_changed_weights_on_load
+    release.publish_verified(self.manifest,self.report,self.target)
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/release.py", line 175, in publish_verified
+    verify_artifacts(manifest, report)
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/release.py", line 109, in verify_artifacts
+    actual = artifact_identity(identity['root'], identity['base_model'])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/release.py", line 98, in artifact_identity
+    raise ValueError('Incomplete adapter/tokenizer inventory')
+ValueError: Incomplete adapter/tokenizer inventory
+
+======================================================================
+ERROR: test_rejected_candidate_preserves_accepted_base_pointer (tests_hw8910.test_base_release.BaseRelease.test_rejected_candidate_preserves_accepted_base_pointer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/tests_hw8910/test_base_release.py", line 53, in test_rejected_candidate_preserves_accepted_base_pointer
+    release.publish_verified(self.manifest,self.report,self.target)
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/release.py", line 175, in publish_verified
+    verify_artifacts(manifest, report)
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/release.py", line 109, in verify_artifacts
+    actual = artifact_identity(identity['root'], identity['base_model'])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/release.py", line 98, in artifact_identity
+    raise ValueError('Incomplete adapter/tokenizer inventory')
+ValueError: Incomplete adapter/tokenizer inventory
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.383s
+
+FAILED (errors=5)
