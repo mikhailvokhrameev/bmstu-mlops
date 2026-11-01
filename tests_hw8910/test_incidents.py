@@ -151,6 +151,42 @@ class Incidents(unittest.TestCase):
         self.assertEqual(1, len(events), 'Recovery must reconcile accepted pointer with exactly one durable release event')
         self.assertEqual('fixture-B', events[0]['model_id'])
 
+    def test_04d_journal_failure_recovers_before_different_evaluation(self):
+        original_replace = os.replace
+        def fail_journal(source, target):
+            if Path(target).name == 'publications.jsonl':
+                raise OSError('injected journal failure')
+            return original_replace(source, target)
+        with patch('os.replace', fail_journal):
+            with self.assertRaises(OSError):
+                lab.run(self.root, 'report-B.json')
+        self.assertEqual('fixture-B', self.read('accepted.json')['model_id'])
+        self.assertTrue((self.root/'publication-pending.json').exists())
+        report = self.read('report-B.json')
+        report['evaluation_run_id'] = 'another-evaluation'
+        lab.write(self.root/'report-B.json', report)
+        for _ in range(2):
+            result = self.cli('run')
+            self.assertEqual(0, result.returncode, result.stderr)
+        events = [json.loads(line) for line in (self.root/'publications.jsonl').read_text().splitlines()]
+        self.assertEqual(['fixture-eval-B', 'another-evaluation'], [e['evaluation_run_id'] for e in events])
+        self.assertFalse((self.root/'publication-pending.json').exists())
+        attempts = (self.root/'attempts.jsonl').read_text().splitlines()
+        self.assertEqual(3, len({json.loads(line)['attempt_id'] for line in attempts}))
+
+    def test_04e_crash_after_journal_commit_is_idempotent(self):
+        original_replace = os.replace
+        def interrupt_after_commit(source, target):
+            original_replace(source, target)
+            if Path(target).name == 'publications.jsonl':
+                raise OSError('injected interruption after journal commit')
+        with patch('os.replace', interrupt_after_commit):
+            with self.assertRaises(OSError):
+                lab.run(self.root, 'report-B.json')
+        self.assertTrue((self.root/'publication-pending.json').exists())
+        self.assertEqual(0, self.cli('run').returncode)
+        self.assertEqual(1, len((self.root/'publications.jsonl').read_text().splitlines()))
+
     def test_05_warmup_http(self):
         with self.server(warmup=10) as url:
             self.assertEqual(200, self.http(url, '/health')[0])

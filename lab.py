@@ -62,13 +62,46 @@ def prepare(root):
     write(entry,result);print('PREPARED',result['input_sha256']);return result
 
 
+def reconcile(root):
+    """Finish a durable publication intent before processing another release.
+
+    A single writer owns these files. The journal is atomically rewritten, so
+    interruption cannot leave a partial JSONL record. Replaying an intent is safe
+    on either side of the pointer/journal boundary.
+    """
+    pending = root/'publication-pending.json'
+    if not pending.exists():
+        return
+    intent = read(pending)
+    release.publish(intent['manifest'], intent['report'], root/'accepted.json')
+    journal = root/'publications.jsonl'
+    events = [json.loads(line) for line in journal.read_text().splitlines()] if journal.exists() else []
+    if not any(event.get('release_id') == intent['event']['release_id'] for event in events):
+        events.append(intent['event'])
+        release.atomic_write(journal, b''.join(canonical(event)+b'\n' for event in events))
+    pending.unlink()
+
+
 def run(root,report_name,fail_after_prepare=False):
+    import uuid
+    # Attempt identity is independent of cached result and release identity.
+    with (root/'attempts.jsonl').open('a') as stream:
+        stream.write(json.dumps({'attempt_id':str(uuid.uuid4()),'report':report_name})+'\n')
+        stream.flush()
+        import os
+        os.fsync(stream.fileno())
+    reconcile(root)
     prepared=prepare(root)
     if fail_after_prepare:raise RuntimeError('Инъекция сбоя после подготовки')
     manifest=read(root/'manifest-B.json');report=read(root/report_name)
-    release.publish(manifest,report,root/'accepted.json')
-    with (root/'publications.jsonl').open('a') as f:
-        f.write(json.dumps({'model_id':manifest['model_id'],'prepared':prepared['input_sha256']})+'\n')
+    release.validate_release(manifest, report)
+    release_id = digest(canonical({'manifest':manifest, 'report':report}))
+    intent = {'manifest':manifest, 'report':report,
+              'event':{'release_id':release_id,'model_id':manifest['model_id'],
+                       'evaluation_run_id':report['evaluation_run_id'],
+                       'prepared':prepared['input_sha256']}}
+    release.atomic_write(root/'publication-pending.json', canonical(intent))
+    reconcile(root)
     print('PUBLISHED',manifest['model_id'])
 
 
