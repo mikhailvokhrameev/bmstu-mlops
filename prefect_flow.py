@@ -59,3 +59,22 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+@task(name='validate-real-release', cache_policy=None)
+def validate_real_release(runtime_path: Path):
+    from evaluation.release_evidence import create
+    return create(runtime_path)
+
+
+@task(name='publish-real-release', cache_policy=None)
+def publish_real_release(artifact, target: Path):
+    manifest, report = artifact
+    release.publish_verified(manifest, report, target)
+
+
+@flow(name='evaluated-model-release')
+def evaluated_release_flow(runtime_path: Path, target: Path):
+    """Production entry: recompute gate/evidence each run; never uses lab publish."""
+    artifact = validate_real_release(runtime_path)
+    publish_real_release(artifact, target)

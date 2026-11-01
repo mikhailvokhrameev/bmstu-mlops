@@ -66,6 +66,11 @@ def init_baseline():
     print('Baseline: исходная модель с точной ревизией. Сохраните evaluation/baseline.json в Git')
 
 
+def protocol_snapshot(config, rows, behavioral, training):
+    return dict(config=config, golden=rows, behavioral=behavioral, training_index=training,
+                evaluation_code={p.name: p.read_text() for p in sorted(Path('evaluation').glob('*.py'))})
+
+
 def inputs():
     config = read_json('evaluation/params.json')
     rows = read_rows(config['golden'])
@@ -75,8 +80,7 @@ def inputs():
     if not set(config['critical_slices']) <= {s for r in rows for s in r['slices']}:
         raise ValueError('Критический срез отсутствует')
     baseline = read_json(BASELINE)
-    protocol = dict(config=config, golden=rows, behavioral=behavioral, training_index=training,
-                    evaluation_code={p.name: p.read_text() for p in sorted(Path('evaluation').glob('*.py'))})
+    protocol = protocol_snapshot(config, rows, behavioral, training)
     return config, rows, behavioral, baseline, proof, fingerprint(protocol)
 
 
@@ -134,7 +138,13 @@ def evaluate():
     import mlflow
     config, rows, behavioral, baseline, proof, protocol_hash = inputs()
     candidate = candidate_model()
-    manifest, _ = manifest_for(candidate)
+    manifest, adapter = manifest_for(candidate)
+    release_binding = None
+    if adapter is not None:
+        import release as release_contract
+        from evaluation.release_evidence import evaluation_runtime
+        release_binding = dict(artifact=release_contract.artifact_identity(adapter, manifest['model']),
+                               runtime=evaluation_runtime(manifest, config))
     reports = {}
     for role, spec in [('baseline', baseline), ('candidate', candidate)]:
         outputs = generate(spec, manifest, config, rows + behavioral)
@@ -145,6 +155,8 @@ def evaluate():
                       golden_sha256=fingerprint(rows), baseline_spec_sha256=fingerprint(baseline),
                       behavioral=score(behavioral, [by_id[r['id']] for r in behavioral]), leakage=proof,
                       outputs_sha256=fingerprint(outputs))
+        if role == 'candidate' and release_binding is not None:
+            report['release_binding'] = release_binding
         reports[role] = report
     a = {r['id']: r for r in reports['baseline']['per_item']}
     b = {r['id']: r for r in reports['candidate']['per_item']}
