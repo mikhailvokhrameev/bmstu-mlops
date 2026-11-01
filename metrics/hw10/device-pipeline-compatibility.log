@@ -1,0 +1,17 @@
+test_baseline_init_refuses_overwrite (test_pipeline.PipelineContract.test_baseline_init_refuses_overwrite) ... ok
+test_negative_check_does_not_mutate_model_or_alias (test_pipeline.PipelineContract.test_negative_check_does_not_mutate_model_or_alias) ... ok
+test_pass_release_and_explicit_baseline_update (test_pipeline.PipelineContract.test_pass_release_and_explicit_baseline_update) ... ok
+test_protocol_or_raw_changes_rejected (test_pipeline.PipelineContract.test_protocol_or_raw_changes_rejected) ... ok
+test_refused_candidate_keeps_alias (test_pipeline.PipelineContract.test_refused_candidate_keeps_alias) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.027s
+
+OK
+Отчёты и сырые ответы сохранены. Далее: make eval; только после PASS - make promote
+PASS: испорченные ответы отклонены, alias не менялся
+Отчёты и сырые ответы сохранены. Далее: make eval; только после PASS - make promote
+champion -> models:/fixture-model/2
+Baseline обновлён явно; старый сохранён. Следующая оценка сравнит с принятой версией
+Отчёты и сырые ответы сохранены. Далее: make eval; только после PASS - make promote
+Отчёты и сырые ответы сохранены. Далее: make eval; только после PASS - make promote

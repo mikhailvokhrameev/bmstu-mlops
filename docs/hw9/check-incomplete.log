@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/evaluation/release_evidence.py", line 74, in <module>
+    main()
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/evaluation/release_evidence.py", line 68, in main
+    manifest, report = create(args.runtime, args.output)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/evaluation/release_evidence.py", line 23, in create
+    runtime = read_json(runtime_path)
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/evaluation/contract.py", line 13, in read_json
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'docs/hw9/runtime-not-provided.json'
+exit_code=1

@@ -1,0 +1,43 @@
+[
+  {
+    "path": "/health",
+    "request": null,
+    "status": 200,
+    "response": {
+      "alive": true,
+      "backend": "diagnostic"
+    }
+  },
+  {
+    "path": "/ready",
+    "request": null,
+    "status": 200,
+    "response": {
+      "ready": true,
+      "model_id": "diagnostic-smollm2-135m-12fd25f-cpu",
+      "runtime_sha256": "2bc721ed36665f1f95ad55642dc8b35eeea28adc6983d52fa6e3a4829ac48646",
+      "diagnostic_only": true,
+      "accepted_release": false
+    }
+  },
+  {
+    "path": "/generate",
+    "request": {
+      "prompt": "Say hello."
+    },
+    "status": 200,
+    "response": {
+      "text": "Hello! How can I help you today?",
+      "output_tokens": 10,
+      "request_id": "ea99d4fd-75fa-4483-b4fe-bc17daca4ed0",
+      "model_id": "diagnostic-smollm2-135m-12fd25f-cpu",
+      "runtime_sha256": "2bc721ed36665f1f95ad55642dc8b35eeea28adc6983d52fa6e3a4829ac48646",
+      "queue_seconds": 2.662499900907278e-05,
+      "generation_seconds": 0.7381190830492415,
+      "total_seconds": 0.7381457080482505,
+      "max_new_tokens": 32,
+      "diagnostic_only": true,
+      "accepted_release": false
+    }
+  }
+]

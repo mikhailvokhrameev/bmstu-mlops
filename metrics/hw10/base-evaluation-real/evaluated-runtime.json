@@ -1,0 +1,13 @@
+{
+  "base_model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+  "base_revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+  "device": "cpu",
+  "dtype": "float32",
+  "generation": {
+    "system": "Ты помощник по MLOps-инструментам. Реши задачу выбора варианта. Верни только JSON с единственным полем answer и строковой меткой из choices, указанных в вопросе, например {\"answer\":\"A\"}. На запрос за пределами MLOps (не про трекинг экспериментов, версионирование данных, оркестрацию и развёртывание моделей) верни {\"answer\":\"REFUSE\"}.",
+    "max_new_tokens": 32,
+    "enable_thinking": false,
+    "seed": 42
+  },
+  "do_sample": false
+}

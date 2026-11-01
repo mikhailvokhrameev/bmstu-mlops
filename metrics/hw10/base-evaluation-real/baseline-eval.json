@@ -1,0 +1,789 @@
+{
+  "overall": {
+    "n": 50,
+    "correct": 0,
+    "valid": 0,
+    "errors": 0,
+    "accuracy": 0.0,
+    "format_rate": 0.0
+  },
+  "slices": {
+    "2_options": {
+      "n": 45,
+      "correct": 0,
+      "valid": 0,
+      "errors": 0,
+      "accuracy": 0.0,
+      "format_rate": 0.0
+    },
+    "3_options": {
+      "n": 5,
+      "correct": 0,
+      "valid": 0,
+      "errors": 0,
+      "accuracy": 0.0,
+      "format_rate": 0.0
+    },
+    "data-versioning": {
+      "n": 12,
+      "correct": 0,
+      "valid": 0,
+      "errors": 0,
+      "accuracy": 0.0,
+      "format_rate": 0.0
+    },
+    "experiment-tracking": {
+      "n": 12,
+      "correct": 0,
+      "valid": 0,
+      "errors": 0,
+      "accuracy": 0.0,
+      "format_rate": 0.0
+    },
+    "orchestration": {
+      "n": 13,
+      "correct": 0,
+      "valid": 0,
+      "errors": 0,
+      "accuracy": 0.0,
+      "format_rate": 0.0
+    },
+    "serving": {
+      "n": 13,
+      "correct": 0,
+      "valid": 0,
+      "errors": 0,
+      "accuracy": 0.0,
+      "format_rate": 0.0
+    }
+  },
+  "per_item": [
+    {
+      "id": "gold-001",
+      "raw": "Какие функции MLflow записывает числовую",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-002",
+      "raw": "Что в MLflow хранит версии зарегистрированных модел",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-003",
+      "raw": "Какие функции MLflow сохраняет гиперпарамет",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-004",
+      "raw": "Из чего TensorBoard читает данные для графиков? A -",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-005",
+      "raw": "Какой командой запускает веб-интерфейс MLflow Tracking",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-006",
+      "raw": "Что в MLflow называется artifact? A - файл, сохранё",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-007",
+      "raw": "Как в Optuna называется объект всей оптими",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-008",
+      "raw": "Как в Optuna называется одна попытка с конкретны",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-009",
+      "raw": "Какие метрики в TensorBoard? Возвращается какие метри",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-010",
+      "raw": "Что такое alias (например, champion) в реестре моделей MLflow",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-011",
+      "raw": "Какие метаданные запусков могут получать ваш к",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "3_options"
+      ]
+    },
+    {
+      "id": "gold-012",
+      "raw": "Какой метод Optuna запускает оптимизацию? A - study",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "experiment-tracking",
+        "3_options"
+      ]
+    },
+    {
+      "id": "gold-013",
+      "raw": "Какой командой DVC начинает отслеживать файл",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-014",
+      "raw": "Какой командой DVC отправляет данные из кеша в ",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-015",
+      "raw": "Что Git хранит вместо большого файла, добав",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-016",
+      "raw": "Какой командой DVC восстанавливает файлы раб",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-017",
+      "raw": "Что описывает секция deps стадии в dvc.yaml? A",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-018",
+      "raw": "Что записывает файл dvc.lock? A - точные х",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-019",
+      "raw": "Какие стадии пайплайна устарели? A - dvc status, B",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-020",
+      "raw": "Не простое, если вы хотите получать следу",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-021",
+      "raw": "Какой командой DVC воспроизводит пайплайн, п",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "3_options"
+      ]
+    },
+    {
+      "id": "gold-022",
+      "raw": "Что означает cache: false у метрики в dvc.yaml? A - фай",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-023",
+      "raw": "Какой командой DVC скачивает данные из удалё",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-024",
+      "raw": "Что показывает команда dvc dag? A - граф зави",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "data-versioning",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-025",
+      "raw": "Как в Airflow называется Python-описание набора задач",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-026",
+      "raw": "Что в Airflow выполняет одну единицу работы вн",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-027",
+      "raw": "Какой компонент Airflow запускает задачи по рас",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-028",
+      "raw": "Каким методом задача Luigi объявляет свои з",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-029",
+      "raw": "Какой декоратор Prefect превращает Python-функцию в з",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-030",
+      "raw": "Что в Dagster называется asset? Какие-то объект",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-031",
+      "raw": "Как потоки внутри одного Python-процесса? В",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-032",
+      "raw": "Как Kubeflow Pipelines описывает конвейер? Выполня",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-033",
+      "raw": "Для чего в Kedro нужен Data Catalog? A - описывает наб",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-034",
+      "raw": "Что реализует Argo CD? A - обучение нейросетей",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-035",
+      "raw": "Как Tekton Pipelines описывает шаги CI/CD? A - как ",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-036",
+      "raw": "На основе какого проекта построены управ",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "3_options"
+      ]
+    },
+    {
+      "id": "gold-037",
+      "raw": "Что задаёт cron-выражение в расписании DAG",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "orchestration",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-038",
+      "raw": "Модели какого формата загружает TensorFlow Serving? A - Saved",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-039",
+      "raw": "Не так, это открытый формат представл",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-040",
+      "raw": "Не простое. Не простое. Не простое. Н",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-041",
+      "raw": "Что оптимизирует NVIDIA TensorRT? A - инференс ней",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-042",
+      "raw": "На каком оборудовании OpenVINO в первую очередь",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-043",
+      "raw": "Что используют, чтобы контейнеры Docker пол",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-044",
+      "raw": "Что позволяет Knative Serving? A - версионировать датас",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-045",
+      "raw": "Какой объект Kubernetes описывает желаемое ч",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "3_options"
+      ]
+    },
+    {
+      "id": "gold-046",
+      "raw": "Какой порт использует REST API TensorFlow Serving в официальном",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-047",
+      "raw": "Статические профильмы для последнего и",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-048",
+      "raw": "Что такое Vertex AI в Google Cloud? A - библиотека для постр",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-049",
+      "raw": "Какие ресурсы в Azure Machine Learning? Верни только видеоф",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    },
+    {
+      "id": "gold-050",
+      "raw": "Что делает Ray Serve? A - версионирует датасеты в Git, B",
+      "parsed": null,
+      "valid": false,
+      "correct": false,
+      "error": null,
+      "slices": [
+        "serving",
+        "2_options"
+      ]
+    }
+  ],
+  "status": "complete",
+  "model": {
+    "kind": "base",
+    "name": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+  },
+  "evaluation_run_id": "base-c1ab7438bde14743a18f0e40482f7631",
+  "protocol_sha256": "67c6eff241608c838906c9c2eacf271ad736ee7affb4243740b92938ec5a6502",
+  "golden_sha256": "821553370b380ea95c6dca8882b805a61f993cfe5c07bada1259b93d84eca785",
+  "baseline_spec_sha256": "705d8f7a4eadd7c4dd711bd8d03532a173efc96fba8fb21dc4b712985b74d66f",
+  "behavioral": {
+    "overall": {
+      "n": 5,
+      "correct": 0,
+      "valid": 0,
+      "errors": 0,
+      "accuracy": 0.0,
+      "format_rate": 0.0
+    },
+    "slices": {
+      "behavior": {
+        "n": 5,
+        "correct": 0,
+        "valid": 0,
+        "errors": 0,
+        "accuracy": 0.0,
+        "format_rate": 0.0
+      }
+    },
+    "per_item": [
+      {
+        "id": "behavior-format-flow",
+        "raw": "Что объявляет декоратор @flow в Prefect? A - поток",
+        "parsed": null,
+        "valid": false,
+        "correct": false,
+        "error": null,
+        "slices": [
+          "behavior"
+        ]
+      },
+      {
+        "id": "behavior-paraphrase-flow",
+        "raw": "Для чего в Prefect применяют декоратор @flow? A - т",
+        "parsed": null,
+        "valid": false,
+        "correct": false,
+        "error": null,
+        "slices": [
+          "behavior"
+        ]
+      },
+      {
+        "id": "behavior-format-lock",
+        "raw": "Не простое, если выполненный файл DVC фи",
+        "parsed": null,
+        "valid": false,
+        "correct": false,
+        "error": null,
+        "slices": [
+          "behavior"
+        ]
+      },
+      {
+        "id": "behavior-refusal-poem",
+        "raw": "Сочини стихотворение про осень. A - строфа и",
+        "parsed": null,
+        "valid": false,
+        "correct": false,
+        "error": null,
+        "slices": [
+          "behavior"
+        ]
+      },
+      {
+        "id": "behavior-refusal-weather",
+        "raw": "Какой погода будет завтра в Москве? A - солне",
+        "parsed": null,
+        "valid": false,
+        "correct": false,
+        "error": null,
+        "slices": [
+          "behavior"
+        ]
+      }
+    ]
+  },
+  "leakage": {
+    "exact_or_group_intersections": 0,
+    "n_train_index": 1330,
+    "n_golden": 50,
+    "n_behavioral": 5
+  },
+  "outputs_sha256": "baa8f5356bcf8d658295314fed06f02d2f9acd7b5b82b957cd66da7cffc56f7f",
+  "release_binding": {
+    "artifact": {
+      "kind": "base",
+      "root": "/private/tmp/bmstu-hw10-base-humye_2t/snapshot",
+      "base_model": {
+        "name": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+      },
+      "files": {
+        "config.json": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+        "generation_config.json": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+        "merges.txt": "0b54e8aa4e53d5383e2e4bc635a56b43f9647f7b13832d5d9ecd8f82dac4f510",
+        "model.safetensors": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+        "special_tokens_map.json": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+        "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "tokenizer_config.json": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+        "vocab.json": "82b84012e3add4d01d12ba14442026e49b8cbbaead1f79ecf3d919784f82dc79"
+      }
+    },
+    "runtime": {
+      "base_model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+      "base_revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+      "device": "cpu",
+      "dtype": "float32",
+      "generation": {
+        "system": "Ты помощник по MLOps-инструментам. Реши задачу выбора варианта. Верни только JSON с единственным полем answer и строковой меткой из choices, указанных в вопросе, например {\"answer\":\"A\"}. На запрос за пределами MLOps (не про трекинг экспериментов, версионирование данных, оркестрацию и развёртывание моделей) верни {\"answer\":\"REFUSE\"}.",
+        "max_new_tokens": 32,
+        "enable_thinking": false,
+        "seed": 42
+      },
+      "do_sample": false
+    }
+  }
+}

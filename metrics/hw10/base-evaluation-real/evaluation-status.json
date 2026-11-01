@@ -1,0 +1,5 @@
+{
+  "status": "rejected",
+  "passed": false,
+  "reason": "ValueError: Behavioral: прошли 0 из 5"
+}

@@ -116,3 +116,10 @@ baseline-update:
 	uv run python -m evaluation.cli baseline-update
 predict-candidate:
 	uv run python -m src.predict --uri models:/my-smollm-adapter@candidate --prompt "Выберите правильный вариант."
+
+# --- ДЗ 8–10: исходный учебный прототип (тесты намеренно красные) ---
+PYTHON ?= python3
+.PHONY: check-hw8910
+check-hw8910:
+	$(PYTHON) -m compileall -q lab.py release.py service.py tests_hw8910
+	$(PYTHON) -m unittest discover -s tests_hw8910 -v

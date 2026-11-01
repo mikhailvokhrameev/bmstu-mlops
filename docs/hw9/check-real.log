@@ -1,0 +1,15 @@
+test_incomplete_attempt_is_persisted (test_real_release.RealRelease.test_incomplete_attempt_is_persisted) ... ok
+test_inventory_detects_any_changed_or_extra_file (test_real_release.RealRelease.test_inventory_detects_any_changed_or_extra_file) ... ok
+test_legacy_cannot_publish_real_pointer (test_real_release.RealRelease.test_legacy_cannot_publish_real_pointer) ... ok
+test_behavioral_raw_tampering_rejected_with_updated_hashes (test_real_release.VerifiedEvidenceTests.test_behavioral_raw_tampering_rejected_with_updated_hashes) ... ok
+test_critical_slices_cannot_be_removed_from_report (test_real_release.VerifiedEvidenceTests.test_critical_slices_cannot_be_removed_from_report) ... ok
+test_file_reference_rejects_symlink (test_real_release.VerifiedEvidenceTests.test_file_reference_rejects_symlink) ... ok
+test_model_id_and_uri_must_match_model_spec (test_real_release.VerifiedEvidenceTests.test_model_id_and_uri_must_match_model_spec) ... ok
+test_pinned_golden_data_changes_rejected (test_real_release.VerifiedEvidenceTests.test_pinned_golden_data_changes_rejected) ... ok
+test_raw_tampering_rejected_even_with_updated_hashes (test_real_release.VerifiedEvidenceTests.test_raw_tampering_rejected_even_with_updated_hashes) ... ok
+test_verified_roundtrip (test_real_release.VerifiedEvidenceTests.test_verified_roundtrip) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.166s
+
+OK

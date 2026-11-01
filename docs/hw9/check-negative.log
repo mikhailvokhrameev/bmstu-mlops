@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/evaluation/solution.py", line 177, in quality_gate
+    _fail(f'Behavioral: прошли {stats["correct"]} из {stats["n"]}')
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/evaluation/solution.py", line 74, in _fail
+    raise ValueError(message)
+ValueError: Behavioral: прошли 3 из 5
+exit_code=1

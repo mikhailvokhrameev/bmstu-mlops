@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/private/tmp/run-hw10-diagnostic.py", line 21, in <module>
+    if proc.poll() is not None: raise RuntimeError(f'server exited {proc.returncode}')
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: server exited 3

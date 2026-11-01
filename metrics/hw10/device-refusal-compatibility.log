@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/evaluation/release_evidence.py", line 137, in <module>
+    main()
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/evaluation/release_evidence.py", line 131, in main
+    manifest, report = create(args.runtime, args.output, base_evaluation=args.base_evaluation)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/evaluation/release_evidence.py", line 28, in create
+    return create_base(base_evaluation, runtime_path, output)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/evaluation/release_evidence.py", line 109, in create_base
+    decision=quality_gate(baseline,candidate,protocol['config']['critical_slices'])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/evaluation/solution.py", line 177, in quality_gate
+    _fail(f'Behavioral: прошли {stats["correct"]} из {stats["n"]}')
+  File "/Users/mikhailvokhrameev/github_repositories/bmstu-mlops/evaluation/solution.py", line 74, in _fail
+    raise ValueError(message)
+ValueError: Behavioral: прошли 0 из 5

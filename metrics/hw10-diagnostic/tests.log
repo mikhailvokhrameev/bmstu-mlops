@@ -1,0 +1,27 @@
+test_auto_device_rejected_even_with_matching_hash (tests_hw8910.test_diagnostic_api.DiagnosticAPI.test_auto_device_rejected_even_with_matching_hash) ... ok
+test_base_identity_mismatch_rejected_even_with_matching_hash (tests_hw8910.test_diagnostic_api.DiagnosticAPI.test_base_identity_mismatch_rejected_even_with_matching_hash) ... ok
+test_changed_runtime_rejected_before_backend (tests_hw8910.test_diagnostic_api.DiagnosticAPI.test_changed_runtime_rejected_before_backend) ... ok
+test_changed_snapshot_rejected_before_backend (tests_hw8910.test_diagnostic_api.DiagnosticAPI.test_changed_snapshot_rejected_before_backend) ... ok
+test_diagnostic_and_stub_marks (tests_hw8910.test_diagnostic_api.DiagnosticAPI.test_diagnostic_and_stub_marks) ... ok
+test_diagnostic_requires_explicit_manifest (tests_hw8910.test_diagnostic_api.DiagnosticAPI.test_diagnostic_requires_explicit_manifest) ... ok
+test_verified_calls_load_verified_and_marks_responses (tests_hw8910.test_diagnostic_api.DiagnosticAPI.test_verified_calls_load_verified_and_marks_responses) ... ok
+test_every_attempt_and_equal_prompts (tests_hw8910.test_diagnostic_benchmark.DiagnosticBenchmark.test_every_attempt_and_equal_prompts) ... ok
+test_real_rejects_legacy (tests_hw8910.test_api.API.test_real_rejects_legacy) ... ok
+test_restart_and_rollback (tests_hw8910.test_api.API.test_restart_and_rollback) ... ok
+test_unready_and_compute_bound (tests_hw8910.test_api.API.test_unready_and_compute_bound) ... ok
+test_validation_before_compute (tests_hw8910.test_api.API.test_validation_before_compute) ... ok
+test_adapter_auto_binding_is_also_refused (tests_hw8910.test_runtime_device.RuntimeDevice.test_adapter_auto_binding_is_also_refused) ... ok
+test_adapter_evaluation_pins_auto_before_generation (tests_hw8910.test_runtime_device.RuntimeDevice.test_adapter_evaluation_pins_auto_before_generation) ... ok
+test_bound_auto_cannot_publish_even_with_matching_hashes (tests_hw8910.test_runtime_device.RuntimeDevice.test_bound_auto_cannot_publish_even_with_matching_hashes) ... ok
+test_cuda_requires_an_explicit_index (tests_hw8910.test_runtime_device.RuntimeDevice.test_cuda_requires_an_explicit_index) ... ok
+test_model_parameters_must_match_evaluated_device (tests_hw8910.test_runtime_device.RuntimeDevice.test_model_parameters_must_match_evaluated_device) ... ok
+test_startup_refuses_a_model_moved_to_the_wrong_device (tests_hw8910.test_runtime_device.RuntimeDevice.test_startup_refuses_a_model_moved_to_the_wrong_device) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.584s
+
+OK
+Создан синтетический стенд: /var/folders/ss/4960hrgn57dbwxnwknt3jpp00000gn/T/tmpfodu56j_/workspace
+Создан синтетический стенд: /var/folders/ss/4960hrgn57dbwxnwknt3jpp00000gn/T/tmpylhblfbh/workspace
+Создан синтетический стенд: /var/folders/ss/4960hrgn57dbwxnwknt3jpp00000gn/T/tmp81ose011/workspace
+Создан синтетический стенд: /var/folders/ss/4960hrgn57dbwxnwknt3jpp00000gn/T/tmp65v_czvu/workspace

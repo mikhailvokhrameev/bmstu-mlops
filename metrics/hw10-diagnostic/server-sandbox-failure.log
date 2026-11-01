@@ -1,0 +1,7 @@
+INFO:     Started server process [23554]
+INFO:     Waiting for application startup.
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights:   0%|          | 1/272 [00:00<01:57,  2.30it/s]Loading weights:  44%|████▍     | 120/272 [00:00<00:00, 277.74it/s]Loading weights:  65%|██████▍   | 176/272 [00:00<00:00, 256.28it/s]Loading weights:  80%|███████▉  | 217/272 [00:01<00:00, 240.10it/s]Loading weights:  92%|█████████▏| 250/272 [00:01<00:00, 214.87it/s]Loading weights: 100%|██████████| 272/272 [00:01<00:00, 204.72it/s]
+INFO:     Application startup complete.
+ERROR:    [Errno 1] error while attempting to bind on address ('127.0.0.1', 8092): operation not permitted
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
