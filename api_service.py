@@ -113,7 +113,10 @@ def load_diagnostic(manifest_path):
     return manifest
 
 
-def create_app(pointer=Path('accepted.json'),backend='transformers',max_parallel=1,diagnostic_manifest=None):
+def create_app(pointer=Path('accepted.json'),backend='transformers',max_parallel=1,diagnostic_manifest=None,simulated_config=None):
+    if backend == 'simulated':
+        from simulated_backend import create_simulated_app
+        return create_simulated_app(simulated_config, max_parallel)
     if max_parallel < 1:
         raise ValueError('max_parallel must be positive')
     @asynccontextmanager
@@ -187,12 +190,14 @@ def main():
     import uvicorn
     parser=argparse.ArgumentParser()
     parser.add_argument('--pointer',type=Path,default=Path('accepted.json'))
-    parser.add_argument('--backend',choices=['stub','transformers','diagnostic'],default='transformers')
+    parser.add_argument('--backend',choices=['stub','transformers','diagnostic','simulated'],default='transformers')
     parser.add_argument('--diagnostic-manifest',type=Path)
+    parser.add_argument('--simulated-config',type=Path)
+    parser.add_argument('--host',default='127.0.0.1')
     parser.add_argument('--port',type=int,default=8092)
     parser.add_argument('--max-parallel',type=int,default=1)
     args=parser.parse_args()
-    uvicorn.run(create_app(args.pointer,args.backend,args.max_parallel,args.diagnostic_manifest),host='127.0.0.1',port=args.port)
+    uvicorn.run(create_app(args.pointer,args.backend,args.max_parallel,args.diagnostic_manifest,args.simulated_config),host=args.host,port=args.port)
 
 if __name__=='__main__':
     main()

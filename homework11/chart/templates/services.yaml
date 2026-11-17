@@ -1,0 +1,16 @@
+{{- range $sticky := list false true }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "inference.name" $ }}-{{ ternary "sticky" "balanced" $sticky }}
+spec:
+  selector:
+    {{- include "inference.labels" $ | nindent 4 }}
+  ports: [{name: http, port: 8092, targetPort: http}]
+  sessionAffinity: {{ ternary "ClientIP" "None" $sticky }}
+  {{- if $sticky }}
+  sessionAffinityConfig:
+    clientIP: {timeoutSeconds: 10800}
+  {{- end }}
+{{- end }}

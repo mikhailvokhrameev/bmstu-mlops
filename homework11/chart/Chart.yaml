@@ -1,0 +1,5 @@
+apiVersion: v2
+name: inference
+version: 0.1.0
+appVersion: "11.0.0"
+description: CPU simulated inference for homework 11

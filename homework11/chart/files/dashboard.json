@@ -1,0 +1,235 @@
+{
+  "uid": "homework11",
+  "title": "Homework 11 — CPU simulated backend",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "namespace",
+        "type": "constant",
+        "query": "hw11"
+      },
+      {
+        "name": "deployment",
+        "type": "constant",
+        "query": "hw11-inference"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "TTFC p50 / p95 (s)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(simulated_ttfc_seconds_bucket[2m])))",
+          "legendFormat": "{{pod}} {{outcome}}",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum by (le) (rate(simulated_ttfc_seconds_bucket[2m])))",
+          "refId": "B",
+          "legendFormat": "p50"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Full response p95 (s)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(simulated_total_seconds_bucket[2m])))",
+          "legendFormat": "{{pod}} {{outcome}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Running / waiting per Pod",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "simulated_running",
+          "legendFormat": "running {{pod}}",
+          "refId": "A"
+        },
+        {
+          "expr": "simulated_waiting",
+          "legendFormat": "waiting {{pod}}",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Completed requests / second",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (pod) (rate(simulated_requests_total{outcome=\"completed\"}[2m]))",
+          "legendFormat": "{{pod}} {{outcome}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Refusals / second",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (pod,outcome) (rate(simulated_requests_total{outcome=~\"rejected|queue_timeout|unready|aborted|invalid\"}[2m]))",
+          "legendFormat": "{{pod}} {{outcome}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "CPU cores per Pod",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "max by (pod) (rate(container_cpu_usage_seconds_total{job=\"cadvisor\",namespace=\"$namespace\",pod=~\"$deployment-.*\",id=~\".*/[^/]*pod[^/]+\",cpu=\"total\"}[2m]))",
+          "legendFormat": "{{pod}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "RAM bytes per Pod",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "max by (pod) (container_memory_working_set_bytes{job=\"cadvisor\",namespace=\"$namespace\",pod=~\"$deployment-.*\",id=~\".*/[^/]*pod[^/]+\"})",
+          "legendFormat": "{{pod}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Ready replicas",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "kube_deployment_status_replicas_ready{deployment=\"$deployment\",namespace=\"$namespace\"}",
+          "legendFormat": "{{pod}} {{outcome}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Queue p95 (s)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (pod,le) (rate(simulated_queue_seconds_bucket[2m])))",
+          "legendFormat": "{{pod}} {{outcome}}",
+          "refId": "A"
+        }
+      ]
+    }
+  ]
+}

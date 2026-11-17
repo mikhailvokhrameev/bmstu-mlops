@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inference.name" . }}
+spec:
+  {{- if not .Values.hpa.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  minReadySeconds: 5
+  progressDeadlineSeconds: 300
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: {maxSurge: 1, maxUnavailable: 0}
+  selector:
+    matchLabels:
+      {{- include "inference.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "inference.labels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, fsGroup: 10001}
+      containers:
+        - name: api
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: [python, api_service.py]
+          args: [--backend, simulated, --host, 0.0.0.0, --port, "8092", --simulated-config, /config/simulator.json, --max-parallel, {{ .Values.maxParallel | quote }}]
+          env:
+            - name: POD_NAME
+              valueFrom: {fieldRef: {fieldPath: metadata.name}}
+          ports: [{name: http, containerPort: 8092}]
+          startupProbe:
+            httpGet: {path: /startup, port: http}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet: {path: /ready, port: http}
+            periodSeconds: 1
+            failureThreshold: 1
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            periodSeconds: 5
+            failureThreshold: 3
+            timeoutSeconds: 2
+          lifecycle:
+            preStop:
+              exec:
+                command: [python, -c, {{ printf "import time; time.sleep(%v)" .Values.preStopSeconds | quote }}]
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts: [{name: config, mountPath: /config, readOnly: true}]
+      volumes:
+        - name: config
+          configMap: {name: {{ include "inference.name" . }}-config}

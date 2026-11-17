@@ -1,0 +1,38 @@
+replicaCount: 2
+image:
+  repository: bmstu-inference
+  tag: hw11
+  pullPolicy: IfNotPresent
+artifact:
+  version: A
+simulator:
+  warmup_seconds: 20
+  max_queue: 32
+  queue_timeout_seconds: 10
+  cache_entries: 64
+  prefix_chars: 512
+  hit_cpu_seconds: 0.02
+  miss_cpu_seconds: 0.8
+  chunk_cpu_seconds: 0.02
+  chunks: 8
+  premature_ready: false
+maxParallel: 1
+resources:
+  requests: {cpu: 250m, memory: 96Mi}
+  limits: {cpu: "1", memory: 256Mi}
+terminationGracePeriodSeconds: 120
+preStopSeconds: 5
+startupProbe:
+  failureThreshold: 60
+  periodSeconds: 2
+hpa:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 60
+  stabilizationWindowSeconds: 120
+monitoring:
+  enabled: true
+  prometheusImage: prom/prometheus:v3.1.0
+  grafanaImage: grafana/grafana:11.5.0
+  kubeStateMetricsImage: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.14.0

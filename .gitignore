@@ -20,3 +20,9 @@ metrics/train_*.json
 metrics/compare_*.json
 mlruns/
 mlartifacts/
+
+# Keep the Homework 11 report available for publication.
+!homework11/report.html
+
+# Local unpacked Homework 11 measurements; the verified archive is tracked.
+/results/

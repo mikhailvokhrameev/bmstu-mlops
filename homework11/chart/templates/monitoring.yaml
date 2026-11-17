@@ -1,0 +1,88 @@
+{{- if .Values.monitoring.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Release.Name }}-monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Namespace }}-{{ .Release.Name }}-monitoring
+rules:
+  - apiGroups: [""]
+    resources: [pods, nodes, nodes/proxy, namespaces, services, endpoints]
+    verbs: [get, list, watch]
+  - apiGroups: [apps]
+    resources: [deployments, replicasets, statefulsets, daemonsets]
+    verbs: [get, list, watch]
+  - apiGroups: [batch]
+    resources: [jobs, cronjobs]
+    verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Namespace }}-{{ .Release.Name }}-monitoring
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: {{ .Release.Namespace }}-{{ .Release.Name }}-monitoring}
+subjects: [{kind: ServiceAccount, name: {{ .Release.Name }}-monitoring, namespace: {{ .Release.Namespace }}}]
+{{- range $name, $image := dict "prometheus" .Values.monitoring.prometheusImage "grafana" .Values.monitoring.grafanaImage "kube-state-metrics" .Values.monitoring.kubeStateMetricsImage }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Release.Name }}-{{ $name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {component: {{ $.Release.Name }}-{{ $name }}}
+  template:
+    metadata:
+      labels: {component: {{ $.Release.Name }}-{{ $name }}}
+    spec:
+      serviceAccountName: {{ $.Release.Name }}-monitoring
+      securityContext: {fsGroup: 65534}
+      containers:
+        - name: {{ $name }}
+          image: {{ $image }}
+          {{- if eq $name "prometheus" }}
+          args: [--config.file=/etc/prometheus/prometheus.yml, --storage.tsdb.path=/prometheus, --storage.tsdb.retention.time=2h, --storage.tsdb.retention.size=256MB]
+          ports: [{name: http, containerPort: 9090}]
+          volumeMounts:
+            - {name: config, mountPath: /etc/prometheus}
+            - {name: storage, mountPath: /prometheus}
+          {{- else if eq $name "grafana" }}
+          ports: [{name: http, containerPort: 3000}]
+          env:
+            - {name: GF_AUTH_ANONYMOUS_ENABLED, value: "true"}
+            - {name: GF_AUTH_ANONYMOUS_ORG_ROLE, value: Viewer}
+            - {name: GF_USERS_ALLOW_SIGN_UP, value: "false"}
+          volumeMounts:
+            - {name: storage, mountPath: /var/lib/grafana}
+            - {name: config, mountPath: /etc/grafana/provisioning/datasources/datasource.yaml, subPath: datasource.yaml}
+            - {name: config, mountPath: /etc/grafana/provisioning/dashboards/dashboards.yaml, subPath: dashboards.yaml}
+            - {name: config, mountPath: /var/lib/grafana/dashboards/dashboard.json, subPath: dashboard.json}
+          {{- else }}
+          args: ["--resources=pods,deployments,replicasets,nodes", "--namespaces={{ $.Release.Namespace }}"]
+          ports: [{name: http, containerPort: 8080}]
+          {{- end }}
+          readinessProbe:
+            tcpSocket: {port: http}
+            periodSeconds: 5
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 384Mi}
+      volumes:
+        - name: config
+          configMap: {name: {{ $.Release.Name }}-monitoring}
+        - name: storage
+          emptyDir: {sizeLimit: 384Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $.Release.Name }}-{{ $name }}
+spec:
+  selector: {component: {{ $.Release.Name }}-{{ $name }}}
+  ports: [{name: http, port: {{ if eq $name "prometheus" }}9090{{ else if eq $name "grafana" }}3000{{ else }}8080{{ end }}, targetPort: http}]
+{{- end }}
+{{- end }}

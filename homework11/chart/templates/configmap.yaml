@@ -1,0 +1,8 @@
+{{- $artifact := dict "version" .Values.artifact.version | toJson }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "inference.name" . }}-config
+data:
+  artifact.json: {{ $artifact | quote }}
+  simulator.json: {{ merge (dict "artifact_path" "/config/artifact.json" "artifact_sha256" (sha256sum $artifact)) .Values.simulator | toJson | quote }}
